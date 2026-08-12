@@ -81,15 +81,6 @@ window.SITES = [
     "src": "sites/grok-4-5-real.html"
   },
   {
-    "file": "grok4.5.html",
-    "slug": "grok-4-5",
-    "category": "xAI · Grok",
-    "model": "Grok 4.5",
-    "channel": "标准",
-    "thumb": "thumbs/grok-4-5.png",
-    "src": "sites/grok-4-5.html"
-  },
-  {
     "file": "apideepseekv4flash0731.html",
     "slug": "deepseek-v4-flash-api-0731",
     "category": "DeepSeek",
