@@ -562,15 +562,15 @@ body {
 .viewer-controls {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   flex: none;
 }
 
 .icon-btn {
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
+  width: 48px;
+  height: 48px;
   border: 1px solid var(--border);
   background: #fff;
   border-radius: var(--radius-sm);
@@ -587,7 +587,7 @@ body {
 }
 
 .icon-btn i {
-  font-size: 18px;
+  font-size: 20px;
 }
 
 /* Viewer 内评分 */

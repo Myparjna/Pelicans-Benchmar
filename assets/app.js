@@ -20,7 +20,6 @@
   const btnPrev = document.getElementById('btnPrev');
   const btnNext = document.getElementById('btnNext');
   const btnClose = document.getElementById('btnClose');
-  const btnOpenNew = document.getElementById('btnOpenNew');
 
   const CHANNEL_CLASS = {
     '官网风格': 'ch-blue',
@@ -346,7 +345,6 @@
     viewerBadge.className = 'channel-badge ' + channelClass(s.channel);
     viewerCount.textContent = `${currentIndex + 1} / ${filteredSites.length}`;
     const target = s.src; // sites/<slug>.html 已是 ASCII 干净路径，无需编码
-    btnOpenNew.href = target;
     viewerIframe.src = target;
     updateViewerRating(s);
   }
