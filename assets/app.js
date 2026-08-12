@@ -7,6 +7,7 @@
   const root = document.getElementById('galleryRoot');
   const searchInput = document.getElementById('searchInput');
   const filterBar = document.getElementById('filterBar');
+  const sortToggle = document.getElementById('sortToggle');
   const totalCount = document.getElementById('totalCount');
 
   const viewer = document.getElementById('viewer');
@@ -15,6 +16,7 @@
   const viewerBadge = document.getElementById('viewerBadge');
   const viewerCategory = document.getElementById('viewerCategory');
   const viewerCount = document.getElementById('viewerCount');
+  const viewerRating = document.getElementById('viewerRating');
   const btnPrev = document.getElementById('btnPrev');
   const btnNext = document.getElementById('btnNext');
   const btnClose = document.getElementById('btnClose');
@@ -91,18 +93,18 @@
   }
 
   function renderChips() {
-    const chips = categories().map(c => {
+    filterBar.innerHTML = categories().map(c => {
       const count = c === '全部'
         ? sites.length
         : sites.filter(s => s.category === c).length;
       const active = c === activeCategory ? 'active' : '';
       return `<button class="filter-chip ${active}" data-category="${escapeHtml(c)}" type="button">${escapeHtml(c)} <span class="chip-count">${count}</span></button>`;
     }).join('');
+  }
 
-    const sortActive = sortByRating ? 'active' : '';
-    const sortBtn = `<button class="filter-chip sort-toggle ${sortActive}" data-sort="rating" type="button"><i class="ti ti-sort-descending-2"></i> 按评分排序</button>`;
-
-    filterBar.innerHTML = chips + sortBtn;
+  function updateSortToggle() {
+    sortToggle.classList.toggle('active', sortByRating);
+    sortToggle.setAttribute('aria-pressed', String(sortByRating));
   }
 
   function ratingHTML(s) {
@@ -115,6 +117,25 @@
     const scoreText = cur ? `${cur} 分` : '未评分';
     return `
       <div class="rating" data-slug="${escapeHtml(s.slug)}">
+        <div class="rating-head">
+          <span class="rating-label">我的评分</span>
+          <span class="rating-score${cur ? ' rated' : ''}">${scoreText}</span>
+          ${clearBtn}
+        </div>
+        <div class="rating-scale">${btns.join('')}</div>
+      </div>`;
+  }
+
+  function viewerRatingHTML(s) {
+    const cur = getRating(s.slug);
+    const btns = [];
+    for (let n = 1; n <= 10; n++) {
+      btns.push(`<button class="rating-btn${n === cur ? ' active' : ''}" type="button" data-score="${n}" aria-label="评 ${n} 分">${n}</button>`);
+    }
+    const clearBtn = cur ? `<button class="rating-clear" type="button" title="清除评分" aria-label="清除评分"><i class="ti ti-x"></i></button>` : '';
+    const scoreText = cur ? `${cur} 分` : '未评分';
+    return `
+      <div class="rating viewer-rating" data-slug="${escapeHtml(s.slug)}">
         <div class="rating-head">
           <span class="rating-label">我的评分</span>
           <span class="rating-score${cur ? ' rated' : ''}">${scoreText}</span>
@@ -256,6 +277,49 @@
     bindRatings(newNode); // 仅绑定新节点，避免重复绑定
   }
 
+  function bindViewerRating() {
+    const wrap = viewerRating.querySelector('.rating.viewer-rating');
+    if (!wrap) return;
+    const slug = wrap.dataset.slug;
+    wrap.querySelectorAll('.rating-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const score = parseInt(btn.dataset.score, 10);
+        saveRating(slug, score);
+        updateViewerRating(siteBySlug[slug]);
+        syncCardRating(slug);
+      });
+    });
+    wrap.querySelectorAll('.rating-clear').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        saveRating(slug, null);
+        updateViewerRating(siteBySlug[slug]);
+        syncCardRating(slug);
+      });
+    });
+  }
+
+  function updateViewerRating(s) {
+    viewerRating.innerHTML = viewerRatingHTML(s);
+    bindViewerRating();
+  }
+
+  function syncCardRating(slug) {
+    // 同步更新展厅卡片（或排序视图）中的评分状态
+    if (sortByRating) {
+      renderGallery();
+    } else {
+      const wrap = root.querySelector(`.site-card[data-slug="${slug}"] .rating`);
+      if (wrap) updateCardRating(wrap, slug);
+    }
+    // 如果当前查看器里就是该站点，也刷新查看器内的评分显示
+    const current = filteredSites[currentIndex];
+    if (current && current.slug === slug) {
+      updateViewerRating(siteBySlug[slug]);
+    }
+  }
+
   function openViewer(slug) {
     const idx = filteredSites.findIndex(s => s.slug === slug);
     if (idx === -1) return;
@@ -270,6 +334,7 @@
     viewer.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('viewer-open');
     viewerIframe.src = 'about:blank';
+    viewerRating.innerHTML = '';
     currentIndex = -1;
   }
 
@@ -283,6 +348,7 @@
     const target = s.src; // sites/<slug>.html 已是 ASCII 干净路径，无需编码
     btnOpenNew.href = target;
     viewerIframe.src = target;
+    updateViewerRating(s);
   }
 
   function prev() {
@@ -308,19 +374,20 @@
       .replace(/'/g, '&#39;');
   }
 
+  sortToggle.addEventListener('click', () => {
+    sortByRating = !sortByRating;
+    if (sortByRating) activeCategory = '全部'; // 排序即为全量榜单
+    updateSortToggle();
+    renderChips();
+    applyFilters();
+  });
+
   filterBar.addEventListener('click', e => {
-    const sortBtn = e.target.closest('[data-sort="rating"]');
-    if (sortBtn) {
-      sortByRating = !sortByRating;
-      if (sortByRating) activeCategory = '全部'; // 排序即为全量榜单
-      renderChips();
-      applyFilters();
-      return;
-    }
     const chip = e.target.closest('.filter-chip');
-    if (!chip || chip.dataset.sort) return;
+    if (!chip) return;
     activeCategory = chip.dataset.category;
     sortByRating = false; // 选分类即退出排序视图
+    updateSortToggle();
     renderChips();
     applyFilters();
   });
@@ -343,6 +410,7 @@
     if (e.key === 'ArrowRight') next();
   });
 
+  updateSortToggle();
   renderChips();
   applyFilters();
 })();

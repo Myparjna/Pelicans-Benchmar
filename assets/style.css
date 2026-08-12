@@ -345,15 +345,44 @@ body {
   color: var(--primary-dark);
 }
 
+/* Header actions */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: none;
+}
+
 /* 排序切换按钮 */
 .sort-toggle {
-  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  padding: 9px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+  user-select: none;
 }
+
+.sort-toggle:hover {
+  border-color: #cbd5e1;
+  box-shadow: var(--shadow-sm);
+}
+
 .sort-toggle.active {
   background: linear-gradient(135deg, var(--primary), #0ea5e9);
   border-color: transparent;
   color: #fff;
 }
+
 .sort-toggle.active .ti {
   color: #fff;
 }
@@ -561,6 +590,42 @@ body {
   font-size: 18px;
 }
 
+/* Viewer 内评分 */
+.viewer-rating {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.viewer-rating .rating {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.viewer-rating .rating-head {
+  margin-bottom: 0;
+  min-height: auto;
+}
+
+.viewer-rating .rating-scale {
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.viewer-rating .rating-btn {
+  min-width: 20px;
+  padding: 3px 0;
+  font-size: 11px;
+}
+
+.viewer-rating .rating-clear {
+  width: 22px;
+  height: 22px;
+  font-size: 14px;
+}
+
 .viewer-body {
   flex: 1;
   position: relative;
@@ -603,6 +668,15 @@ body.viewer-open {
   .brand-icon {
     width: 38px;
     height: 38px;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .sort-toggle {
+    width: 100%;
+    justify-content: center;
   }
 
   .search-box {

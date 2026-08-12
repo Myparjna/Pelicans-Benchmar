@@ -24,6 +24,9 @@
           <i class="ti ti-search"></i>
           <input type="search" id="searchInput" placeholder="搜索模型、厂商或渠道…" autocomplete="off">
         </label>
+        <button class="sort-toggle" id="sortToggle" type="button" aria-pressed="false">
+          <i class="ti ti-sort-descending-2"></i> 按评分排序
+        </button>
       </div>
     </div>
   </header>
@@ -42,6 +45,7 @@
           <h2 id="viewerTitle"></h2>
           <span class="channel-badge" id="viewerBadge"></span>
           <span class="category-badge" id="viewerCategory"></span>
+          <div class="viewer-rating" id="viewerRating" aria-label="当前站点评分"></div>
         </div>
         <div class="viewer-controls">
           <button class="icon-btn" id="btnPrev" title="上一个 (←)" aria-label="上一个"><i class="ti ti-chevron-left"></i></button>
