@@ -1,0 +1,194 @@
+window.SITES = [
+  {
+    "file": "qwen3.7plus官网.html",
+    "slug": "qwen-3-7-plus",
+    "category": "阿里 · 通义千问",
+    "model": "通义千问 Qwen 3.7 Plus",
+    "channel": "官网风格",
+    "thumb": "thumbs/qwen-3-7-plus.png"
+  },
+  {
+    "file": "qwen3.627b官网.html",
+    "slug": "qwen-3-6-27b",
+    "category": "阿里 · 通义千问",
+    "model": "通义千问 Qwen 3.6 27B",
+    "channel": "官网风格",
+    "thumb": "thumbs/qwen-3-6-27b.png"
+  },
+  {
+    "file": "qwen3.6flash官网.html",
+    "slug": "qwen-3-6-flash",
+    "category": "阿里 · 通义千问",
+    "model": "通义千问 Qwen 3.6 Flash",
+    "channel": "官网风格",
+    "thumb": "thumbs/qwen-3-6-flash.png"
+  },
+  {
+    "file": "qwen官网3.8max.html",
+    "slug": "qwen-3-8-max",
+    "category": "阿里 · 通义千问",
+    "model": "通义千问 Qwen 3.8 Max",
+    "channel": "官网风格",
+    "thumb": "thumbs/qwen-3-8-max.png"
+  },
+  {
+    "file": "千问官网3.6flash.html",
+    "slug": "qianwen-3-6-flash",
+    "category": "阿里 · 通义千问",
+    "model": "通义千问 Qwen 3.6 Flash",
+    "channel": "官网风格",
+    "thumb": "thumbs/qianwen-3-6-flash.png"
+  },
+  {
+    "file": "gpt5.6solcodex.html",
+    "slug": "gpt-5-6-codex",
+    "category": "OpenAI",
+    "model": "GPT-5.6 Codex",
+    "channel": "Sol Codex",
+    "thumb": "thumbs/gpt-5-6-codex.png"
+  },
+  {
+    "file": "gemini3.6flash官网.html",
+    "slug": "gemini-3-6-flash",
+    "category": "Google · Gemini",
+    "model": "Gemini 3.6 Flash",
+    "channel": "官网风格",
+    "thumb": "thumbs/gemini-3-6-flash.png"
+  },
+  {
+    "file": "gemini31pro官网.html",
+    "slug": "gemini-3-1-pro",
+    "category": "Google · Gemini",
+    "model": "Gemini 3.1 Pro",
+    "channel": "官网风格",
+    "thumb": "thumbs/gemini-3-1-pro.png"
+  },
+  {
+    "file": "grok45真.html",
+    "slug": "grok-4-5-real",
+    "category": "xAI · Grok",
+    "model": "Grok 4.5",
+    "channel": "真·官网",
+    "thumb": "thumbs/grok-4-5-real.png"
+  },
+  {
+    "file": "grok4.5.html",
+    "slug": "grok-4-5",
+    "category": "xAI · Grok",
+    "model": "Grok 4.5",
+    "channel": "标准",
+    "thumb": "thumbs/grok-4-5.png"
+  },
+  {
+    "file": "apideepseekv4flash0731.html",
+    "slug": "deepseek-v4-flash-api-0731",
+    "category": "DeepSeek",
+    "model": "DeepSeek V4 Flash",
+    "channel": "API 直连",
+    "thumb": "thumbs/deepseek-v4-flash-api-0731.png"
+  },
+  {
+    "file": "v4pro813API.html",
+    "slug": "deepseek-v4-pro-api-0813",
+    "category": "DeepSeek",
+    "model": "DeepSeek V4 Pro",
+    "channel": "API 直连",
+    "thumb": "thumbs/deepseek-v4-pro-api-0813.png"
+  },
+  {
+    "file": "deepseekv4pro424官网版本.html",
+    "slug": "deepseek-v4-pro-0424",
+    "category": "DeepSeek",
+    "model": "DeepSeek V4 Pro",
+    "channel": "官网风格",
+    "thumb": "thumbs/deepseek-v4-pro-0424.png"
+  },
+  {
+    "file": "deepseekv4flash0424trae.html",
+    "slug": "deepseek-v4-flash-0424-trae",
+    "category": "DeepSeek",
+    "model": "DeepSeek V4 Flash",
+    "channel": "Trae",
+    "thumb": "thumbs/deepseek-v4-flash-0424-trae.png"
+  },
+  {
+    "file": "deepseek0424pro trae.html",
+    "slug": "deepseek-0424-pro-trae",
+    "category": "DeepSeek",
+    "model": "DeepSeek V4 Pro (0424)",
+    "channel": "Trae",
+    "thumb": "thumbs/deepseek-0424-pro-trae.png"
+  },
+  {
+    "file": "deepseekflash0424官网版.html",
+    "slug": "deepseek-flash-0424",
+    "category": "DeepSeek",
+    "model": "DeepSeek V4 Flash (0424)",
+    "channel": "官网风格",
+    "thumb": "thumbs/deepseek-flash-0424.png"
+  },
+  {
+    "file": "deepseekv4pro-0424-workbuddy.html",
+    "slug": "deepseek-v4-pro-0424-wb",
+    "category": "DeepSeek",
+    "model": "DeepSeek V4 Pro (0424)",
+    "channel": "WorkBuddy",
+    "thumb": "thumbs/deepseek-v4-pro-0424-wb.png"
+  },
+  {
+    "file": "deepseekv4flash0424-workbuddy.html",
+    "slug": "deepseek-v4-flash-0424-wb",
+    "category": "DeepSeek",
+    "model": "DeepSeek V4 Flash (0424)",
+    "channel": "WorkBuddy",
+    "thumb": "thumbs/deepseek-v4-flash-0424-wb.png"
+  },
+  {
+    "file": "豆包官网专家模式.html",
+    "slug": "doubao-expert",
+    "category": "字节 · 豆包",
+    "model": "豆包 Doubao (专家模式)",
+    "channel": "官网风格 · 专家模式",
+    "thumb": "thumbs/doubao-expert.png"
+  },
+  {
+    "file": "seed21pro trae.html",
+    "slug": "seed-2-1-pro-trae",
+    "category": "字节 · Seed",
+    "model": "Seed 2.1 Pro",
+    "channel": "Trae",
+    "thumb": "thumbs/seed-2-1-pro-trae.png"
+  },
+  {
+    "file": "HY3workbuddy.html",
+    "slug": "hunyuan-hy3-wb",
+    "category": "腾讯 · 混元",
+    "model": "混元 HY3",
+    "channel": "WorkBuddy",
+    "thumb": "thumbs/hunyuan-hy3-wb.png"
+  },
+  {
+    "file": "kimik3workbuddy.html",
+    "slug": "kimi-k3-wb",
+    "category": "月之暗面 · Kimi",
+    "model": "Kimi K3",
+    "channel": "WorkBuddy",
+    "thumb": "thumbs/kimi-k3-wb.png"
+  },
+  {
+    "file": "GLM52workbuddy.html",
+    "slug": "glm-5-2-wb",
+    "category": "智谱 · GLM",
+    "model": "智谱 GLM 5.2",
+    "channel": "WorkBuddy",
+    "thumb": "thumbs/glm-5-2-wb.png"
+  },
+  {
+    "file": "minimaxm3-workbuddy.html",
+    "slug": "minimax-m3-wb",
+    "category": "MiniMax",
+    "model": "MiniMax M3",
+    "channel": "WorkBuddy",
+    "thumb": "thumbs/minimax-m3-wb.png"
+  }
+];

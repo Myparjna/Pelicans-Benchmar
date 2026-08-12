@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>模型生成网页展厅 · 鹈鹕自行车测试</title>
+  <meta name="description" content="对比 24 个国内外大模型/平台生成的鹈鹕自行车主题网页效果，支持分类筛选、逐一预览与全屏 iframe 查看。">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <i class="ti ti-layout-grid brand-icon"></i>
+        <div>
+          <h1>模型生成网页展厅</h1>
+          <p class="subtitle">鹈鹕自行车测试 · 24 个模型/版本生成效果对比</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <label class="search-box" for="searchInput">
+          <i class="ti ti-search"></i>
+          <input type="search" id="searchInput" placeholder="搜索模型、厂商或渠道…" autocomplete="off">
+        </label>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="filter-bar" id="filterBar" aria-label="分类筛选"></div>
+    <div id="galleryRoot"></div>
+  </main>
+
+  <div class="viewer" id="viewer" aria-hidden="true" role="dialog" aria-modal="true" aria-label="网页预览">
+    <div class="viewer-backdrop"></div>
+    <div class="viewer-frame">
+      <header class="viewer-header">
+        <div class="viewer-info">
+          <span class="viewer-count" id="viewerCount"></span>
+          <h2 id="viewerTitle"></h2>
+          <span class="channel-badge" id="viewerBadge"></span>
+          <span class="category-badge" id="viewerCategory"></span>
+        </div>
+        <div class="viewer-controls">
+          <button class="icon-btn" id="btnPrev" title="上一个 (←)" aria-label="上一个"><i class="ti ti-chevron-left"></i></button>
+          <button class="icon-btn" id="btnNext" title="下一个 (→)" aria-label="下一个"><i class="ti ti-chevron-right"></i></button>
+          <a class="icon-btn" id="btnOpenNew" target="_blank" rel="noopener" title="新标签页打开" aria-label="新标签页打开"><i class="ti ti-external-link"></i></a>
+          <button class="icon-btn" id="btnClose" title="关闭 (Esc)" aria-label="关闭"><i class="ti ti-x"></i></button>
+        </div>
+      </header>
+      <div class="viewer-body">
+        <iframe id="viewerIframe" src="about:blank" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>共 <strong id="totalCount">0</strong> 个站点 · 按厂商分类 · 点击卡片逐一看效果 · 方向键切换 · Esc 关闭</p>
+    </div>
+  </footer>
+
+  <script src="sites-data.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>

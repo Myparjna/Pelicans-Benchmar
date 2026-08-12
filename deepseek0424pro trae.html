@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>鹈鹕骑自行车</title>
+<style>
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scene {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.scene svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ===== 天气层过渡 ===== */
+#skyRect {
+  transition: fill 1.5s ease;
+}
+#groundGrass {
+  transition: fill 1.5s ease;
+}
+#groundRoad {
+  transition: fill 1.5s ease;
+}
+
+/* ===== 太阳 ===== */
+.sun-group {
+  transition: opacity 1.5s ease;
+}
+.sun-ray {
+  animation: sunPulse 3s ease-in-out infinite;
+  transform-origin: 680px 80px;
+}
+.sun-ray:nth-child(2)  { animation-delay: 0s; }
+.sun-ray:nth-child(3)  { animation-delay: 0.2s; }
+.sun-ray:nth-child(4)  { animation-delay: 0.4s; }
+.sun-ray:nth-child(5)  { animation-delay: 0.6s; }
+.sun-ray:nth-child(6)  { animation-delay: 0.8s; }
+.sun-ray:nth-child(7)  { animation-delay: 1.0s; }
+.sun-ray:nth-child(8)  { animation-delay: 1.2s; }
+.sun-ray:nth-child(9)  { animation-delay: 1.4s; }
+.sun-ray:nth-child(10) { animation-delay: 1.6s; }
+.sun-ray:nth-child(11) { animation-delay: 1.8s; }
+.sun-ray:nth-child(12) { animation-delay: 2.0s; }
+.sun-ray:nth-child(13) { animation-delay: 2.2s; }
+
+@keyframes sunPulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.9; transform: scale(1.15); }
+}
+
+/* ===== 云层 ===== */
+.clouds-group {
+  transition: opacity 1.5s ease;
+}
+.cloud {
+  animation: cloudDrift 20s linear infinite;
+}
+.cloud:nth-child(1) { animation-duration: 25s; animation-delay: 0s; }
+.cloud:nth-child(2) { animation-duration: 20s; animation-delay: -5s; }
+.cloud:nth-child(3) { animation-duration: 22s; animation-delay: -10s; }
+.cloud:nth-child(4) { animation-duration: 18s; animation-delay: -7s; }
+.cloud:nth-child(5) { animation-duration: 24s; animation-delay: -12s; }
+
+@keyframes cloudDrift {
+  from { transform: translateX(900px); }
+  to { transform: translateX(-300px); }
+}
+
+/* ===== 雨天 ===== */
+.rain-group {
+  transition: opacity 1.5s ease;
+}
+.raindrop {
+  animation: rainFall linear infinite;
+}
+@keyframes rainFall {
+  0% { transform: translateY(-10px) translateX(0); opacity: 0; }
+  5% { opacity: 1; }
+  90% { opacity: 0.6; }
+  100% { transform: translateY(420px) translateX(-15px); opacity: 0; }
+}
+
+/* ===== 车轮旋转 ===== */
+.wheel-spin {
+  transform-origin: var(--cx) var(--cy);
+  animation: wheelRotate 0.8s linear infinite;
+}
+@keyframes wheelRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ===== 踏板旋转 ===== */
+.pedal-crank {
+  transform-origin: 390px 342px;
+  animation: pedalRotate 0.8s linear infinite;
+}
+@keyframes pedalRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ===== 鹈鹕身体晃动 ===== */
+.pelican-body-group {
+  animation: bodyBob 0.8s ease-in-out infinite;
+}
+@keyframes bodyBob {
+  0%, 100% { transform: translateY(0); }
+  25% { transform: translateY(-3px); }
+  75% { transform: translateY(3px); }
+}
+
+/* ===== 翅膀微动 ===== */
+.pelican-wing {
+  transform-origin: 330px 205px;
+  animation: wingFlap 2s ease-in-out infinite;
+}
+@keyframes wingFlap {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(3deg); }
+}
+
+/* ===== 远处树木微动 ===== */
+.tree-group {
+  animation: treeSway 4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+.tree-group:nth-child(odd) { animation-delay: -2s; }
+@keyframes treeSway {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(1deg); }
+  75% { transform: rotate(-1deg); }
+}
+
+/* ===== 天气标签 ===== */
+.weather-label {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-size: clamp(16px, 3vw, 28px);
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  transition: opacity 1s ease;
+  pointer-events: none;
+  z-index: 10;
+  letter-spacing: 0.1em;
+}
+
+/* ===== 响应式提示 ===== */
+@media (max-width: 600px) {
+  .weather-label {
+    top: 12px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="scene">
+  <div class="weather-label" id="weatherLabel">☀️ 晴天</div>
+
+  <svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+
+    <!-- ==================== 渐变定义 ==================== -->
+    <defs>
+      <!-- 天空渐变 -->
+      <linearGradient id="skySunny" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#3A7BD5"></stop>
+        <stop offset="60%" stop-color="#5BA3E6"></stop>
+        <stop offset="100%" stop-color="#87CEEB"></stop>
+      </linearGradient>
+      <linearGradient id="skyCloudy" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#7A8B9A"></stop>
+        <stop offset="50%" stop-color="#9AACBD"></stop>
+        <stop offset="100%" stop-color="#B8C8D8"></stop>
+      </linearGradient>
+      <linearGradient id="skyRainy" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#3D4F5F"></stop>
+        <stop offset="50%" stop-color="#556677"></stop>
+        <stop offset="100%" stop-color="#6B7B8B"></stop>
+      </linearGradient>
+
+      <!-- 地面渐变 -->
+      <linearGradient id="grassGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#5A9E4B"></stop>
+        <stop offset="100%" stop-color="#3D7A2F"></stop>
+      </linearGradient>
+
+      <!-- 太阳光晕 -->
+      <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#FFF9C4" stop-opacity="0.8"></stop>
+        <stop offset="50%" stop-color="#FFE082" stop-opacity="0.3"></stop>
+        <stop offset="100%" stop-color="#FFD54F" stop-opacity="0"></stop>
+      </radialGradient>
+
+      <!-- 云朵渐变 -->
+      <radialGradient id="cloudGrad" cx="40%" cy="35%" r="60%">
+        <stop offset="0%" stop-color="#FFFFFF"></stop>
+        <stop offset="70%" stop-color="#E8EAF0"></stop>
+        <stop offset="100%" stop-color="#C8CCD4"></stop>
+      </radialGradient>
+
+      <radialGradient id="cloudGradDark" cx="40%" cy="35%" r="60%">
+        <stop offset="0%" stop-color="#9EA8B4"></stop>
+        <stop offset="70%" stop-color="#7A8490"></stop>
+        <stop offset="100%" stop-color="#5A6470"></stop>
+      </radialGradient>
+    </defs>
+
+    <!-- ==================== 天空背景 ==================== -->
+    <rect id="skyRect" x="0" y="0" width="800" height="365" fill="url(#skySunny)"></rect>
+
+    <!-- ==================== 远山 ==================== -->
+    <g opacity="0.35">
+      <polygon points="0,365 80,260 160,365" fill="#6B8E5A"></polygon>
+      <polygon points="100,365 220,230 340,365" fill="#5A7D4A"></polygon>
+      <polygon points="280,365 420,210 560,365" fill="#6B8E5A"></polygon>
+      <polygon points="500,365 620,250 740,365" fill="#5A7D4A"></polygon>
+      <polygon points="680,365 780,270 800,290 800,365" fill="#6B8E5A"></polygon>
+    </g>
+
+    <!-- ==================== 太阳 ==================== -->
+    <g class="sun-group" id="sunGroup">
+      <circle cx="680" cy="85" r="60" fill="url(#sunGlow)"></circle>
+      <circle cx="680" cy="85" r="35" fill="#FFD54F"></circle>
+      <circle cx="680" cy="85" r="28" fill="#FFEB3B"></circle>
+      <!-- 光线 -->
+      <line class="sun-ray" x1="680" y1="30" x2="680" y2="15" stroke="#FFD54F" stroke-width="4" stroke-linecap="round"></line>
+      <line class="sun-ray" x1="715" y1="40" x2="728" y2="28" stroke="#FFD54F" stroke-width="4" stroke-linecap="round"></line>
+      <line class="sun-ray" x1="735" y1="65" x2="750" y2="60" stroke="#FFD54F" stroke-width="4" stroke-linecap="round"></line>
+      <line class="sun-ray" x1="738" y1="95" x2="752" y2="100" stroke="#FFD54F" stroke-width="4" stroke-linecap="round"></line>
+      <line class="sun-ray" x1="720" y1="120" x2="732" y2="135" stroke="#FFD54F" stroke-width="4" stroke-linecap="round"></line>
+      <line class="sun-ray" x1="640" y1="30" x2="628" y2="18" stroke="#FFD54F" stroke-width="4" stroke-linecap="round"></line>
+      <line class="sun-ray" x1="620" y1="60" x2="605" y2="55" stroke="#FFD54F" stroke-width="4" stroke-linecap="round"></line>
+      <line class="sun-ray" x1="618" y1="100" x2="603" y2="105" stroke="#FFD54F" stroke-width="4" stroke-linecap="round"></line>
+      <line class="sun-ray" x1="635" y1="125" x2="622" y2="138" stroke="#FFD54F" stroke-width="4" stroke-linecap="round"></line>
+      <line class="sun-ray" x1="680" y1="135" x2="680" y2="150" stroke="#FFD54F" stroke-width="4" stroke-linecap="round"></line>
+      <line class="sun-ray" x1="695" y1="115" x2="705" y2="128" stroke="#FFD54F" stroke-width="4" stroke-linecap="round"></line>
+      <line class="sun-ray" x1="710" y1="85" x2="725" y2="85" stroke="#FFD54F" stroke-width="4" stroke-linecap="round"></line>
+    </g>
+
+    <!-- ==================== 云层 ==================== -->
+    <g class="clouds-group" id="cloudsGroup" style="opacity:0.3">
+      <!-- 云1 -->
+      <g class="cloud">
+        <ellipse cx="200" cy="100" rx="60" ry="30" fill="url(#cloudGrad)"></ellipse>
+        <ellipse cx="240" cy="85" rx="50" ry="28" fill="url(#cloudGrad)"></ellipse>
+        <ellipse cx="260" cy="105" rx="45" ry="25" fill="url(#cloudGrad)"></ellipse>
+        <ellipse cx="180" cy="108" rx="40" ry="22" fill="url(#cloudGrad)"></ellipse>
+      </g>
+      <!-- 云2 -->
+      <g class="cloud">
+        <ellipse cx="450" cy="70" rx="70" ry="32" fill="url(#cloudGrad)"></ellipse>
+        <ellipse cx="490" cy="55" rx="55" ry="30" fill="url(#cloudGrad)"></ellipse>
+        <ellipse cx="520" cy="78" rx="50" ry="26" fill="url(#cloudGrad)"></ellipse>
+        <ellipse cx="430" cy="80" rx="45" ry="24" fill="url(#cloudGrad)"></ellipse>
+      </g>
+      <!-- 云3 -->
+      <g class="cloud">
+        <ellipse cx="100" cy="160" rx="50" ry="24" fill="url(#cloudGrad)"></ellipse>
+        <ellipse cx="135" cy="148" rx="40" ry="22" fill="url(#cloudGrad)"></ellipse>
+        <ellipse cx="150" cy="165" rx="35" ry="20" fill="url(#cloudGrad)"></ellipse>
+      </g>
+      <!-- 云4 (深色) -->
+      <g class="cloud">
+        <ellipse cx="350" cy="130" rx="55" ry="28" fill="url(#cloudGradDark)"></ellipse>
+        <ellipse cx="390" cy="115" rx="48" ry="26" fill="url(#cloudGradDark)"></ellipse>
+        <ellipse cx="410" cy="135" rx="42" ry="22" fill="url(#cloudGradDark)"></ellipse>
+        <ellipse cx="330" cy="138" rx="38" ry="20" fill="url(#cloudGradDark)"></ellipse>
+      </g>
+      <!-- 云5 (深色) -->
+      <g class="cloud">
+        <ellipse cx="600" cy="140" rx="60" ry="30" fill="url(#cloudGradDark)"></ellipse>
+        <ellipse cx="640" cy="125" rx="50" ry="28" fill="url(#cloudGradDark)"></ellipse>
+        <ellipse cx="660" cy="148" rx="45" ry="24" fill="url(#cloudGradDark)"></ellipse>
+        <ellipse cx="580" cy="150" rx="40" ry="22" fill="url(#cloudGradDark)"></ellipse>
+      </g>
+    </g>
+
+    <!-- ==================== 雨滴 ==================== -->
+    <g class="rain-group" id="rainGroup" style="opacity:0">
+      <line class="raindrop" x1="50" y1="0" x2="40" y2="20" stroke="#A0C4E8" stroke-width="2" stroke-linecap="round" style="animation-duration:0.65s; animation-delay:0s"></line>
+      <line class="raindrop" x1="120" y1="0" x2="110" y2="20" stroke="#A0C4E8" stroke-width="2" stroke-linecap="round" style="animation-duration:0.7s;  animation-delay:0.15s"></line>
+      <line class="raindrop" x1="190" y1="0" x2="180" y2="20" stroke="#A0C4E8" stroke-width="2" stroke-linecap="round" style="animation-duration:0.6s;  animation-delay:0.3s"></line>
+      <line class="raindrop" x1="260" y1="0" x2="250" y2="20" stroke="#A0C4E8" stroke-width="2" stroke-linecap="round" style="animation-duration:0.75s; animation-delay:0.05s"></line>
+      <line class="raindrop" x1="330" y1="0" x2="320" y2="20" stroke="#A0C4E8" stroke-width="2" stroke-linecap="round" style="animation-duration:0.68s; animation-delay:0.2s"></line>
+      <line class="raindrop" x1="400" y1="0" x2="390" y2="20" stroke="#A0C4E8" stroke-width="2" stroke-linecap="round" style="animation-duration:0.72s; animation-delay:0.35s"></line>
+      <line class="raindrop" x1="470" y1="0" x2="460" y2="20" stroke="#A0C4E8" stroke-width="2" stroke-linecap="round" style="animation-duration:0.63s; animation-delay:0.1s"></line>
+      <line class="raindrop" x1="540" y1="0" x2="530" y2="20" stroke="#A0C4E8" stroke-width="2" stroke-linecap="round" style="animation-duration:0.7s;  animation-delay:0.25s"></line>
+      <line class="raindrop" x1="610" y1="0" x2="600" y2="20" stroke="#A0C4E8" stroke-width="2" stroke-linecap="round" style="animation-duration:0.66s; animation-delay:0.4s"></line>
+      <line class="raindrop" x1="680" y1="0" x2="670" y2="20" stroke="#A0C4E8" stroke-width="2" stroke-linecap="round" style="animation-duration:0.74s; animation-delay:0.18s"></line>
+      <line class="raindrop" x1="750" y1="0" x2="740" y2="20" stroke="#A0C4E8" stroke-width="2" stroke-linecap="round" style="animation-duration:0.69s; animation-delay:0.32s"></line>
+      <line class="raindrop" x1="80" y1="0" x2="70" y2="20" stroke="#A0C4E8" stroke-width="1.5" stroke-linecap="round" style="animation-duration:0.8s;  animation-delay:0.45s"></line>
+      <line class="raindrop" x1="220" y1="0" x2="210" y2="20" stroke="#A0C4E8" stroke-width="1.5" stroke-linecap="round" style="animation-duration:0.62s; animation-delay:0.5s"></line>
+      <line class="raindrop" x1="360" y1="0" x2="350" y2="20" stroke="#A0C4E8" stroke-width="1.5" stroke-linecap="round" style="animation-duration:0.77s; animation-delay:0.08s"></line>
+      <line class="raindrop" x1="500" y1="0" x2="490" y2="20" stroke="#A0C4E8" stroke-width="1.5" stroke-linecap="round" style="animation-duration:0.64s; animation-delay:0.28s"></line>
+      <line class="raindrop" x1="640" y1="0" x2="630" y2="20" stroke="#A0C4E8" stroke-width="1.5" stroke-linecap="round" style="animation-duration:0.71s; animation-delay:0.42s"></line>
+      <line class="raindrop" x1="160" y1="0" x2="150" y2="20" stroke="#A0C4E8" stroke-width="1.5" stroke-linecap="round" style="animation-duration:0.73s; animation-delay:0.55s"></line>
+      <line class="raindrop" x1="440" y1="0" x2="430" y2="20" stroke="#A0C4E8" stroke-width="1.5" stroke-linecap="round" style="animation-duration:0.67s; animation-delay:0.38s"></line>
+      <line class="raindrop" x1="720" y1="0" x2="710" y2="20" stroke="#A0C4E8" stroke-width="1.5" stroke-linecap="round" style="animation-duration:0.78s; animation-delay:0.48s"></line>
+      <line class="raindrop" x1="30" y1="0" x2="20" y2="20" stroke="#A0C4E8" stroke-width="1.5" stroke-linecap="round" style="animation-duration:0.61s; animation-delay:0.52s"></line>
+    </g>
+
+    <!-- ==================== 地面 ==================== -->
+    <!-- 草地 -->
+    <rect id="groundGrass" x="0" y="358" width="800" height="55" fill="url(#grassGrad)"></rect>
+    <!-- 草地边缘草丛 -->
+    <g fill="#4A8E3B" opacity="0.7">
+      <ellipse cx="30" cy="358" rx="25" ry="8"></ellipse>
+      <ellipse cx="90" cy="360" rx="20" ry="6"></ellipse>
+      <ellipse cx="160" cy="357" rx="22" ry="7"></ellipse>
+      <ellipse cx="230" cy="359" rx="18" ry="5"></ellipse>
+      <ellipse cx="570" cy="358" rx="20" ry="6"></ellipse>
+      <ellipse cx="640" cy="360" rx="24" ry="7"></ellipse>
+      <ellipse cx="710" cy="357" rx="18" ry="5"></ellipse>
+      <ellipse cx="770" cy="359" rx="22" ry="6"></ellipse>
+    </g>
+    <!-- 路面 -->
+    <rect id="groundRoad" x="0" y="375" width="800" height="125" fill="#5A5A5A"></rect>
+    <!-- 路面纹理 -->
+    <rect x="0" y="375" width="800" height="3" fill="#6A6A6A"></rect>
+    <!-- 车道线 -->
+    <rect x="0" y="435" width="800" height="3" fill="#FFD54F" opacity="0.8" stroke-dasharray="35 25" stroke="#FFD54F" stroke-width="3"></rect>
+    <!-- 路缘石 -->
+    <rect x="0" y="373" width="800" height="4" fill="#888"></rect>
+
+    <!-- ==================== 远处树木 ==================== -->
+    <g transform="translate(60, 290)">
+      <g class="tree-group" style="transform-origin:25px 70px">
+        <rect x="20" y="40" width="10" height="30" fill="#6B4226" rx="2"></rect>
+        <ellipse cx="25" cy="25" rx="30" ry="35" fill="#4A8E3B"></ellipse>
+        <ellipse cx="10" cy="35" rx="18" ry="22" fill="#3D7A2F"></ellipse>
+        <ellipse cx="40" cy="30" rx="20" ry="25" fill="#5A9E4B"></ellipse>
+      </g>
+    </g>
+    <g transform="translate(700, 285)">
+      <g class="tree-group" style="transform-origin:25px 75px">
+        <rect x="20" y="45" width="10" height="30" fill="#6B4226" rx="2"></rect>
+        <ellipse cx="25" cy="28" rx="28" ry="32" fill="#4A8E3B"></ellipse>
+        <ellipse cx="12" cy="38" rx="16" ry="20" fill="#3D7A2F"></ellipse>
+        <ellipse cx="38" cy="33" rx="18" ry="22" fill="#5A9E4B"></ellipse>
+      </g>
+    </g>
+    <g transform="translate(740, 295)">
+      <g class="tree-group" style="transform-origin:18px 65px">
+        <rect x="15" y="38" width="8" height="27" fill="#6B4226" rx="2"></rect>
+        <ellipse cx="19" cy="22" rx="22" ry="28" fill="#4A8E3B"></ellipse>
+        <ellipse cx="8" cy="30" rx="14" ry="18" fill="#3D7A2F"></ellipse>
+        <ellipse cx="30" cy="26" rx="16" ry="20" fill="#5A9E4B"></ellipse>
+      </g>
+    </g>
+
+    <!-- ==================== 自行车组 ==================== -->
+    <!-- 后轮 -->
+    <g>
+      <circle cx="250" cy="360" r="52" fill="none" stroke="#3A3A3A" stroke-width="6"></circle>
+      <circle cx="250" cy="360" r="48" fill="none" stroke="#555" stroke-width="2"></circle>
+      <g class="wheel-spin" style="--cx:250px;--cy:360px">
+        <line x1="250" y1="312" x2="250" y2="408" stroke="#888" stroke-width="1.5"></line>
+        <line x1="202" y1="360" x2="298" y2="360" stroke="#888" stroke-width="1.5"></line>
+        <line x1="216" y1="326" x2="284" y2="394" stroke="#888" stroke-width="1.5"></line>
+        <line x1="284" y1="326" x2="216" y2="394" stroke="#888" stroke-width="1.5"></line>
+        <line x1="208" y1="345" x2="292" y2="375" stroke="#888" stroke-width="1"></line>
+        <line x1="292" y1="345" x2="208" y2="375" stroke="#888" stroke-width="1"></line>
+        <line x1="235" y1="310" x2="265" y2="410" stroke="#888" stroke-width="1"></line>
+        <line x1="265" y1="310" x2="235" y2="410" stroke="#888" stroke-width="1"></line>
+        <circle cx="250" cy="360" r="8" fill="#777" stroke="#555" stroke-width="2"></circle>
+      </g>
+      <circle cx="250" cy="360" r="5" fill="#999"></circle>
+    </g>
+
+    <!-- 前轮 -->
+    <g>
+      <circle cx="530" cy="360" r="52" fill="none" stroke="#3A3A3A" stroke-width="6"></circle>
+      <circle cx="530" cy="360" r="48" fill="none" stroke="#555" stroke-width="2"></circle>
+      <g class="wheel-spin" style="--cx:530px;--cy:360px">
+        <line x1="530" y1="312" x2="530" y2="408" stroke="#888" stroke-width="1.5"></line>
+        <line x1="482" y1="360" x2="578" y2="360" stroke="#888" stroke-width="1.5"></line>
+        <line x1="496" y1="326" x2="564" y2="394" stroke="#888" stroke-width="1.5"></line>
+        <line x1="564" y1="326" x2="496" y2="394" stroke="#888" stroke-width="1.5"></line>
+        <line x1="488" y1="345" x2="572" y2="375" stroke="#888" stroke-width="1"></line>
+        <line x1="572" y1="345" x2="488" y2="375" stroke="#888" stroke-width="1"></line>
+        <line x1="515" y1="310" x2="545" y2="410" stroke="#888" stroke-width="1"></line>
+        <line x1="545" y1="310" x2="515" y2="410" stroke="#888" stroke-width="1"></line>
+        <circle cx="530" cy="360" r="8" fill="#777" stroke="#555" stroke-width="2"></circle>
+      </g>
+      <circle cx="530" cy="360" r="5" fill="#999"></circle>
+    </g>
+
+    <!-- 自行车车架 -->
+    <g stroke="#E53935" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <!-- 座管: 座垫 → 五通 -->
+      <line x1="320" y1="235" x2="390" y2="342"></line>
+      <!-- 下管: 五通 → 头管底部 -->
+      <line x1="390" y1="342" x2="505" y2="230"></line>
+      <!-- 上管: 座管顶部 → 头管顶部 -->
+      <line x1="320" y1="235" x2="500" y2="225"></line>
+      <!-- 后上叉: 座管顶部 → 后轮轴 -->
+      <line x1="320" y1="235" x2="250" y2="360"></line>
+      <!-- 后下叉: 五通 → 后轮轴 -->
+      <line x1="390" y1="342" x2="250" y2="360"></line>
+      <!-- 前叉: 头管底部 → 前轮轴 -->
+      <line x1="505" y1="230" x2="530" y2="360"></line>
+    </g>
+
+    <!-- 头管 -->
+    <line x1="500" y1="225" x2="505" y2="230" stroke="#C62828" stroke-width="8" stroke-linecap="round"></line>
+
+    <!-- 车把 -->
+    <g stroke="#555" stroke-width="4" stroke-linecap="round" fill="none">
+      <path d="M500,225 Q510,215 520,218 Q530,221 528,228"></path>
+    </g>
+
+    <!-- 车座 -->
+    <g>
+      <line x1="320" y1="235" x2="320" y2="225" stroke="#888" stroke-width="4" stroke-linecap="round"></line>
+      <ellipse cx="320" cy="222" rx="18" ry="6" fill="#3A3A3A"></ellipse>
+      <ellipse cx="320" cy="221" rx="16" ry="4" fill="#4A4A4A"></ellipse>
+    </g>
+
+    <!-- 脚踏曲柄组 -->
+    <g class="pedal-crank">
+      <!-- 链轮 -->
+      <circle cx="390" cy="342" r="18" fill="none" stroke="#666" stroke-width="3"></circle>
+      <circle cx="390" cy="342" r="14" fill="none" stroke="#777" stroke-width="1.5"></circle>
+      <circle cx="390" cy="342" r="4" fill="#888"></circle>
+
+      <!-- 右曲柄 + 踏板 (远侧) -->
+      <line x1="390" y1="342" x2="390" y2="320" stroke="#888" stroke-width="4" stroke-linecap="round"></line>
+      <rect x="382" y="316" width="16" height="5" rx="2" fill="#666"></rect>
+
+      <!-- 左曲柄 + 踏板 (近侧) -->
+      <line x1="390" y1="342" x2="390" y2="364" stroke="#888" stroke-width="4" stroke-linecap="round"></line>
+      <rect x="382" y="363" width="16" height="5" rx="2" fill="#666"></rect>
+    </g>
+
+    <!-- 链条 (简化) -->
+    <g fill="none" stroke="#999" stroke-width="1.5" opacity="0.6">
+      <path d="M372,342 Q310,380 250,372"></path>
+      <path d="M408,342 Q310,400 250,388"></path>
+    </g>
+
+    <!-- ==================== 鹈鹕组 ==================== -->
+    <g class="pelican-body-group">
+      <!-- 鹈鹕身体 -->
+      <ellipse cx="330" cy="210" rx="52" ry="38" fill="#F5F5F5"></ellipse>
+      <ellipse cx="330" cy="210" rx="52" ry="38" fill="none" stroke="#DDD" stroke-width="1.5"></ellipse>
+
+      <!-- 鹈鹕身体阴影/纹理 -->
+      <ellipse cx="330" cy="218" rx="40" ry="20" fill="#EAEAEA" opacity="0.5"></ellipse>
+
+      <!-- 尾巴羽毛 -->
+      <path d="M280,205 Q260,195 255,185 Q265,200 278,210" fill="#E0E0E0" stroke="#CCC" stroke-width="1"></path>
+      <path d="M282,210 Q258,208 250,200 Q262,212 280,215" fill="#DDD" stroke="#CCC" stroke-width="1"></path>
+
+      <!-- 翅膀 (折叠在身体上) -->
+      <g class="pelican-wing">
+        <path d="M310,195 Q340,180 365,190 Q355,200 340,205 Q355,210 350,220 Q330,215 310,210 Z" fill="#E8E8E8" stroke="#CCC" stroke-width="1"></path>
+        <!-- 翅膀羽毛纹理 -->
+        <path d="M320,198 Q340,188 358,194" fill="none" stroke="#D5D5D5" stroke-width="1"></path>
+        <path d="M318,204 Q338,195 355,202" fill="none" stroke="#D5D5D5" stroke-width="1"></path>
+        <path d="M315,210 Q335,205 348,212" fill="none" stroke="#D5D5D5" stroke-width="1"></path>
+        <!-- 翼尖深色 -->
+        <path d="M355,190 Q370,188 368,200 Q360,205 350,205 Z" fill="#555"></path>
+      </g>
+
+      <!-- 脖子 -->
+      <path d="M360,195 Q380,180 395,165" fill="none" stroke="#F0F0F0" stroke-width="20" stroke-linecap="round"></path>
+      <path d="M360,195 Q380,180 395,165" fill="none" stroke="#E8E8E8" stroke-width="16" stroke-linecap="round"></path>
+
+      <!-- 头部 -->
+      <circle cx="400" cy="158" r="18" fill="#F5F5F5"></circle>
+      <circle cx="400" cy="158" r="18" fill="none" stroke="#DDD" stroke-width="1"></circle>
+
+      <!-- 头顶羽毛 -->
+      <path d="M395,140 Q400,130 408,135" fill="none" stroke="#DDD" stroke-width="2" stroke-linecap="round"></path>
+      <path d="M400,140 Q405,128 412,132" fill="none" stroke="#E0E0E0" stroke-width="1.5" stroke-linecap="round"></path>
+
+      <!-- 眼睛 -->
+      <circle cx="408" cy="152" r="4" fill="#FFF"></circle>
+      <circle cx="409" cy="152" r="2.5" fill="#222"></circle>
+      <circle cx="410" cy="151" r="1" fill="#FFF"></circle>
+
+      <!-- 鹈鹕标志性大嘴 -->
+      <g>
+        <!-- 上喙 -->
+        <path d="M415,152 L480,145 Q488,144 490,148 L490,152 Q485,150 475,152 L415,158 Z" fill="#F4A460" stroke="#D2894A" stroke-width="1.2"></path>
+        <!-- 上喙高光 -->
+        <path d="M418,150 L475,146 Q478,145 478,148" fill="none" stroke="#FCD5A0" stroke-width="1.5" opacity="0.6"></path>
+
+        <!-- 下喙 + 喉囊 -->
+        <path d="M415,158 L470,154 Q485,153 488,156 Q490,162 485,170 Q478,178 465,178 Q440,176 415,165 Z" fill="#F4A460" stroke="#D2894A" stroke-width="1.2"></path>
+        <!-- 喉囊阴影 -->
+        <path d="M420,162 Q450,168 470,166 Q480,165 482,168 Q475,174 460,174 Q435,173 418,167 Z" fill="#E8963A" opacity="0.5"></path>
+        <!-- 喉囊下部 (更淡色) -->
+        <path d="M418,165 Q445,175 470,172 Q478,170 480,174 Q468,180 450,178 Q430,176 418,170 Z" fill="#FCD5A0" opacity="0.4"></path>
+      </g>
+
+      <!-- 鹈鹕前胸 -->
+      <ellipse cx="355" cy="215" rx="25" ry="30" fill="#F5F5F5"></ellipse>
+
+      <!-- ===== 腿部 (JS动态更新) ===== -->
+      <!-- 近侧腿 (左腿 - 连到近侧踏板) -->
+      <line id="nearLeg" x1="330" y1="240" x2="390" y2="364" stroke="#F4A460" stroke-width="5" stroke-linecap="round"></line>
+      <line id="nearLegShadow" x1="330" y1="240" x2="390" y2="364" stroke="#D2894A" stroke-width="2" stroke-linecap="round" opacity="0.5"></line>
+
+      <!-- 远侧腿 (右腿 - 连到远侧踏板) -->
+      <line id="farLeg" x1="335" y1="238" x2="390" y2="320" stroke="#E8963A" stroke-width="4" stroke-linecap="round" opacity="0.7"></line>
+
+      <!-- 鹈鹕脚掌 (近侧, 在踏板上) -->
+      <g id="nearFoot">
+        <path d="M384,365 L378,372 L390,372 Z" fill="#F4A460"></path>
+        <path d="M387,366 L386,374 L394,372 Z" fill="#E8963A"></path>
+      </g>
+
+      <!-- 鹈鹕脚掌 (远侧, 在踏板上) -->
+      <g id="farFoot" opacity="0.6">
+        <path d="M384,320 L378,327 L390,327 Z" fill="#E8963A"></path>
+        <path d="M387,321 L386,329 L394,327 Z" fill="#D2894A"></path>
+      </g>
+
+      <!-- 翅膀/手臂搭在车把上 -->
+      <line x1="370" y1="200" x2="510" y2="220" stroke="#E8E8E8" stroke-width="4" stroke-linecap="round"></line>
+      <line x1="370" y1="200" x2="510" y2="220" stroke="#DDD" stroke-width="2" stroke-linecap="round" opacity="0.5"></line>
+    </g>
+
+    <!-- ==================== 地面阴影 ==================== -->
+    <ellipse cx="390" cy="415" rx="160" ry="10" fill="rgba(0,0,0,0.15)"></ellipse>
+
+  </svg>
+</div>
+
+<script>
+(function() {
+  // ============ 天气切换 ============
+  const weatherStates = ['sunny', 'cloudy', 'rainy'];
+  const weatherLabels = { sunny: '☀️ 晴天', cloudy: '☁️ 阴天', rainy: '🌧️ 雨天' };
+  const skyColors = {
+    sunny: 'url(#skySunny)',
+    cloudy: 'url(#skyCloudy)',
+    rainy: 'url(#skyRainy)'
+  };
+  const grassColors = {
+    sunny: 'url(#grassGrad)',
+    cloudy: '#7A9A6B',
+    rainy: '#5A7A4B'
+  };
+  const roadColors = {
+    sunny: '#5A5A5A',
+    cloudy: '#4E4E4E',
+    rainy: '#3A3A3A'
+  };
+
+  let currentWeather = 0; // 0: sunny, 1: cloudy, 2: rainy
+  const skyRect = document.getElementById('skyRect');
+  const groundGrass = document.getElementById('groundGrass');
+  const groundRoad = document.getElementById('groundRoad');
+  const sunGroup = document.getElementById('sunGroup');
+  const cloudsGroup = document.getElementById('cloudsGroup');
+  const rainGroup = document.getElementById('rainGroup');
+  const weatherLabel = document.getElementById('weatherLabel');
+
+  function applyWeather(index) {
+    const state = weatherStates[index];
+    skyRect.setAttribute('fill', skyColors[state]);
+    groundGrass.setAttribute('fill', grassColors[state]);
+    groundRoad.setAttribute('fill', roadColors[state]);
+    weatherLabel.textContent = weatherLabels[state];
+
+    if (state === 'sunny') {
+      sunGroup.style.opacity = '1';
+      cloudsGroup.style.opacity = '0.3';
+      rainGroup.style.opacity = '0';
+    } else if (state === 'cloudy') {
+      sunGroup.style.opacity = '0';
+      cloudsGroup.style.opacity = '1';
+      rainGroup.style.opacity = '0';
+    } else if (state === 'rainy') {
+      sunGroup.style.opacity = '0';
+      cloudsGroup.style.opacity = '1';
+      rainGroup.style.opacity = '1';
+    }
+  }
+
+  function switchWeather() {
+    currentWeather = (currentWeather + 1) % 3;
+    applyWeather(currentWeather);
+  }
+
+  // 初始状态
+  applyWeather(0);
+
+  // 每5秒切换
+  setInterval(switchWeather, 5000);
+
+  // ============ 腿部动画 ============
+  const nearLeg = document.getElementById('nearLeg');
+  const nearLegShadow = document.getElementById('nearLegShadow');
+  const farLeg = document.getElementById('farLeg');
+  const nearFoot = document.getElementById('nearFoot');
+  const farFoot = document.getElementById('farFoot');
+
+  const hipNearX = 330, hipNearY = 240;
+  const hipFarX = 335, hipFarY = 238;
+  const crankX = 390, crankY = 342;
+  const crankRadius = 22;
+
+  function animateLegs(timestamp) {
+    // 踏板旋转速度：与车轮同步 (0.8s一圈)
+    const angle = (timestamp / 800) * Math.PI * 2;
+
+    // 近侧踏板 (下方)
+    const nearPedalX = crankX + crankRadius * Math.cos(angle);
+    const nearPedalY = crankY + crankRadius * Math.sin(angle);
+
+    // 远侧踏板 (上方，180度相位差)
+    const farPedalX = crankX + crankRadius * Math.cos(angle + Math.PI);
+    const farPedalY = crankY + crankRadius * Math.sin(angle + Math.PI);
+
+    // 更新近侧腿
+    nearLeg.setAttribute('x2', nearPedalX);
+    nearLeg.setAttribute('y2', nearPedalY);
+    nearLegShadow.setAttribute('x2', nearPedalX);
+    nearLegShadow.setAttribute('y2', nearPedalY);
+
+    // 更新近侧脚掌
+    const footAngle = angle * 180 / Math.PI;
+    nearFoot.setAttribute('transform',
+      `translate(${nearPedalX - 390},${nearPedalY - 364}) rotate(${footAngle},390,364)`);
+
+    // 更新远侧腿
+    farLeg.setAttribute('x2', farPedalX);
+    farLeg.setAttribute('y2', farPedalY);
+
+    // 更新远侧脚掌
+    farFoot.setAttribute('transform',
+      `translate(${farPedalX - 390},${farPedalY - 320}) rotate(${footAngle + 180},390,320)`);
+
+    requestAnimationFrame(animateLegs);
+  }
+
+  requestAnimationFrame(animateLegs);
+})();
+</script>
+
+
+</body></html>
