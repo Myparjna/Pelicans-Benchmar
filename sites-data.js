@@ -27,7 +27,7 @@ window.SITES = [
     "src": "sites/qwen-3-6-flash.html"
   },
   {
-    "file": "qwen官网3.8max.html",
+    "file": "qwen3.8max.html",
     "slug": "qwen-3-8-max",
     "category": "阿里 · 通义千问",
     "model": "通义千问 Qwen 3.8 Max",
