@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>鹈鹕骑自行车</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #87CEEB;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ---- 场景容器 ---- */
+.scene {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  transition: background 1.2s ease;
+}
+
+/* ---- 天气状态 ---- */
+.scene.weather-sunny {
+  background: linear-gradient(180deg, #4A90D9 0%, #87CEEB 50%, #7EC850 65%, #5DA832 100%);
+}
+.scene.weather-cloudy {
+  background: linear-gradient(180deg, #9E9E9E 0%, #BDBDBD 40%, #7EC850 65%, #5DA832 100%);
+}
+.scene.weather-rainy {
+  background: linear-gradient(180deg, #616161 0%, #9E9E9E 40%, #6B8E23 65%, #4A7A1A 100%);
+}
+
+/* ---- 太阳 ---- */
+.sun {
+  position: absolute;
+  top: 6%; right: 12%;
+  width: min(90px, 10vw);
+  height: min(90px, 10vw);
+  background: radial-gradient(circle at 35% 35%, #FFE066, #FFB300);
+  border-radius: 50%;
+  box-shadow: 0 0 60px rgba(255, 200, 0, 0.6);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  z-index: 3;
+}
+.weather-cloudy .sun { opacity: 0.2; transform: scale(0.7); }
+.weather-rainy .sun { opacity: 0; transform: scale(0.3); }
+
+/* ---- 云朵 ---- */
+.cloud {
+  position: absolute;
+  z-index: 4;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+.cloud div {
+  position: absolute;
+  background: #fff;
+  border-radius: 50%;
+}
+.cloud-1 { top: 5%; left: 10%; width: 160px; height: 60px; }
+.cloud-1 div:nth-child(1) { width: 70px; height: 70px; left: 20px; top: -25px; }
+.cloud-1 div:nth-child(2) { width: 90px; height: 80px; left: 55px; top: -35px; }
+.cloud-1 div:nth-child(3) { width: 60px; height: 55px; left: 95px; top: -20px; }
+
+.cloud-2 { top: 10%; right: 20%; width: 130px; height: 50px; }
+.cloud-2 div:nth-child(1) { width: 60px; height: 60px; left: 15px; top: -20px; }
+.cloud-2 div:nth-child(2) { width: 75px; height: 65px; left: 45px; top: -30px; }
+.cloud-2 div:nth-child(3) { width: 50px; height: 45px; left: 80px; top: -15px; }
+
+.cloud-3 { top: 2%; left: 50%; width: 140px; height: 55px; }
+.cloud-3 div:nth-child(1) { width: 65px; height: 65px; left: 20px; top: -22px; }
+.cloud-3 div:nth-child(2) { width: 80px; height: 70px; left: 50px; top: -32px; }
+.cloud-3 div:nth-child(3) { width: 55px; height: 50px; left: 88px; top: -18px; }
+
+.weather-cloudy .cloud, .weather-rainy .cloud { opacity: 1; }
+
+/* ---- 雨滴 ---- */
+.rain-container {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 65%;
+  pointer-events: none;
+  z-index: 5;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+.weather-rainy .rain-container { opacity: 1; }
+.raindrop {
+  position: absolute;
+  width: 2px;
+  height: clamp(12px, 2vh, 22px);
+  background: linear-gradient(180deg, transparent, rgba(174, 194, 224, 0.7));
+  animation: rainFall linear infinite;
+}
+@keyframes rainFall {
+  0% { transform: translateY(-20px); opacity: 0; }
+  10% { opacity: 1; }
+  100% { transform: translateY(calc(65vh + 20px)); opacity: 0.3; }
+}
+
+/* ---- 地面 ---- */
+.ground {
+  position: absolute;
+  bottom: 0; left: 0; width: 100%; height: 35%;
+  z-index: 1;
+}
+
+/* ---- 道路 ---- */
+.road {
+  position: absolute;
+  bottom: 0; left: 0; width: 100%; height: 40%;
+  background: #555;
+  z-index: 2;
+}
+.road::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 0; width: 100%; height: 4px;
+  background: repeating-linear-gradient(90deg, #FFD54F 0px, #FFD54F 40px, transparent 40px, transparent 80px);
+  transform: translateY(-50%);
+}
+
+/* ---- 自行车 + 鹈鹕 容器 ---- */
+.bike-wrapper {
+  position: absolute;
+  bottom: 13.5%;
+  left: 0;
+  z-index: 10;
+  animation: bikeMove 8s linear infinite;
+  width: clamp(140px, 18vw, 220px);
+}
+@keyframes bikeMove {
+  0% { left: -20%; }
+  100% { left: 110%; }
+}
+
+/* ---- 鹈鹕 ---- */
+.pelican {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 身体 */
+.pelican-body {
+  width: 70%;
+  height: 0;
+  padding-bottom: 45%;
+  background: #FFA726;
+  border-radius: 50% 50% 40% 40%;
+  position: relative;
+  z-index: 3;
+}
+
+/* 翅膀（上下扇动） */
+.pelican-wing {
+  position: absolute;
+  top: -20%;
+  left: 50%;
+  width: 75%;
+  height: 0;
+  padding-bottom: 30%;
+  background: #F57C00;
+  border-radius: 50% 50% 10% 10%;
+  transform-origin: center bottom;
+  animation: wingFlap 0.6s ease-in-out infinite alternate;
+  z-index: 2;
+}
+@keyframes wingFlap {
+  0% { transform: translateX(-50%) rotate(-15deg); }
+  100% { transform: translateX(-50%) rotate(20deg); }
+}
+
+/* 头 */
+.pelican-head {
+  position: absolute;
+  top: -55%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: 0;
+  padding-bottom: 35%;
+  background: #FFA726;
+  border-radius: 50% 50% 30% 30%;
+  z-index: 4;
+}
+
+/* 眼睛 */
+.pelican-eye {
+  position: absolute;
+  top: 25%;
+  right: 18%;
+  width: 18%;
+  height: 0;
+  padding-bottom: 18%;
+  background: #fff;
+  border-radius: 50%;
+  z-index: 5;
+}
+.pelican-eye::after {
+  content: '';
+  position: absolute;
+  top: 25%;
+  left: 25%;
+  width: 50%;
+  height: 50%;
+  background: #222;
+  border-radius: 50%;
+}
+
+/* 喙（鹈鹕标志性大嘴） */
+.pelican-beak {
+  position: absolute;
+  top: 10%;
+  left: 70%;
+  width: 55%;
+  height: 0;
+  padding-bottom: 20%;
+  background: #FF8F00;
+  border-radius: 0 60% 60% 0;
+  transform-origin: left center;
+  z-index: 3;
+  border: 2px solid #E65100;
+  border-left: none;
+}
+/* 喙下袋 */
+.pelican-pouch {
+  position: absolute;
+  top: 18%;
+  left: 70%;
+  width: 50%;
+  height: 0;
+  padding-bottom: 14%;
+  background: #FFB74D;
+  border-radius: 0 0 50% 50%;
+  border: 2px solid #E65100;
+  border-top: none;
+  z-index: 2;
+}
+
+/* 尾巴 */
+.pelican-tail {
+  position: absolute;
+  top: 5%;
+  right: 85%;
+  width: 25%;
+  height: 0;
+  padding-bottom: 15%;
+  background: #F57C00;
+  border-radius: 0 0 0 80%;
+  z-index: 1;
+}
+
+/* ---- 自行车 ---- */
+.bike {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 50%;
+  margin-top: -5%;
+  z-index: 5;
+}
+
+/* 车轮 */
+.bike-wheel {
+  position: absolute;
+  bottom: 0;
+  width: 28%;
+  height: 0;
+  padding-bottom: 28%;
+  border: 3px solid #333;
+  border-radius: 50%;
+  background: transparent;
+  animation: wheelSpin 1s linear infinite;
+}
+.bike-wheel::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20%;
+  height: 20%;
+  background: #666;
+  border-radius: 50%;
+}
+.bike-spokes {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+}
+.bike-spokes span {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 70%;
+  height: 1.5px;
+  background: #999;
+  transform-origin: left center;
+}
+.bike-spokes span:nth-child(1) { transform: translate(-50%, -50%) rotate(0deg); }
+.bike-spokes span:nth-child(2) { transform: translate(-50%, -50%) rotate(45deg); }
+.bike-spokes span:nth-child(3) { transform: translate(-50%, -50%) rotate(90deg); }
+.bike-spokes span:nth-child(4) { transform: translate(-50%, -50%) rotate(135deg); }
+
+.bike-wheel-left { left: 0; }
+.bike-wheel-right { right: 0; }
+
+@keyframes wheelSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* 车架 */
+.bike-frame {
+  position: absolute;
+  top: 30%;
+  left: 15%;
+  width: 70%;
+  height: 50%;
+}
+.bike-frame-line {
+  position: absolute;
+  background: #E53935;
+  border-radius: 2px;
+}
+.bike-frame-line:nth-child(1) {
+  left: 38%; top: 0;
+  width: 3px; height: 65%;
+  transform: rotate(-10deg);
+  transform-origin: top center;
+}
+.bike-frame-line:nth-child(2) {
+  left: 20%; top: 0;
+  width: 55%; height: 3px;
+  transform: rotate(5deg);
+  transform-origin: left center;
+}
+.bike-frame-line:nth-child(3) {
+  left: 20%; top: 20%;
+  width: 45%; height: 3px;
+  transform: rotate(30deg);
+  transform-origin: left center;
+}
+.bike-frame-line:nth-child(4) {
+  left: 45%; top: 50%;
+  width: 35%; height: 3px;
+  transform: rotate(-15deg);
+  transform-origin: left center;
+}
+.bike-frame-line:nth-child(5) {
+  left: 45%; top: 5%;
+  width: 35%; height: 3px;
+  transform: rotate(15deg);
+  transform-origin: left center;
+}
+
+/* 座垫 */
+.bike-seat {
+  position: absolute;
+  top: 22%;
+  left: 35%;
+  width: 20%;
+  height: 0;
+  padding-bottom: 6%;
+  background: #333;
+  border-radius: 30%;
+  z-index: 6;
+}
+
+/* 车把 */
+.bike-handlebar {
+  position: absolute;
+  top: 18%;
+  left: 12%;
+  width: 15%;
+  height: 0;
+  padding-bottom: 8%;
+  background: #333;
+  border-radius: 20%;
+  transform: rotate(-20deg);
+  z-index: 6;
+}
+
+/* 踏板 */
+.bike-pedal {
+  position: absolute;
+  bottom: 5%;
+  left: 38%;
+  width: 8%;
+  height: 4px;
+  background: #555;
+  border-radius: 2px;
+  transform-origin: center 2px;
+  animation: pedalRotate 1s linear infinite;
+}
+.bike-pedal::after {
+  content: '';
+  position: absolute;
+  top: -4px; left: 50%;
+  width: 4px; height: 12px;
+  background: #555;
+  transform: translateX(-50%);
+}
+@keyframes pedalRotate {
+  to { transform: rotate(360deg); }
+}
+
+/* ---- 天气标签 ---- */
+.weather-label {
+  position: absolute;
+  top: clamp(8px, 1.5vh, 16px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  color: #fff;
+  font-size: clamp(14px, 2.5vw, 22px);
+  font-weight: bold;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.4);
+  padding: 4px 16px;
+  border-radius: 20px;
+  background: rgba(0,0,0,0.25);
+  backdrop-filter: blur(4px);
+  letter-spacing: 2px;
+  user-select: none;
+}
+
+/* ---- 闪电 ---- */
+.lightning {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 65%;
+  pointer-events: none;
+  z-index: 6;
+  opacity: 0;
+}
+.weather-rainy .lightning {
+  animation: lightningFlash 3s ease-in-out infinite;
+}
+@keyframes lightningFlash {
+  0%, 85%, 100% { opacity: 0; }
+  86% { opacity: 0.8; }
+  88% { opacity: 0; }
+  90% { opacity: 0.6; }
+  92% { opacity: 0; }
+}
+.lightning svg {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+}
+
+/* ---- 响应式：手机竖屏 ---- */
+@media (orientation: portrait) {
+  .bike-wrapper { bottom: 12%; }
+  .weather-label { top: 10px; font-size: 14px; padding: 3px 12px; }
+  .sun { top: 4%; right: 8%; }
+  .cloud-1 { top: 3%; }
+  .cloud-2 { top: 7%; }
+  .cloud-3 { top: 1%; }
+}
+</style>
+</head>
+<body>
+
+<div class="scene weather-sunny" id="scene">
+  <!-- 天气标签 -->
+  <div class="weather-label" id="weatherLabel">☀ 晴天</div>
+
+  <!-- 太阳 -->
+  <div class="sun"></div>
+
+  <!-- 云朵 -->
+  <div class="cloud cloud-1"><div></div><div></div><div></div></div>
+  <div class="cloud cloud-2"><div></div><div></div><div></div></div>
+  <div class="cloud cloud-3"><div></div><div></div><div></div></div>
+
+  <!-- 闪电 -->
+  <div class="lightning">
+    <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid meet">
+      <polygon points="200,0 160,110 210,110 130,250 170,250 100,300 240,140 190,140 270,30" fill="#FFF9C4" opacity="0.85"></polygon>
+    </svg>
+  </div>
+
+  <!-- 雨滴 -->
+  <div class="rain-container" id="rainContainer"></div>
+
+  <!-- 地面 & 道路 -->
+  <div class="ground">
+    <div class="road"></div>
+  </div>
+
+  <!-- 自行车 + 鹈鹕 -->
+  <div class="bike-wrapper">
+    <div class="pelican">
+      <div class="pelican-body">
+        <div class="pelican-wing"></div>
+        <div class="pelican-tail"></div>
+        <div class="pelican-head">
+          <div class="pelican-eye"></div>
+        </div>
+        <div class="pelican-beak"></div>
+        <div class="pelican-pouch"></div>
+      </div>
+    </div>
+    <div class="bike">
+      <div class="bike-wheel bike-wheel-left">
+        <div class="bike-spokes">
+          <span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+      <div class="bike-wheel bike-wheel-right">
+        <div class="bike-spokes">
+          <span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+      <div class="bike-frame">
+        <div class="bike-frame-line"></div>
+        <div class="bike-frame-line"></div>
+        <div class="bike-frame-line"></div>
+        <div class="bike-frame-line"></div>
+        <div class="bike-frame-line"></div>
+      </div>
+      <div class="bike-seat"></div>
+      <div class="bike-handlebar"></div>
+      <div class="bike-pedal"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const scene = document.getElementById('scene');
+  const label = document.getElementById('weatherLabel');
+  const rainContainer = document.getElementById('rainContainer');
+
+  const weathers = ['sunny', 'cloudy', 'rainy'];
+  let idx = 0;
+
+  const labels = {
+    sunny: '☀ 晴天',
+    cloudy: '⛅ 阴天',
+    rainy: '🌧 雨天'
+  };
+
+  // 生成雨滴
+  function generateRaindrops() {
+    rainContainer.innerHTML = '';
+    const count = window.innerWidth < 500 ? 50 : 100;
+    for (let i = 0; i < count; i++) {
+      const drop = document.createElement('div');
+      drop.className = 'raindrop';
+      drop.style.left = Math.random() * 100 + '%';
+      drop.style.animationDuration = (0.5 + Math.random() * 0.6) + 's';
+      drop.style.animationDelay = (Math.random() * 2) + 's';
+      drop.style.opacity = 0.3 + Math.random() * 0.5;
+      rainContainer.appendChild(drop);
+    }
+  }
+  generateRaindrops();
+  window.addEventListener('resize', generateRaindrops);
+
+  // 切换天气
+  function switchWeather() {
+    scene.classList.remove('weather-sunny', 'weather-cloudy', 'weather-rainy');
+    void scene.offsetWidth;
+    scene.classList.add('weather-' + weathers[idx]);
+    label.textContent = labels[weathers[idx]];
+    idx = (idx + 1) % weathers.length;
+  }
+
+  setInterval(switchWeather, 5000);
+})();
+</script>
+
+</body></html>

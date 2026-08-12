@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>醍醐骑自行车 - 动画</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            overflow: hidden;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .title {
+            color: #ffd700;
+            font-size: 1.6rem;
+            font-weight: 700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.5);
+            letter-spacing: 4px;
+            text-align: center;
+            animation: titleGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            0% {
+                text-shadow: 0 0 15px rgba(255, 215, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.5);
+            }
+            100% {
+                text-shadow: 0 0 30px rgba(255, 215, 0, 0.8), 0 0 60px rgba(255, 165, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.5);
+            }
+        }
+
+        canvas {
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(255, 165, 0, 0.15), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: box-shadow 0.3s ease;
+            max-width: 95vw;
+            max-height: 70vh;
+            display: block;
+        }
+
+        canvas:hover {
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6), 0 0 60px rgba(255, 165, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+        }
+
+        .hint {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-align: center;
+            animation: hintPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes hintPulse {
+            0%,
+            100% {
+                opacity: 0.5;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .speed-indicator {
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 20px;
+            padding: 6px 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            pointer-events: none;
+        }
+
+        .speed-indicator .label {
+            color: #fff;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            opacity: 0.8;
+        }
+
+        .speed-bar {
+            width: 80px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .speed-bar-fill {
+            height: 100%;
+            width: 30%;
+            background: linear-gradient(90deg, #ffd700, #ff6b6b);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 600px) {
+            .title {
+                font-size: 1.1rem;
+                letter-spacing: 2px;
+            }
+            .hint {
+                font-size: 0.75rem;
+            }
+            canvas {
+                border-radius: 12px;
+                max-width: 98vw;
+            }
+            .speed-indicator {
+                padding: 4px 10px;
+                bottom: -6px;
+            }
+            .speed-bar {
+                width: 50px;
+                height: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">🦩 醍醐骑行中...</div>
+        <canvas id="canvas" width="800" height="500"></canvas>
+        <div class="hint">💡 点击画面加速骑行 | 醍醐的喉囊会随风晃动哦~</div>
+        <div class="speed-indicator">
+            <span class="label">速度</span>
+            <div class="speed-bar">
+                <div class="speed-bar-fill" id="speedFill"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            const speedFill = document.getElementById('speedFill');
+
+            // ==================== 画布尺寸适配 ====================
+            const DESIGN_WIDTH = 800;
+            const DESIGN_HEIGHT = 500;
+            let scaleX = 1;
+            let scaleY = 1;
+
+            function resizeCanvas() {
+                const container = canvas.parentElement;
+                const maxW = container.clientWidth - 20;
+                const maxH = window.innerHeight * 0.7;
+                const ratio = Math.min(maxW / DESIGN_WIDTH, maxH / DESIGN_HEIGHT);
+                const displayW = Math.floor(DESIGN_WIDTH * ratio);
+                const displayH = Math.floor(DESIGN_HEIGHT * ratio);
+                canvas.style.width = displayW + 'px';
+                canvas.style.height = displayH + 'px';
+                scaleX = displayW / DESIGN_WIDTH;
+                scaleY = displayH / DESIGN_HEIGHT;
+            }
+
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            // ==================== 全局状态 ====================
+            let time = 0; // 总时间（秒）
+            let speed = 1.0; // 速度倍率（1.0为正常，点击后增加到2.5）
+            let targetSpeed = 1.0;
+            let speedTransition = 0;
+            let isAccelerating = false;
+            let accelerationTimer = 0;
+            let blinkTimer = 0;
+            let isBlinking = false;
+            let wingFlapPhase = 0; // 翅膀扇动相位
+            let lastWingFlapTime = -10; // 上次扇动时间
+
+            // 道路标记
+            let roadMarkers = [];
+
+            // 云朵
+            const clouds = [
+                { x: 100, y: 60, scale: 1.0, speed: 12 },
+                { x: 350, y: 35, scale: 1.3, speed: 18 },
+                { x: 580, y: 70, scale: 0.85, speed: 10 },
+                { x: 720, y: 45, scale: 1.1, speed: 15 },
+            ];
+
+            // 初始化道路标记
+            for (let i = 0; i < 8; i++) {
+                roadMarkers.push({ x: i * 110 + 20, y: 430, width: 45, height: 5 });
+            }
+
+            // ==================== 工具函数 ====================
+            function lerp(a, b, t) { return a + (b - a) * t; }
+
+            function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+            function easeInOut(t) {
+                return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+            }
+
+            function smoothstep(t) {
+                return t * t * (3 - 2 * t);
+            }
+
+            // 绘制圆角矩形
+            function roundRect(ctx, x, y, w, h, r) {
+                ctx.beginPath();
+                ctx.moveTo(x + r, y);
+                ctx.lineTo(x + w - r, y);
+                ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+                ctx.lineTo(x + w, y + h - r);
+                ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+                ctx.lineTo(x + r, y + h);
+                ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+                ctx.lineTo(x, y + r);
+                ctx.quadraticCurveTo(x, y, x + r, y);
+                ctx.closePath();
+            }
+
+            // 绘制椭圆
+            function drawEllipse(ctx, x, y, rx, ry, rotation, color) {
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(rotation || 0);
+                ctx.beginPath();
+                ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
+                ctx.fillStyle = color;
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // ==================== 背景绘制 ====================
+            function drawBackground() {
+                // 天空渐变
+                const skyGrad = ctx.createLinearGradient(0, 0, 0, 400);
+                skyGrad.addColorStop(0, '#87CEEB');
+                skyGrad.addColorStop(0.4, '#B0DDF0');
+                skyGrad.addColorStop(0.7, '#D4ECF7');
+                skyGrad.addColorStop(1, '#F0F8FC');
+                ctx.fillStyle = skyGrad;
+                ctx.fillRect(0, 0, 800, 400);
+
+                // 太阳
+                const sunX = 680;
+                const sunY = 80;
+                const sunGlow = ctx.createRadialGradient(sunX, sunY, 20, sunX, sunY, 90);
+                sunGlow.addColorStop(0, 'rgba(255,255,200,0.9)');
+                sunGlow.addColorStop(0.3, 'rgba(255,220,100,0.5)');
+                sunGlow.addColorStop(1, 'rgba(255,200,50,0)');
+                ctx.fillStyle = sunGlow;
+                ctx.beginPath();
+                ctx.arc(sunX, sunY, 90, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#FFE066';
+                ctx.beginPath();
+                ctx.arc(sunX, sunY, 32, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#FFF4C4';
+                ctx.beginPath();
+                ctx.arc(sunX - 4, sunY - 4, 20, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 太阳光线
+                ctx.strokeStyle = 'rgba(255,230,120,0.4)';
+                ctx.lineWidth = 2.5;
+                ctx.lineCap = 'round';
+                for (let i = 0; i < 12; i++) {
+                    const angle = (i / 12) * Math.PI * 2 + time * 0.15;
+                    const innerR = 42;
+                    const outerR = 55 + Math.sin(time * 1.5 + i) * 4;
+                    ctx.beginPath();
+                    ctx.moveTo(sunX + Math.cos(angle) * innerR, sunY + Math.sin(angle) * innerR);
+                    ctx.lineTo(sunX + Math.cos(angle) * outerR, sunY + Math.sin(angle) * outerR);
+                    ctx.stroke();
+                }
+
+                // 远处的山丘
+                ctx.fillStyle = '#C5D9A8';
+                ctx.beginPath();
+                ctx.moveTo(0, 380);
+                ctx.quadraticCurveTo(150, 310, 300, 370);
+                ctx.quadraticCurveTo(450, 290, 600, 365);
+                ctx.quadraticCurveTo(700, 320, 800, 360);
+                ctx.lineTo(800, 400);
+                ctx.lineTo(0, 400);
+                ctx.closePath();
+                ctx.fill();
+
+                // 更远的山丘（淡色）
+                ctx.fillStyle = '#D8E8C8';
+                ctx.beginPath();
+                ctx.moveTo(0, 390);
+                ctx.quadraticCurveTo(200, 340, 400, 380);
+                ctx.quadraticCurveTo(550, 350, 800, 375);
+                ctx.lineTo(800, 400);
+                ctx.lineTo(0, 400);
+                ctx.closePath();
+                ctx.fill();
+
+                // 云朵
+                clouds.forEach(cloud => {
+                    const cx = cloud.x + time * cloud.speed;
+                    const cy = cloud.y + Math.sin(time * 0.5 + cloud.x) * 5;
+                    const cs = cloud.scale;
+                    ctx.save();
+                    ctx.translate(cx % 850 - 25, cy);
+                    ctx.scale(cs, cs);
+                    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 28, 0, Math.PI * 2);
+                    ctx.arc(30, -8, 34, 0, Math.PI * 2);
+                    ctx.arc(60, 2, 26, 0, Math.PI * 2);
+                    ctx.arc(28, 6, 24, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = 'rgba(240,248,255,0.5)';
+                    ctx.beginPath();
+                    ctx.arc(8, -5, 18, 0, Math.PI * 2);
+                    ctx.arc(35, -12, 20, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                });
+
+                // 地面/道路
+                const roadGrad = ctx.createLinearGradient(0, 400, 0, 500);
+                roadGrad.addColorStop(0, '#8B8B7A');
+                roadGrad.addColorStop(0.15, '#9A9A88');
+                roadGrad.addColorStop(0.5, '#A8A895');
+                roadGrad.addColorStop(0.85, '#9A9A88');
+                roadGrad.addColorStop(1, '#7A7A6A');
+                ctx.fillStyle = roadGrad;
+                ctx.fillRect(0, 400, 800, 100);
+
+                // 道路纹理
+                ctx.fillStyle = 'rgba(0,0,0,0.05)';
+                for (let i = 0; i < 40; i++) {
+                    const rx = (i * 37 + 13) % 800;
+                    const ry = 405 + Math.sin(i * 2.7) * 55;
+                    ctx.beginPath();
+                    ctx.arc(rx, ry, 2 + Math.sin(i) * 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // 道路边缘线
+                ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([20, 15]);
+                ctx.beginPath();
+                ctx.moveTo(0, 407);
+                ctx.lineTo(800, 407);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // 道路中间虚线
+                ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+                ctx.lineWidth = 4;
+                ctx.setLineDash([35, 30]);
+                ctx.lineDashOffset = -time * speed * 45;
+                ctx.beginPath();
+                ctx.moveTo(0, 445);
+                ctx.lineTo(800, 445);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // 道路上的移动标记
+                const markerSpeed = speed * 60;
+                roadMarkers.forEach(marker => {
+                    marker.x -= markerSpeed * 0.016;
+                    if (marker.x < -50) {
+                        marker.x = 820 + Math.random() * 50;
+                    }
+                    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+                    roundRect(ctx, marker.x, marker.y, marker.width, marker.height, 2);
+                    ctx.fill();
+                });
+            }
+
+            // ==================== 自行车绘制 ====================
+            function drawBicycle(wheelAngle, pedalAngle, bodyBob) {
+                const rearWheel = { x: 260, y: 380, r: 48 };
+                const frontWheel = { x: 505, y: 380, r: 48 };
+                const crankCenter = { x: 375, y: 380 };
+                const seatPos = { x: 315, y: 285 };
+                const handlebarPos = { x: 495, y: 275 };
+
+                // 后轮
+                drawWheel(rearWheel.x, rearWheel.y, rearWheel.r, wheelAngle, '#333');
+                // 前轮
+                drawWheel(frontWheel.x, frontWheel.y, frontWheel.r, wheelAngle, '#333');
+
+                // 车架 - 后三角
+                ctx.strokeStyle = '#C0392B';
+                ctx.lineWidth = 5;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+
+                // 后下叉（后轮轴到中轴）
+                ctx.beginPath();
+                ctx.moveTo(rearWheel.x, rearWheel.y);
+                ctx.lineTo(crankCenter.x, crankCenter.y);
+                ctx.stroke();
+
+                // 后上叉（后轮轴到座椅）
+                ctx.beginPath();
+                ctx.moveTo(rearWheel.x, rearWheel.y);
+                ctx.lineTo(seatPos.x, seatPos.y);
+                ctx.stroke();
+
+                // 座管（中轴到座椅）
+                ctx.beginPath();
+                ctx.moveTo(crankCenter.x, crankCenter.y);
+                ctx.lineTo(seatPos.x, seatPos.y);
+                ctx.stroke();
+
+                // 主梁（中轴到把手）
+                ctx.beginPath();
+                ctx.moveTo(crankCenter.x, crankCenter.y);
+                ctx.lineTo(handlebarPos.x, handlebarPos.y);
+                ctx.stroke();
+
+                // 前叉（前轮到把手）
+                ctx.strokeStyle = '#E74C3C';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(frontWheel.x, frontWheel.y);
+                ctx.lineTo(handlebarPos.x, handlebarPos.y);
+                ctx.stroke();
+
+                // 座椅
+                ctx.fillStyle = '#2C2C2C';
+                ctx.beginPath();
+                ctx.ellipse(seatPos.x - 4, seatPos.y - 4, 22, 8, -0.15, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#444';
+                ctx.beginPath();
+                ctx.ellipse(seatPos.x - 4, seatPos.y - 5, 18, 5, -0.15, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 座椅支柱
+                ctx.strokeStyle = '#555';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(seatPos.x, seatPos.y - 2);
+                ctx.lineTo(seatPos.x + 3, seatPos.y + 15);
+                ctx.stroke();
+
+                // 把手
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 5;
+                ctx.beginPath();
+                ctx.moveTo(handlebarPos.x - 8, handlebarPos.y - 8);
+                ctx.quadraticCurveTo(handlebarPos.x + 5, handlebarPos.y - 20, handlebarPos.x + 18, handlebarPos.y - 10);
+                ctx.stroke();
+                // 把手握把
+                ctx.strokeStyle = '#222';
+                ctx.lineWidth = 7;
+                ctx.beginPath();
+                ctx.moveTo(handlebarPos.x + 10, handlebarPos.y - 12);
+                ctx.lineTo(handlebarPos.x + 22, handlebarPos.y - 6);
+                ctx.stroke();
+                ctx.fillStyle = '#1a1a1a';
+                ctx.beginPath();
+                ctx.arc(handlebarPos.x + 22, handlebarPos.y - 6, 5, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 链条
+                ctx.strokeStyle = '#666';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([3, 3]);
+                ctx.beginPath();
+                ctx.moveTo(rearWheel.x, rearWheel.y + 15);
+                ctx.lineTo(crankCenter.x, crankCenter.y + 12);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(rearWheel.x, rearWheel.y - 15);
+                ctx.lineTo(crankCenter.x, crankCenter.y - 12);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // 曲柄和踏板
+                const crankLength = 32;
+                const pedalX = crankCenter.x + Math.cos(pedalAngle) * crankLength;
+                const pedalY = crankCenter.y + Math.sin(pedalAngle) * crankLength;
+                const pedalX2 = crankCenter.x + Math.cos(pedalAngle + Math.PI) * crankLength;
+                const pedalY2 = crankCenter.y + Math.sin(pedalAngle + Math.PI) * crankLength;
+
+                // 曲柄臂
+                ctx.strokeStyle = '#555';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(crankCenter.x, crankCenter.y);
+                ctx.lineTo(pedalX, pedalY);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(crankCenter.x, crankCenter.y);
+                ctx.lineTo(pedalX2, pedalY2);
+                ctx.stroke();
+
+                // 中轴
+                ctx.fillStyle = '#444';
+                ctx.beginPath();
+                ctx.arc(crankCenter.x, crankCenter.y, 7, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#666';
+                ctx.beginPath();
+                ctx.arc(crankCenter.x, crankCenter.y, 4, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 踏板
+                drawPedal(pedalX, pedalY, pedalAngle);
+                drawPedal(pedalX2, pedalY2, pedalAngle + Math.PI);
+
+                return { crankCenter, seatPos, handlebarPos, pedalPositions: [{ x: pedalX, y: pedalY }, { x: pedalX2, y: pedalY2 }] };
+            }
+
+            function drawWheel(x, y, radius, angle, color) {
+                // 轮胎
+                ctx.strokeStyle = color || '#2C2C2C';
+                ctx.lineWidth = 6;
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // 内圈
+                ctx.strokeStyle = '#555';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(x, y, radius - 8, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // 辐条
+                const spokes = 12;
+                ctx.strokeStyle = 'rgba(200,200,200,0.6)';
+                ctx.lineWidth = 1.2;
+                for (let i = 0; i < spokes; i++) {
+                    const spokeAngle = angle + (i / spokes) * Math.PI * 2;
+                    const innerR = 8;
+                    const outerR = radius - 9;
+                    ctx.beginPath();
+                    ctx.moveTo(x + Math.cos(spokeAngle) * innerR, y + Math.sin(spokeAngle) * innerR);
+                    ctx.lineTo(x + Math.cos(spokeAngle) * outerR, y + Math.sin(spokeAngle) * outerR);
+                    ctx.stroke();
+                }
+
+                // 轮轴
+                ctx.fillStyle = '#888';
+                ctx.beginPath();
+                ctx.arc(x, y, 8, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#CCC';
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            function drawPedal(x, y, angle) {
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(angle * 0.5);
+                ctx.fillStyle = '#333';
+                roundRect(ctx, -10, -5, 20, 10, 3);
+                ctx.fill();
+                ctx.fillStyle = '#555';
+                roundRect(ctx, -8, -3, 16, 6, 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // ==================== 醍醐绘制 ====================
+            function drawPelican(data, bodyBob, time) {
+                const { crankCenter, seatPos, handlebarPos, pedalPositions } = data;
+
+                // 醍醐身体位置（在座椅上方，随身体浮动）
+                const bodyX = seatPos.x - 8 + Math.sin(time * 0.8) * 1.5;
+                const bodyY = seatPos.y - 48 + bodyBob * 6;
+
+                // 头部位置
+                const headX = bodyX + 78 + Math.sin(time * 0.5) * 2;
+                const headY = bodyY - 52 + Math.sin(time * 0.7) * 3;
+
+                // 髋关节位置（身体底部）
+                const hipX = bodyX + 5;
+                const hipY = bodyY + 38;
+
+                // 翅膀扇动逻辑
+                const flapCycle = 5.5; // 每5.5秒扇动一次
+                const flapProgress = ((time % flapCycle) + flapCycle) % flapCycle;
+                let wingFlapAngle = 0;
+                let wingScaleY = 1;
+                if (flapProgress > 4.5 && flapProgress < 5.2) {
+                    const flapT = (flapProgress - 4.5) / 0.7; // 0到1
+                    wingFlapAngle = Math.sin(flapT * Math.PI) * 0.55;
+                    wingScaleY = 1 + Math.sin(flapT * Math.PI) * 0.25;
+                }
+
+                // 眨眼逻辑
+                const blinkCycle = 3.8;
+                const blinkProgress = ((time % blinkCycle) + blinkCycle) % blinkCycle;
+                let eyeScaleY = 1;
+                if (blinkProgress > 3.6 && blinkProgress < 3.75) {
+                    eyeScaleY = 0.15;
+                } else if (blinkProgress > 3.75 && blinkProgress < 3.8) {
+                    eyeScaleY = lerp(0.15, 1, (blinkProgress - 3.75) / 0.05);
+                } else {
+                    eyeScaleY = 1;
+                }
+
+                // ===== 绘制醍醐的腿（先画腿，在自行车后面） =====
+                // 找到两个踏板位置
+                const pedalA = pedalPositions[0];
+                const pedalB = pedalPositions[1];
+
+                // 确定哪条腿在前（根据踏板高度判断）
+                const pedalHigher = pedalA.y < pedalB.y ? pedalA : pedalB;
+                const pedalLower = pedalA.y < pedalB.y ? pedalB : pedalA;
+
+                // 远侧腿（在自行车后面，颜色稍暗）
+                drawPelicanLeg(ctx, hipX, hipY, pedalLower.x, pedalLower.y, '#E8963E', '#D4812E', 1);
+                // 远侧脚
+                drawPelicanFoot(pedalLower.x, pedalLower.y, '#D4812E');
+
+                // ===== 绘制醍醐的身体 =====
+                // 身体主体（白色椭圆）
+                const bodyGrad = ctx.createRadialGradient(bodyX - 10, bodyY - 10, 5, bodyX, bodyY, 50);
+                bodyGrad.addColorStop(0, '#FFFFFF');
+                bodyGrad.addColorStop(0.7, '#F8F4EC');
+                bodyGrad.addColorStop(1, '#E8E0D0');
+                drawEllipse(ctx, bodyX, bodyY, 42, 35, -0.15, bodyGrad);
+
+                // 身体阴影
+                drawEllipse(ctx, bodyX + 3, bodyY + 8, 38, 28, -0.15, 'rgba(180,160,140,0.3)');
+
+                // 胸部羽毛纹理
+                ctx.strokeStyle = 'rgba(180,160,140,0.25)';
+                ctx.lineWidth = 1;
+                for (let i = 0; i < 6; i++) {
+                    const tx = bodyX - 20 + i * 8;
+                    const ty = bodyY - 8 + i * 6;
+                    ctx.beginPath();
+                    ctx.arc(tx, ty, 12 - i, -0.5, 0.8);
+                    ctx.stroke();
+                }
+
+                // ===== 翅膀 =====
+                drawPelicanWing(bodyX - 8, bodyY - 2, wingFlapAngle, wingScaleY, time);
+
+                // ===== 尾巴 =====
+                ctx.fillStyle = '#F0E8DC';
+                ctx.beginPath();
+                ctx.moveTo(bodyX - 38, bodyY - 5);
+                ctx.quadraticCurveTo(bodyX - 58, bodyY - 18, bodyX - 62, bodyY - 5);
+                ctx.quadraticCurveTo(bodyX - 55, bodyY + 5, bodyX - 38, bodyY + 10);
+                ctx.closePath();
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(150,130,110,0.3)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // ===== 脖子 =====
+                ctx.strokeStyle = '#F8F4EC';
+                ctx.lineWidth = 16;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(bodyX + 18, bodyY - 18);
+                ctx.quadraticCurveTo(bodyX + 50, bodyY - 40, headX - 12, headY + 8);
+                ctx.stroke();
+                // 脖子高光
+                ctx.strokeStyle = '#FFFFFF';
+                ctx.lineWidth = 8;
+                ctx.beginPath();
+                ctx.moveTo(bodyX + 20, bodyY - 22);
+                ctx.quadraticCurveTo(bodyX + 48, bodyY - 42, headX - 12, headY + 4);
+                ctx.stroke();
+
+                // ===== 头部 =====
+                const headGrad = ctx.createRadialGradient(headX - 5, headY - 5, 3, headX, headY, 24);
+                headGrad.addColorStop(0, '#FFFFFF');
+                headGrad.addColorStop(0.8, '#F8F4EC');
+                headGrad.addColorStop(1, '#E8E0D0');
+                ctx.fillStyle = headGrad;
+                ctx.beginPath();
+                ctx.arc(headX, headY, 21, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 头部的羽毛细节
+                ctx.strokeStyle = 'rgba(180,160,140,0.2)';
+                ctx.lineWidth = 1;
+                for (let i = 0; i < 3; i++) {
+                    ctx.beginPath();
+                    ctx.arc(headX - 5 + i * 5, headY - 8 + i * 4, 8, -0.8, 0.6);
+                    ctx.stroke();
+                }
+
+                // ===== 眼睛 =====
+                const eyeX = headX + 6;
+                const eyeY = headY - 4;
+                ctx.fillStyle = '#1a1a1a';
+                ctx.beginPath();
+                ctx.ellipse(eyeX, eyeY, 4.5, 4.5 * eyeScaleY, 0, 0, Math.PI * 2);
+                ctx.fill();
+                // 眼睛高光
+                ctx.fillStyle = '#FFFFFF';
+                ctx.beginPath();
+                ctx.arc(eyeX + 1.5, eyeY - 2 * eyeScaleY, 2, 0, Math.PI * 2);
+                ctx.fill();
+                // 眼睛周围
+                ctx.strokeStyle = 'rgba(150,130,110,0.3)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.arc(eyeX, eyeY, 6, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // ===== 喙（醍醐标志性长喙） =====
+                const beakStartX = headX + 16;
+                const beakStartY = headY - 2;
+                const beakEndX = beakStartX + 58;
+                const beakEndY = beakStartY + 12;
+                const beakMidX = (beakStartX + beakEndX) / 2;
+                const beakMidY = beakStartY + 3;
+
+                // 上喙
+                const beakGrad = ctx.createLinearGradient(beakStartX, beakStartY, beakEndX, beakEndY);
+                beakGrad.addColorStop(0, '#FF9E40');
+                beakGrad.addColorStop(0.4, '#FFB060');
+                beakGrad.addColorStop(1, '#F08020');
+                ctx.fillStyle = beakGrad;
+                ctx.beginPath();
+                ctx.moveTo(beakStartX, beakStartY - 3);
+                ctx.quadraticCurveTo(beakMidX, beakStartY - 10, beakEndX - 2, beakEndY - 6);
+                ctx.quadraticCurveTo(beakEndX, beakEndY - 2, beakEndX - 4, beakEndY + 4);
+                ctx.quadraticCurveTo(beakMidX - 8, beakStartY + 12, beakStartX + 2, beakStartY + 6);
+                ctx.closePath();
+                ctx.fill();
+                // 上喙高光
+                ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(beakStartX + 5, beakStartY - 1);
+                ctx.quadraticCurveTo(beakMidX - 5, beakStartY - 5, beakEndX - 10, beakEndY - 3);
+                ctx.stroke();
+
+                // 下喙
+                ctx.fillStyle = '#F08020';
+                ctx.beginPath();
+                ctx.moveTo(beakStartX + 2, beakStartY + 5);
+                ctx.quadraticCurveTo(beakMidX - 5, beakStartY + 10, beakEndX - 6, beakEndY + 5);
+                ctx.quadraticCurveTo(beakMidX - 10, beakStartY + 8, beakStartX + 4, beakStartY + 3);
+                ctx.closePath();
+                ctx.fill();
+
+                // ===== 喉囊（醍醐标志性大喉囊） =====
+                const pouchTopX = beakMidX - 5;
+                const pouchTopY = beakStartY + 8;
+                const pouchBottomY = pouchTopY + 30 + Math.sin(time * 2.5) * 4 + Math.sin(time * 0.7) * 2; // 随风晃动
+
+                const pouchGrad = ctx.createLinearGradient(pouchTopX, pouchTopY, pouchTopX, pouchBottomY);
+                pouchGrad.addColorStop(0, '#FFB07C');
+                pouchGrad.addColorStop(0.5, '#FFA060');
+                pouchGrad.addColorStop(1, '#F08040');
+                ctx.fillStyle = pouchGrad;
+                ctx.beginPath();
+                ctx.moveTo(pouchTopX - 8, pouchTopY);
+                ctx.quadraticCurveTo(pouchTopX - 18, pouchTopY + 8, pouchTopX - 12, pouchBottomY - 4);
+                ctx.quadraticCurveTo(pouchTopX - 2, pouchBottomY + 8, pouchTopX + 18, pouchBottomY - 6);
+                ctx.quadraticCurveTo(pouchTopX + 22, pouchTopY + 6, pouchTopX + 12, pouchTopY - 2);
+                ctx.closePath();
+                ctx.fill();
+
+                // 喉囊高光和褶皱
+                ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(pouchTopX - 5, pouchTopY + 5);
+                ctx.quadraticCurveTo(pouchTopX - 10, pouchTopY + 20, pouchTopX - 3, pouchBottomY - 2);
+                ctx.stroke();
+                ctx.strokeStyle = 'rgba(200,100,50,0.25)';
+                ctx.lineWidth = 1;
+                for (let i = 1; i <= 3; i++) {
+                    const py = pouchTopY + 5 + i * 7;
+                    ctx.beginPath();
+                    ctx.moveTo(pouchTopX - 5 - i * 2, py);
+                    ctx.quadraticCurveTo(pouchTopX - i, py + 4, pouchTopX + 6 + i * 2, py);
+                    ctx.stroke();
+                }
+
+                // 喙尖细节
+                ctx.fillStyle = '#E06010';
+                ctx.beginPath();
+                ctx.arc(beakEndX - 4, beakEndY + 1, 3.5, 0, Math.PI * 2);
+                ctx.fill();
+
+                // ===== 近侧腿（在自行车前面，颜色正常） =====
+                drawPelicanLeg(ctx, hipX, hipY, pedalHigher.x, pedalHigher.y, '#FFAA50', '#F09030', 1.15);
+                // 近侧脚
+                drawPelicanFoot(pedalHigher.x, pedalHigher.y, '#F09030');
+
+                // 醍醐的"手"（翅膀前端）放在把手上
+                const wingTipX = handlebarPos.x - 2;
+                const wingTipY = handlebarPos.y + 5;
+                ctx.fillStyle = '#F0E8DC';
+                ctx.beginPath();
+                ctx.ellipse(wingTipX, wingTipY, 8, 5, 0.3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(150,130,110,0.3)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+
+            function drawPelicanLeg(ctx, hipX, hipY, pedalX, pedalY, color1, color2, scale) {
+                const thighLen = 32 * scale;
+                const shinLen = 32 * scale;
+                const dx = pedalX - hipX;
+                const dy = pedalY - hipY;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                // 计算膝盖位置（简化IK）
+                let kneeX, kneeY;
+                if (dist > thighLen + shinLen) {
+                    // 完全伸直
+                    const nx = dx / dist;
+                    const ny = dy / dist;
+                    kneeX = hipX + nx * thighLen;
+                    kneeY = hipY + ny * thighLen;
+                } else {
+                    const midX = (hipX + pedalX) / 2;
+                    const midY = (hipY + pedalY) / 2;
+                    const nx = dx / (dist || 1);
+                    const ny = dy / (dist || 1);
+                    // 垂直于腿方向（向前）
+                    const px = -ny;
+                    const py = nx;
+                    // 弯曲偏移
+                    const bendAmount = (thighLen + shinLen - dist) * 0.35;
+                    kneeX = midX + px * bendAmount;
+                    kneeY = midY + py * bendAmount;
+                }
+
+                // 大腿
+                ctx.strokeStyle = color1;
+                ctx.lineWidth = 8 * scale;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(hipX, hipY);
+                ctx.lineTo(kneeX, kneeY);
+                ctx.stroke();
+
+                // 大腿高光
+                ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+                ctx.lineWidth = 3 * scale;
+                ctx.beginPath();
+                ctx.moveTo(hipX - 2, hipY + 2);
+                ctx.lineTo(kneeX - 2, kneeY + 2);
+                ctx.stroke();
+
+                // 小腿
+                ctx.strokeStyle = color2;
+                ctx.lineWidth = 7 * scale;
+                ctx.beginPath();
+                ctx.moveTo(kneeX, kneeY);
+                ctx.lineTo(pedalX, pedalY);
+                ctx.stroke();
+
+                // 小腿高光
+                ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+                ctx.lineWidth = 2.5 * scale;
+                ctx.beginPath();
+                ctx.moveTo(kneeX - 1.5, kneeY + 2);
+                ctx.lineTo(pedalX - 1.5, pedalY + 2);
+                ctx.stroke();
+            }
+
+            function drawPelicanFoot(x, y, color) {
+                // 醍醐的蹼足
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + 14, y + 2);
+                ctx.lineTo(x + 12, y + 8);
+                ctx.lineTo(x + 5, y + 9);
+                ctx.lineTo(x + 3, y + 12);
+                ctx.lineTo(x - 2, y + 9);
+                ctx.lineTo(x - 6, y + 7);
+                ctx.lineTo(x - 4, y + 3);
+                ctx.closePath();
+                ctx.fill();
+                // 蹼的纹理
+                ctx.strokeStyle = 'rgba(200,120,50,0.3)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(x + 1, y + 2);
+                ctx.lineTo(x + 8, y + 3);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(x + 2, y + 5);
+                ctx.lineTo(x + 7, y + 5);
+                ctx.stroke();
+            }
+
+            function drawPelicanWing(bodyX, bodyY, flapAngle, scaleY, time) {
+                ctx.save();
+                ctx.translate(bodyX, bodyY);
+                ctx.rotate(-0.15 + flapAngle);
+                ctx.scale(1, scaleY);
+
+                // 翅膀主体
+                const wingGrad = ctx.createLinearGradient(0, -20, 0, 40);
+                wingGrad.addColorStop(0, '#FFFFFF');
+                wingGrad.addColorStop(0.6, '#F0E8DC');
+                wingGrad.addColorStop(1, '#D8D0C0');
+                ctx.fillStyle = wingGrad;
+                ctx.beginPath();
+                ctx.moveTo(0, -5);
+                ctx.quadraticCurveTo(20, -25, 55, -35);
+                ctx.quadraticCurveTo(70, -30, 65, -15);
+                ctx.quadraticCurveTo(75, -20, 72, -5);
+                ctx.quadraticCurveTo(68, 10, 45, 20);
+                ctx.quadraticCurveTo(20, 30, 0, 22);
+                ctx.closePath();
+                ctx.fill();
+
+                // 翅膀羽毛纹理
+                ctx.strokeStyle = 'rgba(160,140,120,0.3)';
+                ctx.lineWidth = 1.2;
+                for (let i = 0; i < 8; i++) {
+                    const fx = 10 + i * 7;
+                    const fyTop = -20 + i * 3;
+                    const fyBot = 18 + i * 2;
+                    ctx.beginPath();
+                    ctx.moveTo(fx, fyTop);
+                    ctx.quadraticCurveTo(fx + 5, fyTop + 12, fx + 2, fyBot);
+                    ctx.stroke();
+                }
+
+                // 翅膀高光
+                ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(8, -12);
+                ctx.quadraticCurveTo(30, -25, 50, -28);
+                ctx.stroke();
+
+                ctx.restore();
+            }
+
+            // ==================== 特效绘制 ====================
+            function drawEffects(time, speed) {
+                // 速度线效果
+                if (speed > 1.3) {
+                    const intensity = clamp((speed - 1.3) / 1.2, 0, 1);
+                    ctx.strokeStyle = `rgba(255,255,255,${0.15 * intensity})`;
+                    ctx.lineWidth = 2;
+                    ctx.lineCap = 'round';
+                    for (let i = 0; i < 8; i++) {
+                        const lineY = 150 + i * 35 + Math.sin(time * 5 + i * 2) * 8;
+                        const lineLen = 20 + intensity * 50 + Math.sin(time * 8 + i) * 15;
+                        const lineX = 700 + Math.sin(time * 6 + i * 3) * 20;
+                        ctx.beginPath();
+                        ctx.moveTo(lineX, lineY);
+                        ctx.lineTo(lineX - lineLen, lineY + Math.sin(time * 7 + i) * 5);
+                        ctx.stroke();
+                    }
+                }
+
+                // 骑行时的小灰尘
+                if (speed > 1.2) {
+                    const dustIntensity = clamp((speed - 1.2) / 1.0, 0, 1);
+                    for (let i = 0; i < 6; i++) {
+                        const dustX = 230 + Math.sin(time * 3 + i * 1.7) * 15;
+                        const dustY = 405 + Math.cos(time * 2.5 + i * 2.1) * 8;
+                        const dustR = 2 + Math.sin(time * 4 + i) * 1.5 + dustIntensity * 3;
+                        const dustAlpha = 0.2 + 0.3 * dustIntensity * Math.abs(Math.sin(time * 2 + i));
+                        ctx.fillStyle = `rgba(160,150,130,${dustAlpha})`;
+                        ctx.beginPath();
+                        ctx.arc(dustX, dustY, dustR, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+
+                // 醍醐头顶的小音符（加速时）
+                if (speed > 1.8) {
+                    const noteAlpha = clamp((speed - 1.8) / 0.7, 0, 0.7);
+                    const noteX = 370 + Math.sin(time * 2) * 8;
+                    const noteY = 110 + Math.sin(time * 3) * 5;
+                    ctx.fillStyle = `rgba(255,180,50,${noteAlpha})`;
+                    ctx.font = '20px Arial';
+                    ctx.fillText('♪', noteX, noteY);
+                    ctx.fillStyle = `rgba(255,180,50,${noteAlpha * 0.6})`;
+                    ctx.font = '14px Arial';
+                    ctx.fillText('♫', noteX + 20, noteY - 15 + Math.sin(time * 2.5) * 4);
+                }
+            }
+
+            // ==================== 主绘制函数 ====================
+            function drawScene() {
+                ctx.clearRect(0, 0, 800, 500);
+
+                // 背景
+                drawBackground();
+
+                // 计算动画参数
+                const wheelAngle = time * speed * 3.5;
+                const pedalAngle = time * speed * 3.5;
+                const bodyBob = Math.sin(time * speed * 3.5) * 0.5 + Math.sin(time * speed * 1.7) * 0.3;
+
+                // 绘制自行车
+                const bikeData = drawBicycle(wheelAngle, pedalAngle, bodyBob);
+
+                // 绘制醍醐
+                drawPelican(bikeData, bodyBob, time);
+
+                // 绘制特效
+                drawEffects(time, speed);
+            }
+
+            // ==================== 动画循环 ====================
+            let lastTime = 0;
+            const TARGET_FPS = 60;
+            const FRAME_INTERVAL = 1000 / TARGET_FPS;
+            let accumulator = 0;
+
+            function animate(timestamp) {
+                requestAnimationFrame(animate);
+
+                if (!lastTime) lastTime = timestamp;
+                const deltaTime = (timestamp - lastTime) / 1000;
+                lastTime = timestamp;
+
+                // 帧率控制
+                accumulator += deltaTime;
+                if (accumulator < FRAME_INTERVAL / 1000) return;
+                const stepTime = Math.min(accumulator, 0.05);
+                accumulator -= stepTime;
+
+                // 更新速度（平滑过渡）
+                speed = lerp(speed, targetSpeed, 0.04);
+                speed = clamp(speed, 0.8, 3.0);
+
+                // 更新速度指示器
+                const speedPercent = clamp((speed - 0.8) / (3.0 - 0.8) * 100, 5, 100);
+                speedFill.style.width = speedPercent + '%';
+
+                // 更新总时间
+                time += stepTime * speed;
+
+                // 更新道路标记
+                roadMarkers.forEach(marker => {
+                    marker.x -= speed * 60 * stepTime;
+                    if (marker.x < -50) {
+                        marker.x = 820 + Math.random() * 50;
+                    }
+                });
+
+                // 绘制场景
+                drawScene();
+            }
+
+            // ==================== 交互处理 ====================
+            canvas.addEventListener('click', function(e) {
+                isAccelerating = !isAccelerating;
+                targetSpeed = isAccelerating ? 2.8 : 1.0;
+
+                // 点击动画反馈
+                const rect = canvas.getBoundingClientRect();
+                const mx = (e.clientX - rect.left) / rect.width * 800;
+                const my = (e.clientY - rect.top) / rect.height * 500;
+
+                // 绘制点击波纹
+                ctx.save();
+                ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(mx, my, 15, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.restore();
+            });
+
+            // 键盘支持
+            document.addEventListener('keydown', function(e) {
+                if (e.key === ' ' || e.key === 'Space') {
+                    e.preventDefault();
+                    isAccelerating = !isAccelerating;
+                    targetSpeed = isAccelerating ? 2.8 : 1.0;
+                }
+                if (e.key === 'r' || e.key === 'R') {
+                    isAccelerating = false;
+                    targetSpeed = 1.0;
+                    time = 0;
+                }
+            });
+
+            // 触摸支持
+            canvas.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                isAccelerating = !isAccelerating;
+                targetSpeed = isAccelerating ? 2.8 : 1.0;
+            });
+
+            // ==================== 启动动画 ====================
+            // 初始绘制
+            drawScene();
+            // 启动动画循环
+            requestAnimationFrame(function(timestamp) {
+                lastTime = timestamp;
+                requestAnimationFrame(animate);
+            });
+
+            // 窗口大小变化时重新适配
+            window.addEventListener('resize', function() {
+                resizeCanvas();
+                // 重新绘制一帧以立即反映变化
+                drawScene();
+            });
+
+            console.log('🦩 醍醐骑自行车动画已加载！');
+            console.log('💡 点击画面或按空格键加速 | 按R键重置');
+        })();
+    </script>
+</body>
+</html>

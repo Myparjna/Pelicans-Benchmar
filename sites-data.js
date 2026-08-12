@@ -5,7 +5,8 @@ window.SITES = [
     "category": "阿里 · 通义千问",
     "model": "通义千问 Qwen 3.7 Plus",
     "channel": "官网风格",
-    "thumb": "thumbs/qwen-3-7-plus.png"
+    "thumb": "thumbs/qwen-3-7-plus.png",
+    "src": "sites/qwen-3-7-plus.html"
   },
   {
     "file": "qwen3.627b官网.html",
@@ -13,7 +14,8 @@ window.SITES = [
     "category": "阿里 · 通义千问",
     "model": "通义千问 Qwen 3.6 27B",
     "channel": "官网风格",
-    "thumb": "thumbs/qwen-3-6-27b.png"
+    "thumb": "thumbs/qwen-3-6-27b.png",
+    "src": "sites/qwen-3-6-27b.html"
   },
   {
     "file": "qwen3.6flash官网.html",
@@ -21,7 +23,8 @@ window.SITES = [
     "category": "阿里 · 通义千问",
     "model": "通义千问 Qwen 3.6 Flash",
     "channel": "官网风格",
-    "thumb": "thumbs/qwen-3-6-flash.png"
+    "thumb": "thumbs/qwen-3-6-flash.png",
+    "src": "sites/qwen-3-6-flash.html"
   },
   {
     "file": "qwen官网3.8max.html",
@@ -29,7 +32,8 @@ window.SITES = [
     "category": "阿里 · 通义千问",
     "model": "通义千问 Qwen 3.8 Max",
     "channel": "官网风格",
-    "thumb": "thumbs/qwen-3-8-max.png"
+    "thumb": "thumbs/qwen-3-8-max.png",
+    "src": "sites/qwen-3-8-max.html"
   },
   {
     "file": "千问官网3.6flash.html",
@@ -37,7 +41,8 @@ window.SITES = [
     "category": "阿里 · 通义千问",
     "model": "通义千问 Qwen 3.6 Flash",
     "channel": "官网风格",
-    "thumb": "thumbs/qianwen-3-6-flash.png"
+    "thumb": "thumbs/qianwen-3-6-flash.png",
+    "src": "sites/qianwen-3-6-flash.html"
   },
   {
     "file": "gpt5.6solcodex.html",
@@ -45,7 +50,8 @@ window.SITES = [
     "category": "OpenAI",
     "model": "GPT-5.6 Codex",
     "channel": "Sol Codex",
-    "thumb": "thumbs/gpt-5-6-codex.png"
+    "thumb": "thumbs/gpt-5-6-codex.png",
+    "src": "sites/gpt-5-6-codex.html"
   },
   {
     "file": "gemini3.6flash官网.html",
@@ -53,7 +59,8 @@ window.SITES = [
     "category": "Google · Gemini",
     "model": "Gemini 3.6 Flash",
     "channel": "官网风格",
-    "thumb": "thumbs/gemini-3-6-flash.png"
+    "thumb": "thumbs/gemini-3-6-flash.png",
+    "src": "sites/gemini-3-6-flash.html"
   },
   {
     "file": "gemini31pro官网.html",
@@ -61,7 +68,8 @@ window.SITES = [
     "category": "Google · Gemini",
     "model": "Gemini 3.1 Pro",
     "channel": "官网风格",
-    "thumb": "thumbs/gemini-3-1-pro.png"
+    "thumb": "thumbs/gemini-3-1-pro.png",
+    "src": "sites/gemini-3-1-pro.html"
   },
   {
     "file": "grok45真.html",
@@ -69,7 +77,8 @@ window.SITES = [
     "category": "xAI · Grok",
     "model": "Grok 4.5",
     "channel": "真·官网",
-    "thumb": "thumbs/grok-4-5-real.png"
+    "thumb": "thumbs/grok-4-5-real.png",
+    "src": "sites/grok-4-5-real.html"
   },
   {
     "file": "grok4.5.html",
@@ -77,7 +86,8 @@ window.SITES = [
     "category": "xAI · Grok",
     "model": "Grok 4.5",
     "channel": "标准",
-    "thumb": "thumbs/grok-4-5.png"
+    "thumb": "thumbs/grok-4-5.png",
+    "src": "sites/grok-4-5.html"
   },
   {
     "file": "apideepseekv4flash0731.html",
@@ -85,7 +95,8 @@ window.SITES = [
     "category": "DeepSeek",
     "model": "DeepSeek V4 Flash",
     "channel": "API 直连",
-    "thumb": "thumbs/deepseek-v4-flash-api-0731.png"
+    "thumb": "thumbs/deepseek-v4-flash-api-0731.png",
+    "src": "sites/deepseek-v4-flash-api-0731.html"
   },
   {
     "file": "v4pro813API.html",
@@ -93,7 +104,8 @@ window.SITES = [
     "category": "DeepSeek",
     "model": "DeepSeek V4 Pro",
     "channel": "API 直连",
-    "thumb": "thumbs/deepseek-v4-pro-api-0813.png"
+    "thumb": "thumbs/deepseek-v4-pro-api-0813.png",
+    "src": "sites/deepseek-v4-pro-api-0813.html"
   },
   {
     "file": "deepseekv4pro424官网版本.html",
@@ -101,7 +113,8 @@ window.SITES = [
     "category": "DeepSeek",
     "model": "DeepSeek V4 Pro",
     "channel": "官网风格",
-    "thumb": "thumbs/deepseek-v4-pro-0424.png"
+    "thumb": "thumbs/deepseek-v4-pro-0424.png",
+    "src": "sites/deepseek-v4-pro-0424.html"
   },
   {
     "file": "deepseekv4flash0424trae.html",
@@ -109,7 +122,8 @@ window.SITES = [
     "category": "DeepSeek",
     "model": "DeepSeek V4 Flash",
     "channel": "Trae",
-    "thumb": "thumbs/deepseek-v4-flash-0424-trae.png"
+    "thumb": "thumbs/deepseek-v4-flash-0424-trae.png",
+    "src": "sites/deepseek-v4-flash-0424-trae.html"
   },
   {
     "file": "deepseek0424pro trae.html",
@@ -117,7 +131,8 @@ window.SITES = [
     "category": "DeepSeek",
     "model": "DeepSeek V4 Pro (0424)",
     "channel": "Trae",
-    "thumb": "thumbs/deepseek-0424-pro-trae.png"
+    "thumb": "thumbs/deepseek-0424-pro-trae.png",
+    "src": "sites/deepseek-0424-pro-trae.html"
   },
   {
     "file": "deepseekflash0424官网版.html",
@@ -125,7 +140,8 @@ window.SITES = [
     "category": "DeepSeek",
     "model": "DeepSeek V4 Flash (0424)",
     "channel": "官网风格",
-    "thumb": "thumbs/deepseek-flash-0424.png"
+    "thumb": "thumbs/deepseek-flash-0424.png",
+    "src": "sites/deepseek-flash-0424.html"
   },
   {
     "file": "deepseekv4pro-0424-workbuddy.html",
@@ -133,7 +149,8 @@ window.SITES = [
     "category": "DeepSeek",
     "model": "DeepSeek V4 Pro (0424)",
     "channel": "WorkBuddy",
-    "thumb": "thumbs/deepseek-v4-pro-0424-wb.png"
+    "thumb": "thumbs/deepseek-v4-pro-0424-wb.png",
+    "src": "sites/deepseek-v4-pro-0424-wb.html"
   },
   {
     "file": "deepseekv4flash0424-workbuddy.html",
@@ -141,7 +158,8 @@ window.SITES = [
     "category": "DeepSeek",
     "model": "DeepSeek V4 Flash (0424)",
     "channel": "WorkBuddy",
-    "thumb": "thumbs/deepseek-v4-flash-0424-wb.png"
+    "thumb": "thumbs/deepseek-v4-flash-0424-wb.png",
+    "src": "sites/deepseek-v4-flash-0424-wb.html"
   },
   {
     "file": "豆包官网专家模式.html",
@@ -149,7 +167,8 @@ window.SITES = [
     "category": "字节 · 豆包",
     "model": "豆包 Doubao (专家模式)",
     "channel": "官网风格 · 专家模式",
-    "thumb": "thumbs/doubao-expert.png"
+    "thumb": "thumbs/doubao-expert.png",
+    "src": "sites/doubao-expert.html"
   },
   {
     "file": "seed21pro trae.html",
@@ -157,7 +176,8 @@ window.SITES = [
     "category": "字节 · Seed",
     "model": "Seed 2.1 Pro",
     "channel": "Trae",
-    "thumb": "thumbs/seed-2-1-pro-trae.png"
+    "thumb": "thumbs/seed-2-1-pro-trae.png",
+    "src": "sites/seed-2-1-pro-trae.html"
   },
   {
     "file": "HY3workbuddy.html",
@@ -165,7 +185,8 @@ window.SITES = [
     "category": "腾讯 · 混元",
     "model": "混元 HY3",
     "channel": "WorkBuddy",
-    "thumb": "thumbs/hunyuan-hy3-wb.png"
+    "thumb": "thumbs/hunyuan-hy3-wb.png",
+    "src": "sites/hunyuan-hy3-wb.html"
   },
   {
     "file": "kimik3workbuddy.html",
@@ -173,7 +194,8 @@ window.SITES = [
     "category": "月之暗面 · Kimi",
     "model": "Kimi K3",
     "channel": "WorkBuddy",
-    "thumb": "thumbs/kimi-k3-wb.png"
+    "thumb": "thumbs/kimi-k3-wb.png",
+    "src": "sites/kimi-k3-wb.html"
   },
   {
     "file": "GLM52workbuddy.html",
@@ -181,7 +203,8 @@ window.SITES = [
     "category": "智谱 · GLM",
     "model": "智谱 GLM 5.2",
     "channel": "WorkBuddy",
-    "thumb": "thumbs/glm-5-2-wb.png"
+    "thumb": "thumbs/glm-5-2-wb.png",
+    "src": "sites/glm-5-2-wb.html"
   },
   {
     "file": "minimaxm3-workbuddy.html",
@@ -189,6 +212,7 @@ window.SITES = [
     "category": "MiniMax",
     "model": "MiniMax M3",
     "channel": "WorkBuddy",
-    "thumb": "thumbs/minimax-m3-wb.png"
+    "thumb": "thumbs/minimax-m3-wb.png",
+    "src": "sites/minimax-m3-wb.html"
   }
 ];

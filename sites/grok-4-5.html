@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鹈鹕的自行车冒险</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            overflow-x: hidden;
+        }
+        header {
+            background: linear-gradient(135deg, #4a90e2, #7b68ee);
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 1.8rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        #scene {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin: 30px auto;
+            height: 500px;
+            background: #87CEEB;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        #sky {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #87CEEB;
+            z-index: 1;
+            transition: background-color 1.5s ease;
+        }
+        #rain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            display: none;
+        }
+        .drop {
+            position: absolute;
+            background: #a0d8ff;
+            width: 2px;
+            height: 35px;
+            animation: fall linear infinite;
+            border-radius: 50%;
+        }
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px);
+            }
+            100% {
+                transform: translateY(600px);
+            }
+        }
+        #clouds {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+        .cloud {
+            position: absolute;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            box-shadow: 30px 0 rgba(255,255,255,0.9),
+                        0 20px rgba(255,255,255,0.9),
+                        -30px 0 rgba(255,255,255,0.9);
+            animation: floatCloud 25s linear infinite;
+        }
+        .cloud:nth-child(2) {
+            animation-duration: 18s;
+            animation-delay: -8s;
+        }
+        .cloud:nth-child(3) {
+            animation-duration: 22s;
+            animation-delay: -15s;
+        }
+        .cloud:nth-child(4) {
+            animation-duration: 20s;
+            animation-delay: -5s;
+        }
+        @keyframes floatCloud {
+            0% {
+                transform: translateX(-100px);
+            }
+            100% {
+                transform: translateX(120vw);
+            }
+        }
+        .sun {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at 30% 30%, #ffeb3b, #f9a825);
+            border-radius: 50%;
+            z-index: 4;
+            box-shadow: 
+                0 0 60px #ffeb3b,
+                0 0 120px #ffeb3b,
+                0 0 180px #ffeb3b;
+            animation: shine 4s infinite alternate;
+        }
+        @keyframes shine {
+            from { box-shadow: 0 0 60px #ffeb3b, 0 0 120px #ffeb3b; }
+            to { box-shadow: 0 0 80px #ffeb3b, 0 0 160px #ffeb3b, 0 0 200px #ffeb3b; }
+        }
+        #pelican-bike {
+            position: absolute;
+            bottom: 110px;
+            left: -180px;
+            width: 220px;
+            height: 220px;
+            z-index: 10;
+            animation: ride 28s linear infinite;
+        }
+        .pelican {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        .head {
+            position: absolute;
+            top: 15px;
+            left: 85px;
+            width: 55px;
+            height: 55px;
+            background: #f8f9fa;
+            border-radius: 50%;
+            z-index: 3;
+        }
+        .beak {
+            position: absolute;
+            top: 22px;
+            left: 115px;
+            width: 38px;
+            height: 22px;
+            background: #ff7043;
+            transform: rotate(-35deg);
+            border-radius: 50% 0 60% 30%;
+            z-index: 4;
+        }
+        .neck {
+            position: absolute;
+            top: 55px;
+            left: 95px;
+            width: 12px;
+            height: 85px;
+            background: #f8f9fa;
+            z-index: 2;
+        }
+        .body {
+            position: absolute;
+            top: 125px;
+            left: 65px;
+            width: 90px;
+            height: 65px;
+            background: #f8f9fa;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        .leg {
+            position: absolute;
+            top: 170px;
+            width: 12px;
+            height: 45px;
+            background: #ff80ab;
+            z-index: 2;
+        }
+        .leg.left {
+            left: 78px;
+            transform: rotate(-15deg);
+        }
+        .leg.right {
+            right: 78px;
+            transform: rotate(15deg);
+        }
+        .wing {
+            position: absolute;
+            top: 85px;
+            width: 45px;
+            height: 25px;
+            background: #f8f9fa;
+            transform: rotate(25deg);
+            z-index: 2;
+        }
+        .wing.left {
+            left: 40px;
+        }
+        .wing.right {
+            right: 40px;
+            transform: rotate(-25deg);
+        }
+        .bicycle {
+            position: absolute;
+            bottom: 0;
+            left: 95px;
+            width: 230px;
+            height: 160px;
+            z-index: 5;
+        }
+        .frame {
+            position: absolute;
+            top: 25px;
+            left: 0;
+            width: 230px;
+            height: 14px;
+            background: linear-gradient(#5c4033, #8d5524);
+            z-index: 1;
+        }
+        .seat {
+            position: absolute;
+            top: 55px;
+            left: 155px;
+            width: 45px;
+            height: 18px;
+            background: #5c4033;
+            z-index: 3;
+        }
+        .handlebars {
+            position: absolute;
+            top: 30px;
+            left: 175px;
+            width: 70px;
+            height: 12px;
+            background: #5c4033;
+            transform: rotate(18deg);
+            z-index: 6;
+        }
+        .wheel {
+            position: absolute;
+            top: 78px;
+            width: 62px;
+            height: 62px;
+            background: #f1f1f1;
+            border: 6px solid #333;
+            border-radius: 50%;
+            z-index: 4;
+        }
+        .wheel1 {
+            left: 18px;
+        }
+        .wheel2 {
+            right: 18px;
+        }
+        .wheel::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 22px;
+            height: 22px;
+            background: #333;
+            border-radius: 50%;
+        }
+        .pedal {
+            position: absolute;
+            top: 88px;
+            left: 105px;
+            width: 26px;
+            height: 4px;
+            background: #5c4033;
+            transform: rotate(0deg);
+            z-index: 7;
+        }
+        @keyframes ride {
+            0% {
+                transform: translateX(-200px);
+            }
+            100% {
+                transform: translateX(120vw);
+            }
+        }
+        @keyframes wheelRotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .wheel1 {
+            animation: wheelRotate 1.2s linear infinite;
+        }
+        .wheel2 {
+            animation: wheelRotate 1.2s linear infinite reverse;
+        }
+        footer {
+            text-align: center;
+            padding: 15px;
+            color: #666;
+            font-size: 0.9rem;
+            background: #fff;
+        }
+        .weather-label {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>鹈鹕的自行车冒险 🌞</h1>
+    </header>
+    
+    <div id="scene">
+        <div id="sky"></div>
+        <div id="clouds"></div>
+        <div id="rain"></div>
+        
+        <div id="pelican-bike">
+            <div class="pelican">
+                <div class="head">
+                    <div class="beak"></div>
+                </div>
+                <div class="neck"></div>
+                <div class="body"></div>
+                <div class="wing left"></div>
+                <div class="wing right"></div>
+                <div class="leg left"></div>
+                <div class="leg right"></div>
+            </div>
+            <div class="bicycle">
+                <div class="frame"></div>
+                <div class="seat"></div>
+                <div class="handlebars"></div>
+                <div class="wheel wheel1"></div>
+                <div class="wheel wheel2"></div>
+                <div class="pedal"></div>
+            </div>
+        </div>
+        
+        <div class="weather-label" id="weather-label">晴天</div>
+    </div>
+    
+    <footer>
+        每5秒天气自动切换 • 鹈鹕正在快乐骑行
+    </footer>
+
+    <script>
+        // 天气切换
+        let currentWeather = 'sunny';
+        const weatherCycle = ['sunny', 'cloudy', 'rainy', 'sunny'];
+        
+        function clearWeatherElements() {
+            const scene = document.getElementById('scene');
+            const clouds = document.getElementById('clouds');
+            const sun = document.getElementById('sun');
+            const rain = document.getElementById('rain');
+            if (clouds) clouds.innerHTML = '';
+            if (sun) sun.innerHTML = '';
+            if (rain) {
+                rain.innerHTML = '';
+                rain.style.display = 'none';
+            }
+        }
+        
+        function applyWeather(weather) {
+            clearWeatherElements();
+            const sky = document.getElementById('sky');
+            const rain = document.getElementById('rain');
+            const clouds = document.getElementById('clouds');
+            const label = document.getElementById('weather-label');
+            
+            switch(weather) {
+                case 'sunny':
+                    sky.style.backgroundColor = '#87CEEB';
+                    sky.style.backgroundImage = '';
+                    label.textContent = '晴天';
+                    label.style.background = 'rgba(255,255,255,0.9)';
+                    
+                    // 太阳
+                    const sunEl = document.createElement('div');
+                    sunEl.className = 'sun';
+                    sunEl.style.top = '12%';
+                    sunEl.style.left = '12%';
+                    document.getElementById('scene').appendChild(sunEl);
+                    
+                    // 云朵
+                    for (let i = 0; i < 5; i++) {
+                        const cloud = document.createElement('div');
+                        cloud.className = 'cloud';
+                        cloud.style.top = (15 + i * 12) + '%';
+                        cloud.style.left = (5 + i * 25) + '%';
+                        cloud.style.width = (90 + i * 15) + 'px';
+                        cloud.style.height = (45 + i * 8) + 'px';
+                        clouds.appendChild(cloud);
+                    }
+                    break;
+                    
+                case 'cloudy':
+                    sky.style.backgroundColor = '#B0D4E8';
+                    label.textContent = '阴天';
+                    label.style.background = 'rgba(200,200,200,0.9)';
+                    
+                    // 多云
+                    for (let i = 0; i < 9; i++) {
+                        const cloud = document.createElement('div');
+                        cloud.className = 'cloud';
+                        cloud.style.top = (8 + Math.random() * 45) + '%';
+                        cloud.style.left = (5 + Math.random() * 70) + '%';
+                        cloud.style.width = (80 + Math.random() * 50) + 'px';
+                        cloud.style.height = (50 + Math.random() * 40) + 'px';
+                        clouds.appendChild(cloud);
+                    }
+                    break;
+                    
+                case 'rainy':
+                    sky.style.backgroundColor = '#5F9EA0';
+                    label.textContent = '雨天';
+                    label.style.background = 'rgba(180,180,180,0.9)';
+                    
+                    rain.style.display = 'block';
+                    
+                    // 雨滴
+                    for (let i = 0; i < 35; i++) {
+                        const drop = document.createElement('div');
+                        drop.className = 'drop';
+                        drop.style.left = (Math.random() * 100) + '%';
+                        drop.style.animationDuration = (0.7 + Math.random() * 0.6) + 's';
+                        drop.style.animationDelay = '-' + Math.random() * 3 + 's';
+                        rain.appendChild(drop);
+                    }
+                    break;
+            }
+        }
+        
+        // 初始化
+        function init() {
+            applyWeather('sunny');
+            
+            // 每5秒切换天气
+            setInterval(() => {
+                let index = weatherCycle.indexOf(currentWeather);
+                index = (index + 1) % weatherCycle.length;
+                currentWeather = weatherCycle[index];
+                applyWeather(currentWeather);
+            }, 5000);
+        }
+        
+        window.onload = init;
+    </script>
+</body>
+</html>

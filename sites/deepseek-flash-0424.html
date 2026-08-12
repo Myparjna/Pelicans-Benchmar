@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>鹈鹕骑自行车</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #1a2a3a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+            object-fit: contain;
+            background: transparent;
+            image-rendering: auto;
+            touch-action: none;
+        }
+        /* 天气指示器 */
+        .weather-indicator {
+            position: fixed;
+            top: 16px;
+            right: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            font-weight: 600;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(6px);
+            padding: 8px 16px;
+            border-radius: 30px;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            pointer-events: none;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            user-select: none;
+        }
+        .weather-indicator .icon {
+            font-size: 18px;
+        }
+        .weather-indicator .label {
+            font-size: 13px;
+        }
+        .weather-indicator .timer {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-left: 4px;
+        }
+        @media (max-width: 600px) {
+            .weather-indicator {
+                top: 10px;
+                right: 10px;
+                padding: 5px 12px;
+                font-size: 12px;
+            }
+            .weather-indicator .icon {
+                font-size: 15px;
+            }
+            .weather-indicator .label {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div class="weather-indicator" id="weatherIndicator">
+        <span class="icon" id="weatherIcon">☀️</span>
+        <span class="label" id="weatherLabel">晴天</span>
+        <span class="timer" id="weatherTimer">5s</span>
+    </div>
+
+    <script>
+        (function() {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+
+            // DOM 元素
+            const weatherIcon = document.getElementById('weatherIcon');
+            const weatherLabel = document.getElementById('weatherLabel');
+            const weatherTimer = document.getElementById('weatherTimer');
+
+            // ---------- 状态 ----------
+            let W = 0,
+                H = 0;
+            let time = 0;
+            let weatherIndex = 0; // 0:晴天 1:阴天 2:雨天
+            const weatherList = [
+                { name: '晴天', icon: '☀️', key: 'sunny' },
+                { name: '阴天', icon: '☁️', key: 'cloudy' },
+                { name: '雨天', icon: '🌧️', key: 'rainy' }
+            ];
+            let weatherTimerCount = 5; // 倒计时秒数
+            let lastWeatherSwitch = 0;
+
+            // 雨滴数组
+            let raindrops = [];
+            const MAX_RAINDROPS = 180;
+
+            // ---------- 尺寸自适应 ----------
+            function resize() {
+                W = window.innerWidth;
+                H = window.innerHeight;
+                canvas.width = W;
+                canvas.height = H;
+                // 重新生成雨滴位置
+                initRaindrops();
+            }
+
+            function initRaindrops() {
+                raindrops = [];
+                for (let i = 0; i < MAX_RAINDROPS; i++) {
+                    raindrops.push({
+                        x: Math.random() * W,
+                        y: Math.random() * H,
+                        speed: 4 + Math.random() * 8,
+                        len: 12 + Math.random() * 18,
+                        opacity: 0.3 + Math.random() * 0.5,
+                        width: 1 + Math.random() * 1.5
+                    });
+                }
+            }
+
+            // ---------- 工具函数 ----------
+            function lerp(a, b, t) { return a + (b - a) * t; }
+
+            function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+            // ---------- 绘制背景 ----------
+            function drawBackground(weatherKey) {
+                let skyTop, skyBottom, horizonColor;
+                const groundY = H * 0.82;
+
+                switch (weatherKey) {
+                    case 'sunny':
+                        skyTop = '#4a9eff';
+                        skyBottom = '#87ceeb';
+                        horizonColor = '#b8d9b0';
+                        break;
+                    case 'cloudy':
+                        skyTop = '#7a8a9a';
+                        skyBottom = '#aab8c8';
+                        horizonColor = '#8a9a7a';
+                        break;
+                    case 'rainy':
+                        skyTop = '#5a6a7a';
+                        skyBottom = '#8a9aaa';
+                        horizonColor = '#6a7a5a';
+                        break;
+                    default:
+                        skyTop = '#4a9eff';
+                        skyBottom = '#87ceeb';
+                        horizonColor = '#b8d9b0';
+                }
+
+                // 天空渐变
+                const grad = ctx.createLinearGradient(0, 0, 0, groundY);
+                grad.addColorStop(0, skyTop);
+                grad.addColorStop(1, skyBottom);
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, W, groundY);
+
+                // 地面
+                const gGrad = ctx.createLinearGradient(0, groundY, 0, H);
+                gGrad.addColorStop(0, horizonColor);
+                gGrad.addColorStop(0.3, '#6d8f5e');
+                gGrad.addColorStop(1, '#4a6a3a');
+                ctx.fillStyle = gGrad;
+                ctx.fillRect(0, groundY, W, H - groundY);
+
+                // 地面纹理（草叶）
+                ctx.strokeStyle = 'rgba(100,140,80,0.4)';
+                ctx.lineWidth = 1.5;
+                for (let i = 0; i < 120; i++) {
+                    const x = (i * 37 + 13) % W;
+                    const y = groundY + 6 + (i * 19 + 7) % (H - groundY - 12);
+                    const h = 6 + (i * 7) % 12;
+                    const angle = -0.3 + (i * 11) % 6 * 0.1;
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.quadraticCurveTo(x + Math.sin(angle) * 4, y - h, x + Math.sin(angle + 0.5) * 6, y - h - 2);
+                    ctx.stroke();
+                }
+
+                // 远处小山（只在晴天和阴天显示）
+                if (weatherKey !== 'rainy') {
+                    ctx.fillStyle = weatherKey === 'sunny' ? 'rgba(100,160,100,0.3)' : 'rgba(90,110,90,0.3)';
+                    ctx.beginPath();
+                    ctx.moveTo(0, groundY);
+                    for (let i = 0; i <= W; i += 5) {
+                        const hill = Math.sin(i * 0.003 + 0.5) * 40 + Math.sin(i * 0.007 + 1.2) * 25;
+                        ctx.lineTo(i, groundY - 20 - hill);
+                    }
+                    ctx.lineTo(W, groundY);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+            }
+
+            // ---------- 绘制太阳 ----------
+            function drawSun() {
+                const cx = W * 0.85;
+                const cy = H * 0.12;
+                const r = Math.min(W, H) * 0.07;
+
+                // 光晕
+                const glow = ctx.createRadialGradient(cx, cy, r * 0.2, cx, cy, r * 4);
+                glow.addColorStop(0, 'rgba(255,230,100,0.25)');
+                glow.addColorStop(0.3, 'rgba(255,200,50,0.08)');
+                glow.addColorStop(1, 'rgba(255,200,50,0)');
+                ctx.fillStyle = glow;
+                ctx.fillRect(cx - r * 4, cy - r * 4, r * 8, r * 8);
+
+                // 光芒线
+                ctx.save();
+                ctx.translate(cx, cy);
+                const rays = 12;
+                for (let i = 0; i < rays; i++) {
+                    const angle = (i / rays) * Math.PI * 2 + time * 0.1;
+                    const len = r * 1.6 + Math.sin(time * 0.5 + i) * r * 0.2;
+                    ctx.beginPath();
+                    ctx.moveTo(Math.cos(angle) * r * 0.9, Math.sin(angle) * r * 0.9);
+                    ctx.lineTo(Math.cos(angle) * len, Math.sin(angle) * len);
+                    ctx.strokeStyle = 'rgba(255,220,80,0.5)';
+                    ctx.lineWidth = 2.5;
+                    ctx.stroke();
+                }
+                ctx.restore();
+
+                // 太阳本体
+                const grad = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.3, r * 0.1, cx, cy, r);
+                grad.addColorStop(0, '#fffbe6');
+                grad.addColorStop(0.5, '#ffd93d');
+                grad.addColorStop(1, '#ff9a3c');
+                ctx.beginPath();
+                ctx.arc(cx, cy, r, 0, Math.PI * 2);
+                ctx.fillStyle = grad;
+                ctx.fill();
+
+                // 高光
+                ctx.beginPath();
+                ctx.arc(cx - r * 0.2, cy - r * 0.25, r * 0.25, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255,255,255,0.6)';
+                ctx.fill();
+            }
+
+            // ---------- 绘制云朵 ----------
+            function drawClouds(weatherKey, timeVal) {
+                const isRainy = weatherKey === 'rainy';
+                const isCloudy = weatherKey === 'cloudy';
+
+                const cloudColor = isRainy ? 'rgba(80,90,100,0.7)' :
+                    isCloudy ? 'rgba(160,175,190,0.6)' :
+                    'rgba(255,255,255,0.5)';
+                const cloudColor2 = isRainy ? 'rgba(60,70,80,0.5)' :
+                    isCloudy ? 'rgba(140,155,170,0.5)' :
+                    'rgba(255,255,255,0.3)';
+
+                // 如果晴天，只画少量云
+                const cloudCount = isRainy ? 8 : isCloudy ? 7 : 3;
+
+                for (let i = 0; i < cloudCount; i++) {
+                    const seed = i * 137.508 + 42.3;
+                    const cx = ((seed * 1.7) % W);
+                    const cy = 20 + ((seed * 3.1 + 50) % (H * 0.35));
+                    const scale = 0.6 + ((seed * 0.7) % 0.8);
+                    const w = 80 * scale;
+                    const h = 28 * scale;
+                    const drift = Math.sin(timeVal * 0.02 + i * 1.5) * 30;
+
+                    ctx.save();
+                    ctx.translate(cx + drift, cy);
+
+                    // 云朵阴影
+                    ctx.shadowColor = 'rgba(0,0,0,0.05)';
+                    ctx.shadowBlur = 20;
+
+                    // 主体
+                    ctx.fillStyle = cloudColor;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, h * 1.3, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(-w * 0.35, -h * 0.2, h * 1.0, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(w * 0.35, -h * 0.15, h * 1.1, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(-w * 0.15, h * 0.1, h * 0.9, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(w * 0.15, h * 0.1, h * 0.8, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // 高光
+                    ctx.shadowBlur = 0;
+                    ctx.fillStyle = cloudColor2;
+                    ctx.beginPath();
+                    ctx.arc(-w * 0.2, -h * 0.3, h * 0.5, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(w * 0.2, -h * 0.25, h * 0.45, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.restore();
+                }
+            }
+
+            // ---------- 绘制雨滴 ----------
+            function drawRain() {
+                const groundY = H * 0.82;
+                for (const drop of raindrops) {
+                    // 更新位置
+                    drop.y += drop.speed * 0.8;
+                    drop.x += drop.speed * 0.15;
+
+                    // 循环
+                    if (drop.y > H) {
+                        drop.y = -drop.len;
+                        drop.x = Math.random() * W;
+                        drop.speed = 4 + Math.random() * 8;
+                        drop.len = 12 + Math.random() * 18;
+                    }
+                    if (drop.x > W) drop.x = -10;
+                    if (drop.x < -10) drop.x = W + 10;
+
+                    ctx.beginPath();
+                    ctx.moveTo(drop.x, drop.y);
+                    ctx.lineTo(drop.x - drop.speed * 0.2, drop.y + drop.len);
+                    ctx.strokeStyle = `rgba(180,210,255,${drop.opacity * 0.8})`;
+                    ctx.lineWidth = drop.width;
+                    ctx.lineCap = 'round';
+                    ctx.stroke();
+                }
+
+                // 地面雨滴涟漪
+                for (let i = 0; i < 20; i++) {
+                    const x = (i * 97 + time * 30) % W;
+                    const y = H * 0.82 + 5 + (i * 53 + time * 10) % (H * 0.16);
+                    const r = 3 + Math.sin(time * 2 + i * 1.7) * 2 + 3;
+                    ctx.beginPath();
+                    ctx.arc(x, y, r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(180,210,255,${0.08 + Math.sin(time + i) * 0.03 + 0.05})`;
+                    ctx.fill();
+                }
+            }
+
+            // ---------- 绘制自行车 ----------
+            function drawBicycle(cx, cy, scale, angle, timeVal) {
+                // cx, cy 是后轮中心位置
+                const r = 28 * scale;
+                const wheelBase = 72 * scale;
+                const frontX = cx + wheelBase;
+                const groundY = cy + r;
+
+                // ---- 车轮 ----
+                function drawWheel(x, y, radius, rotAngle) {
+                    // 轮胎
+                    ctx.beginPath();
+                    ctx.arc(x, y, radius, 0, Math.PI * 2);
+                    ctx.strokeStyle = '#2a2a2a';
+                    ctx.lineWidth = 4 * scale;
+                    ctx.stroke();
+                    // 外圈
+                    ctx.beginPath();
+                    ctx.arc(x, y, radius - 3 * scale, 0, Math.PI * 2);
+                    ctx.strokeStyle = '#3a3a3a';
+                    ctx.lineWidth = 1.5 * scale;
+                    ctx.stroke();
+
+                    // 内圈
+                    ctx.beginPath();
+                    ctx.arc(x, y, radius * 0.22, 0, Math.PI * 2);
+                    ctx.fillStyle = '#555';
+                    ctx.fill();
+                    ctx.strokeStyle = '#444';
+                    ctx.lineWidth = 1.5 * scale;
+                    ctx.stroke();
+
+                    // 辐条
+                    const spokes = 12;
+                    for (let i = 0; i < spokes; i++) {
+                        const a = (i / spokes) * Math.PI * 2 + rotAngle;
+                        ctx.beginPath();
+                        ctx.moveTo(x + Math.cos(a) * radius * 0.22, y + Math.sin(a) * radius * 0.22);
+                        ctx.lineTo(x + Math.cos(a) * radius * 0.92, y + Math.sin(a) * radius * 0.92);
+                        ctx.strokeStyle = 'rgba(180,180,180,0.5)';
+                        ctx.lineWidth = 1 * scale;
+                        ctx.stroke();
+                    }
+                    // 气门芯
+                    const valveAngle = rotAngle;
+                    ctx.beginPath();
+                    ctx.arc(x + Math.cos(valveAngle) * radius * 0.92, y + Math.sin(valveAngle) * radius * 0.92, 2 * scale,
+                        0, Math.PI * 2);
+                    ctx.fillStyle = '#888';
+                    ctx.fill();
+                }
+
+                // ---- 车架 ----
+                function drawFrame() {
+                    ctx.strokeStyle = '#3a6a9a';
+                    ctx.lineWidth = 3.5 * scale;
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+
+                    // 主三角: 后轮中心 -> 座椅 -> 前轮中心
+                    const seatX = cx + wheelBase * 0.45;
+                    const seatY = cy - r * 1.25;
+                    const pedalX = cx + wheelBase * 0.42;
+                    const pedalY = cy + r * 0.1;
+
+                    ctx.beginPath();
+                    ctx.moveTo(cx, cy);
+                    ctx.lineTo(seatX, seatY);
+                    ctx.lineTo(frontX, cy);
+                    ctx.closePath();
+                    ctx.stroke();
+
+                    // 后下叉
+                    ctx.beginPath();
+                    ctx.moveTo(cx, cy);
+                    ctx.lineTo(pedalX, pedalY);
+                    ctx.stroke();
+
+                    // 前下叉
+                    ctx.beginPath();
+                    ctx.moveTo(frontX, cy);
+                    ctx.lineTo(pedalX, pedalY);
+                    ctx.stroke();
+
+                    // 上管 (座椅到车把)
+                    const handleX = frontX - r * 0.3;
+                    const handleY = seatY - r * 0.35;
+                    ctx.beginPath();
+                    ctx.moveTo(seatX, seatY);
+                    ctx.lineTo(handleX, handleY);
+                    ctx.stroke();
+
+                    // 下管 (踏板到车把)
+                    ctx.beginPath();
+                    ctx.moveTo(pedalX, pedalY);
+                    ctx.lineTo(handleX, handleY);
+                    ctx.stroke();
+
+                    // 座椅
+                    ctx.fillStyle = '#2a2a2a';
+                    ctx.beginPath();
+                    ctx.ellipse(seatX, seatY - 2 * scale, 10 * scale, 4 * scale, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    // 座管
+                    ctx.beginPath();
+                    ctx.moveTo(seatX, seatY);
+                    ctx.lineTo(seatX, seatY + r * 0.5);
+                    ctx.strokeStyle = '#555';
+                    ctx.lineWidth = 2.5 * scale;
+                    ctx.stroke();
+
+                    // 车把
+                    ctx.strokeStyle = '#555';
+                    ctx.lineWidth = 3 * scale;
+                    ctx.beginPath();
+                    ctx.moveTo(handleX, handleY);
+                    ctx.quadraticCurveTo(handleX + r * 0.4, handleY - r * 0.6, handleX + r * 0.8, handleY - r * 0.3);
+                    ctx.stroke();
+                    // 车把横
+                    ctx.beginPath();
+                    ctx.moveTo(handleX + r * 0.7, handleY - r * 0.45);
+                    ctx.lineTo(handleX + r * 0.9, handleY - r * 0.15);
+                    ctx.stroke();
+                    // 车把立
+                    ctx.beginPath();
+                    ctx.moveTo(handleX, handleY);
+                    ctx.lineTo(handleX, handleY + r * 0.3);
+                    ctx.stroke();
+
+                    // 前叉
+                    ctx.strokeStyle = '#4a6a8a';
+                    ctx.lineWidth = 3 * scale;
+                    ctx.beginPath();
+                    ctx.moveTo(frontX, cy);
+                    ctx.lineTo(handleX, handleY + r * 0.3);
+                    ctx.stroke();
+                }
+
+                // ---- 踏板 ----
+                function drawPedals(rotAngle) {
+                    const pedalRadius = r * 0.45;
+                    const pAngle = rotAngle;
+
+                    // 左侧踏板 (远端)
+                    const lx = pedalX + Math.cos(pAngle) * pedalRadius;
+                    const ly = pedalY + Math.sin(pAngle) * pedalRadius;
+                    // 右侧踏板 (近端)
+                    const rx = pedalX + Math.cos(pAngle + Math.PI) * pedalRadius;
+                    const ry = pedalY + Math.sin(pAngle + Math.PI) * pedalRadius;
+
+                    // 中轴
+                    ctx.beginPath();
+                    ctx.arc(pedalX, pedalY, 3.5 * scale, 0, Math.PI * 2);
+                    ctx.fillStyle = '#444';
+                    ctx.fill();
+                    ctx.strokeStyle = '#333';
+                    ctx.lineWidth = 1.5 * scale;
+                    ctx.stroke();
+
+                    // 曲柄
+                    ctx.strokeStyle = '#555';
+                    ctx.lineWidth = 3 * scale;
+                    ctx.lineCap = 'round';
+
+                    // 左曲柄 (远端)
+                    ctx.beginPath();
+                    ctx.moveTo(pedalX, pedalY);
+                    ctx.lineTo(lx, ly);
+                    ctx.stroke();
+                    // 右曲柄 (近端)
+                    ctx.beginPath();
+                    ctx.moveTo(pedalX, pedalY);
+                    ctx.lineTo(rx, ry);
+                    ctx.stroke();
+
+                    // 踏板
+                    function drawPedal(x, y, flip) {
+                        const pw = 10 * scale;
+                        const ph = 5 * scale;
+                        ctx.save();
+                        ctx.translate(x, y);
+                        ctx.rotate(flip ? 0 : Math.PI);
+                        ctx.fillStyle = '#333';
+                        ctx.shadowColor = 'rgba(0,0,0,0.2)';
+                        ctx.shadowBlur = 6;
+                        ctx.beginPath();
+                        ctx.roundRect(-pw / 2, -ph / 2, pw, ph, 2 * scale);
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                        // 防滑纹
+                        ctx.strokeStyle = '#555';
+                        ctx.lineWidth = 1 * scale;
+                        for (let i = -pw / 2 + 3 * scale; i < pw / 2 - 2 * scale; i += 4 * scale) {
+                            ctx.beginPath();
+                            ctx.moveTo(i, -ph / 2 + 1 * scale);
+                            ctx.lineTo(i, ph / 2 - 1 * scale);
+                            ctx.stroke();
+                        }
+                        ctx.restore();
+                    }
+
+                    // 近端踏板 (右侧) 在鹈鹕这一侧
+                    drawPedal(rx, ry, true);
+                    // 远端踏板 (左侧)
+                    drawPedal(lx, ly, false);
+                }
+
+                // ---- 绘制自行车 ----
+                drawWheel(cx, cy, r, angle);
+                drawWheel(frontX, cy, r, angle);
+                drawFrame();
+                drawPedals(angle);
+            }
+
+            // ---------- 绘制鹈鹕 ----------
+            function drawPelican(cx, cy, scale, timeVal, pedalAngle) {
+                // cx, cy 是自行车后轮中心位置，鹈鹕坐在座椅上
+                const r = 28 * scale;
+                const wheelBase = 72 * scale;
+
+                const seatX = cx + wheelBase * 0.45;
+                const seatY = cy - r * 1.25;
+
+                // 鹈鹕的位置基于座椅
+                const bodyX = seatX;
+                const bodyY = seatY - 10 * scale;
+
+                // 身体倾斜角度（随踏板运动轻微起伏）
+                const bob = Math.sin(pedalAngle) * 2 * scale;
+                const tilt = Math.sin(pedalAngle) * 0.02;
+
+                ctx.save();
+                ctx.translate(bodyX, bodyY + bob);
+                ctx.rotate(tilt);
+
+                const s = scale;
+
+                // ---- 身体 ----
+                // 白色身体 (椭圆)
+                ctx.shadowColor = 'rgba(0,0,0,0.08)';
+                ctx.shadowBlur = 12;
+
+                // 身体主轮廓
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 32 * s, 26 * s, 0, 0, Math.PI * 2);
+                ctx.fillStyle = '#f8f5f0';
+                ctx.fill();
+                ctx.strokeStyle = '#ddd8d0';
+                ctx.lineWidth = 1.5 * s;
+                ctx.stroke();
+
+                // 身体下部阴影
+                ctx.beginPath();
+                ctx.ellipse(2 * s, 8 * s, 24 * s, 14 * s, 0, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(200,195,185,0.3)';
+                ctx.fill();
+
+                // ---- 翅膀 ----
+                ctx.shadowBlur = 6;
+                // 翅膀 (收拢状态)
+                ctx.beginPath();
+                ctx.ellipse(-14 * s, -6 * s, 18 * s, 14 * s, -0.2, 0, Math.PI * 2);
+                ctx.fillStyle = '#f0ece6';
+                ctx.fill();
+                ctx.strokeStyle = '#d5d0c8';
+                ctx.lineWidth = 1.2 * s;
+                ctx.stroke();
+
+                // 翅膀羽毛纹理
+                for (let i = 0; i < 5; i++) {
+                    const px = -20 * s + i * 6 * s;
+                    const py = -12 * s + i * 2 * s;
+                    ctx.beginPath();
+                    ctx.ellipse(px, py, 4 * s, 8 * s, 0.1, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(220,215,205,0.25)';
+                    ctx.fill();
+                }
+
+                // ---- 头部 ----
+                ctx.shadowBlur = 8;
+                const headX = 28 * s;
+                const headY = -10 * s;
+                ctx.beginPath();
+                ctx.arc(headX, headY, 14 * s, 0, Math.PI * 2);
+                ctx.fillStyle = '#f8f5f0';
+                ctx.fill();
+                ctx.strokeStyle = '#ddd8d0';
+                ctx.lineWidth = 1.2 * s;
+                ctx.stroke();
+
+                // 头部与身体连接
+                ctx.beginPath();
+                ctx.ellipse(18 * s, -4 * s, 14 * s, 12 * s, 0.2, 0, Math.PI * 2);
+                ctx.fillStyle = '#f8f5f0';
+                ctx.fill();
+
+                // ---- 眼睛 ----
+                ctx.shadowBlur = 0;
+                const eyeX = headX + 8 * s;
+                const eyeY = headY - 4 * s;
+                // 眼白
+                ctx.beginPath();
+                ctx.arc(eyeX, eyeY, 5 * s, 0, Math.PI * 2);
+                ctx.fillStyle = '#fff';
+                ctx.fill();
+                // 瞳孔
+                ctx.beginPath();
+                ctx.arc(eyeX + 2 * s, eyeY, 3 * s, 0, Math.PI * 2);
+                ctx.fillStyle = '#1a1a2e';
+                ctx.fill();
+                // 高光
+                ctx.beginPath();
+                ctx.arc(eyeX + 3.5 * s, eyeY - 1.5 * s, 1.2 * s, 0, Math.PI * 2);
+                ctx.fillStyle = '#fff';
+                ctx.fill();
+
+                // ---- 鹈鹕的大嘴 ----
+                ctx.shadowBlur = 4;
+
+                // 上喙 (长而直)
+                const beakLen = 38 * s;
+                const beakX = headX + 10 * s;
+                const beakY = headY + 2 * s;
+
+                ctx.beginPath();
+                ctx.moveTo(beakX, beakY);
+                ctx.quadraticCurveTo(beakX + beakLen * 0.6, beakY - 3 * s, beakX + beakLen, beakY + 1 * s);
+                ctx.quadraticCurveTo(beakX + beakLen * 0.6, beakY + 3 * s, beakX, beakY + 4 * s);
+                ctx.closePath();
+                ctx.fillStyle = '#f5c842';
+                ctx.fill();
+                ctx.strokeStyle = '#d4a832';
+                ctx.lineWidth = 1.2 * s;
+                ctx.stroke();
+
+                // 上喙中线
+                ctx.beginPath();
+                ctx.moveTo(beakX + 4 * s, beakY + 2 * s);
+                ctx.lineTo(beakX + beakLen - 4 * s, beakY + 1.5 * s);
+                ctx.strokeStyle = 'rgba(180,130,30,0.3)';
+                ctx.lineWidth = 1 * s;
+                ctx.stroke();
+
+                // 下喙 (喉囊 - 鹈鹕最显著特征)
+                const pouchLen = 34 * s;
+                const pouchX = beakX + 2 * s;
+                const pouchY = beakY + 4 * s;
+
+                ctx.beginPath();
+                ctx.moveTo(pouchX, pouchY);
+                ctx.quadraticCurveTo(pouchX + pouchLen * 0.3, pouchY + 18 * s, pouchX + pouchLen * 0.7, pouchY + 14 * s);
+                ctx.quadraticCurveTo(pouchX + pouchLen * 0.9, pouchY + 6 * s, pouchX + pouchLen, pouchY + 2 * s);
+                ctx.fillStyle = '#f5c842';
+                ctx.fill();
+                ctx.strokeStyle = '#d4a832';
+                ctx.lineWidth = 1.2 * s;
+                ctx.stroke();
+
+                // 喉囊的纹理 (一些线条)
+                ctx.strokeStyle = 'rgba(200,160,40,0.2)';
+                ctx.lineWidth = 0.8 * s;
+                for (let i = 0; i < 5; i++) {
+                    const lx = pouchX + 4 * s + i * 6 * s;
+                    const ly = pouchY + 2 * s + i * 2 * s;
+                    ctx.beginPath();
+                    ctx.moveTo(lx, ly);
+                    ctx.quadraticCurveTo(lx + 4 * s, ly + 8 * s - i * 1.5 * s, lx + 8 * s, ly + 4 * s);
+                    ctx.stroke();
+                }
+
+                // ---- 腿 ----
+                ctx.shadowBlur = 4;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+
+                // 左腿 (远端) 和右腿 (近端)
+                const legTopX = 2 * s;
+                const legTopY = 18 * s;
+
+                // 计算踏板位置
+                const pedalRadius = r * 0.45;
+                const pedalX = cx + wheelBase * 0.42 - bodyX;
+                const pedalY = cy + r * 0.1 - bodyY - bob;
+
+                const pAngle = pedalAngle;
+                // 右侧踏板 (近端) - 鹈鹕这一侧
+                const rpx = pedalX + Math.cos(pAngle + Math.PI) * pedalRadius;
+                const rpy = pedalY + Math.sin(pAngle + Math.PI) * pedalRadius;
+                // 左侧踏板 (远端)
+                const lpx = pedalX + Math.cos(pAngle) * pedalRadius;
+                const lpy = pedalY + Math.sin(pAngle) * pedalRadius;
+
+                // 右腿 (近端) - 连接到右侧踏板
+                ctx.strokeStyle = '#e8d5b8';
+                ctx.lineWidth = 5 * s;
+                // 大腿
+                ctx.beginPath();
+                ctx.moveTo(legTopX, legTopY);
+                const kneeX = legTopX + 6 * s;
+                const kneeY = legTopY + 10 * s;
+                ctx.quadraticCurveTo(kneeX, kneeY, rpx * 0.7, rpy * 0.85);
+                ctx.stroke();
+                // 小腿
+                ctx.beginPath();
+                ctx.moveTo(rpx * 0.7, rpy * 0.85);
+                ctx.lineTo(rpx, rpy);
+                ctx.stroke();
+
+                // 左腿 (远端) - 连接到左侧踏板
+                ctx.strokeStyle = '#dcc8b0';
+                ctx.lineWidth = 4.5 * s;
+                ctx.beginPath();
+                ctx.moveTo(legTopX - 4 * s, legTopY + 2 * s);
+                const kneeX2 = legTopX - 2 * s;
+                const kneeY2 = legTopY + 12 * s;
+                ctx.quadraticCurveTo(kneeX2, kneeY2, lpx * 0.7, lpy * 0.85);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(lpx * 0.7, lpy * 0.85);
+                ctx.lineTo(lpx, lpy);
+                ctx.stroke();
+
+                // 脚 (简化为小椭圆)
+                function drawFoot(x, y, angle, isRight) {
+                    ctx.save();
+                    ctx.translate(x, y);
+                    ctx.rotate(angle);
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, 6 * s, 3.5 * s, 0, 0, Math.PI * 2);
+                    ctx.fillStyle = isRight ? '#e8d5b8' : '#dcc8b0';
+                    ctx.fill();
+                    ctx.strokeStyle = isRight ? '#d4c0a8' : '#c8b49c';
+                    ctx.lineWidth = 0.8 * s;
+                    ctx.stroke();
+                    // 脚趾
+                    for (let i = -1; i <= 1; i++) {
+                        ctx.beginPath();
+                        ctx.ellipse(i * 4 * s, 3 * s, 2.5 * s, 2 * s, 0.2, 0, Math.PI * 2);
+                        ctx.fillStyle = isRight ? '#e8d5b8' : '#dcc8b0';
+                        ctx.fill();
+                    }
+                    ctx.restore();
+                }
+
+                // 脚的位置跟随踏板
+                const footAngleR = Math.atan2(rpy - (legTopY + 10 * s), rpx - (legTopX + 6 * s));
+                const footAngleL = Math.atan2(lpy - (legTopY + 12 * s), lpx - (legTopX - 2 * s));
+                drawFoot(rpx, rpy, footAngleR + 0.5, true);
+                drawFoot(lpx, lpy, footAngleL + 0.5, false);
+
+                // ---- 脖子 (连接头部和身体) ----
+                ctx.shadowBlur = 4;
+                ctx.strokeStyle = '#f0ece6';
+                ctx.lineWidth = 10 * s;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(headX - 6 * s, headY + 6 * s);
+                ctx.quadraticCurveTo(headX - 2 * s, headY + 14 * s, 14 * s, 8 * s);
+                ctx.stroke();
+                ctx.strokeStyle = '#e8e0d8';
+                ctx.lineWidth = 6 * s;
+                ctx.beginPath();
+                ctx.moveTo(headX - 4 * s, headY + 6 * s);
+                ctx.quadraticCurveTo(headX, headY + 12 * s, 16 * s, 8 * s);
+                ctx.stroke();
+
+                ctx.shadowBlur = 0;
+                ctx.restore();
+            }
+
+            // ---------- 绘制地面阴影 ----------
+            function drawGroundShadow(cx, cy, scale) {
+                const r = 28 * scale;
+                const wheelBase = 72 * scale;
+                const groundY = cy + r;
+
+                // 自行车阴影
+                ctx.fillStyle = 'rgba(0,0,0,0.08)';
+                ctx.beginPath();
+                ctx.ellipse(cx + wheelBase * 0.5, groundY + 2 * scale, wheelBase * 0.7, 6 * scale, 0, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // ---------- 绘制主场景 ----------
+            function drawScene() {
+                const weatherKey = weatherList[weatherIndex].key;
+                const groundY = H * 0.82;
+
+                // 1. 背景
+                drawBackground(weatherKey);
+
+                // 2. 云朵 (在背景层)
+                drawClouds(weatherKey, time);
+
+                // 3. 太阳 (晴天)
+                if (weatherKey === 'sunny') {
+                    drawSun();
+                }
+
+                // 4. 雨滴 (雨天)
+                if (weatherKey === 'rainy') {
+                    drawRain();
+                }
+
+                // 5. 地面阴影
+                const cx = W * 0.48;
+                const cy = groundY - 28 * Math.min(W, H) * 0.022;
+                const scale = Math.min(W, H) * 0.022;
+                drawGroundShadow(cx, cy, scale);
+
+                // 6. 自行车
+                const bikeAngle = time * 2.2;
+                drawBicycle(cx, cy, scale, bikeAngle, time);
+
+                // 7. 鹈鹕
+                const pedalAngle = time * 2.2;
+                drawPelican(cx, cy, scale, time, pedalAngle);
+
+                // 8. 前景装饰 - 几朵小花或小草 (在鹈鹕前面)
+                for (let i = 0; i < 8; i++) {
+                    const fx = (i * 67 + 23) % W;
+                    const fy = groundY + 4 + (i * 31 + 17) % (H - groundY - 8);
+                    const fh = 6 + (i * 13) % 10;
+                    const fc = ['#f5a0b0', '#f5d0a0', '#a0d0f5', '#d0f0a0', '#f5c0d0'][i % 5];
+                    ctx.fillStyle = fc;
+                    ctx.globalAlpha = 0.5;
+                    ctx.beginPath();
+                    ctx.ellipse(fx, fy - fh, 2 + (i % 3), 4 + (i % 4), 0.2, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.globalAlpha = 1;
+                }
+            }
+
+            // ---------- 动画循环 ----------
+            function animate(timestamp) {
+                const delta = 0.016; // 约60fps
+                time += delta;
+
+                drawScene();
+                requestAnimationFrame(animate);
+            }
+
+            // ---------- 天气切换 ----------
+            function switchWeather() {
+                weatherIndex = (weatherIndex + 1) % weatherList.length;
+                const w = weatherList[weatherIndex];
+                weatherIcon.textContent = w.icon;
+                weatherLabel.textContent = w.name;
+                weatherTimerCount = 5;
+
+                // 如果是雨天，重置雨滴
+                if (w.key === 'rainy') {
+                    initRaindrops();
+                }
+
+                // 更新指示器
+                updateWeatherTimer();
+            }
+
+            function updateWeatherTimer() {
+                weatherTimer.textContent = `${Math.ceil(weatherTimerCount)}s`;
+            }
+
+            // ---------- 计时器更新 ----------
+            let lastTimerUpdate = 0;
+
+            function updateTimer(timestamp) {
+                if (!lastTimerUpdate) lastTimerUpdate = timestamp;
+                const elapsed = (timestamp - lastTimerUpdate) / 1000;
+                if (elapsed >= 0.5) {
+                    weatherTimerCount -= elapsed;
+                    lastTimerUpdate = timestamp;
+                    if (weatherTimerCount <= 0) {
+                        weatherTimerCount = 0;
+                    }
+                    updateWeatherTimer();
+                }
+                requestAnimationFrame(updateTimer);
+            }
+
+            // 重写天气切换逻辑，使用setInterval保证精确5秒
+            function startWeatherCycle() {
+                setInterval(() => {
+                    switchWeather();
+                }, 5000);
+            }
+
+            // 天气计时器显示更新
+            function startTimerDisplay() {
+                let count = 5;
+                setInterval(() => {
+                    count -= 0.5;
+                    if (count <= 0) {
+                        count = 5;
+                    }
+                    weatherTimer.textContent = `${Math.ceil(count)}s`;
+                }, 500);
+            }
+
+            // ---------- 初始化 ----------
+            function init() {
+                resize();
+                // 初始天气
+                const w = weatherList[0];
+                weatherIcon.textContent = w.icon;
+                weatherLabel.textContent = w.name;
+                weatherTimer.textContent = '5s';
+
+                // 启动动画
+                animate(0);
+
+                // 启动天气循环
+                startWeatherCycle();
+
+                // 启动计时器显示
+                startTimerDisplay();
+
+                // 监听窗口变化
+                window.addEventListener('resize', () => {
+                    resize();
+                });
+
+                // 手机横竖屏切换
+                window.addEventListener('orientationchange', () => {
+                    setTimeout(resize, 300);
+                });
+            }
+
+            // 等待DOM加载
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+
+            // roundRect polyfill for older browsers
+            if (!CanvasRenderingContext2D.prototype.roundRect) {
+                CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, radii) {
+                    const r = typeof radii === 'number' ? radii : (radii || 0);
+                    this.moveTo(x + r, y);
+                    this.arcTo(x + w, y, x + w, y + h, r);
+                    this.arcTo(x + w, y + h, x, y + h, r);
+                    this.arcTo(x, y + h, x, y, r);
+                    this.arcTo(x, y, x + w, y, r);
+                    return this;
+                };
+            }
+
+        })();
+    </script>
+</body>
+</html>

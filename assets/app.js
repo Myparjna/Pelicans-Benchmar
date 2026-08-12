@@ -159,9 +159,9 @@
     viewerBadge.textContent = s.channel;
     viewerBadge.className = 'channel-badge ' + channelClass(s.channel);
     viewerCount.textContent = `${currentIndex + 1} / ${filteredSites.length}`;
-    const encoded = encodeURIComponent(s.file);
-    btnOpenNew.href = encoded;
-    viewerIframe.src = encoded;
+    const target = s.src; // sites/<slug>.html 已是 ASCII 干净路径，无需编码
+    btnOpenNew.href = target;
+    viewerIframe.src = target;
   }
 
   function prev() {
