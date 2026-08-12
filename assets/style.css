@@ -347,6 +347,118 @@ body {
   color: var(--primary-dark);
 }
 
+/* 排序切换按钮 */
+.sort-toggle {
+  margin-left: auto;
+}
+.sort-toggle.active {
+  background: linear-gradient(135deg, var(--primary), #0ea5e9);
+  border-color: transparent;
+  color: #fff;
+}
+.sort-toggle.active .ti {
+  color: #fff;
+}
+
+/* 榜单排名徽标 */
+.rank-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  background: var(--primary);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* 评分控件 */
+.rating {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+}
+
+.rating-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  min-height: 22px;
+}
+
+.rating-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.rating-score {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.rating-score.rated {
+  color: var(--primary-dark);
+}
+
+.rating-clear {
+  margin-left: auto;
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.rating-clear:hover {
+  background: #f1f5f9;
+  color: #ef4444;
+}
+
+.rating-scale {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.rating-btn {
+  flex: 1 1 auto;
+  min-width: 22px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 5px 0;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.rating-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary-dark);
+  background: var(--primary-light);
+}
+
+.rating-btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
 /* Empty state */
 .empty-state {
   text-align: center;
