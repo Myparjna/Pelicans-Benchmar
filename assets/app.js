@@ -39,21 +39,31 @@
 
   /* ---------- 评分（localStorage 持久化） ---------- */
   const RATINGS_KEY = 'peilika_ratings_v1';
+  // 预置默认评分：新访客直接看到这些分；用户本地手动改过/清除过的以本地为准
+  const DEFAULT_RATINGS = {
+    'qwen-3-8-max': 10,            // 通义千问 Qwen 3.8 Max
+    'gpt-5-6-codex': 9,            // GPT 5.6 (Codex)
+    'deepseek-v4-pro-api-0813': 9, // DeepSeek API V4 Pro
+    'kimi-k3-wb': 9,               // Kimi K3
+    'opus-5-relay': 9              // Claude Opus 5 (中转API)
+  };
   let ratings = loadRatings();
 
   function loadRatings() {
     try {
       const raw = localStorage.getItem(RATINGS_KEY);
-      const obj = raw ? JSON.parse(raw) : {};
-      return (obj && typeof obj === 'object') ? obj : {};
+      const stored = raw ? JSON.parse(raw) : {};
+      const base = (stored && typeof stored === 'object') ? stored : {};
+      // 默认分作为基线，本地手动评分覆盖同名项；0 表示用户主动清除
+      return Object.assign({}, DEFAULT_RATINGS, base);
     } catch (e) {
-      return {};
+      return Object.assign({}, DEFAULT_RATINGS);
     }
   }
 
   function saveRating(slug, score) {
     if (score == null || score === 0) {
-      delete ratings[slug];
+      ratings[slug] = 0; // 主动清除，记为 0 持久保存，避免被默认分覆盖回去
     } else {
       ratings[slug] = score;
     }
