@@ -295,6 +295,7 @@ body {
 .channel-badge.ch-green    { color: #166534; background: #dcfce7; }
 .channel-badge.ch-rose     { color: #9f1239; background: #ffe4e6; }
 .channel-badge.ch-cyan     { color: #0e7490; background: #cffafe; }
+.channel-badge.ch-amber    { color: #92400e; background: #fef3c7; }
 
 .category-badge {
   color: var(--muted);

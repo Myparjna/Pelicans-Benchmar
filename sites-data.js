@@ -54,6 +54,15 @@ window.SITES = [
     "src": "sites/gpt-5-6-codex.html"
   },
   {
+    "file": "gpt5.6luna-codex.html",
+    "slug": "gpt-5-6-luna-codex",
+    "category": "OpenAI",
+    "model": "GPT-5.6 Luna Codex",
+    "channel": "Luna Codex",
+    "thumb": "thumbs/gpt-5-6-luna-codex.png",
+    "src": "sites/gpt-5-6-luna-codex.html"
+  },
+  {
     "file": "gemini3.6flash官网.html",
     "slug": "gemini-3-6-flash",
     "category": "Google · Gemini",
