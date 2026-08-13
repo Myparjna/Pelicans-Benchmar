@@ -205,5 +205,14 @@ window.SITES = [
     "channel": "WorkBuddy",
     "thumb": "thumbs/minimax-m3-wb.png",
     "src": "sites/minimax-m3-wb.html"
+  },
+  {
+    "file": "中转API的opus5.html",
+    "slug": "opus-5-relay",
+    "category": "Anthropic · Claude",
+    "model": "Claude Opus 5",
+    "channel": "中转API",
+    "thumb": "thumbs/opus-5-relay.png",
+    "src": "sites/opus-5-relay.html"
   }
 ];

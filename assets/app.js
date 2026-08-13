@@ -29,7 +29,8 @@
     'Trae': 'ch-purple',
     'WorkBuddy': 'ch-teal',
     'Sol Codex': 'ch-green',
-    '官网风格 · 专家模式': 'ch-rose'
+    '官网风格 · 专家模式': 'ch-rose',
+    '中转API': 'ch-cyan'
   };
 
   function channelClass(ch) {
