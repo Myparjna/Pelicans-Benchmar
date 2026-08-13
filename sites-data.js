@@ -198,11 +198,11 @@ window.SITES = [
     "src": "sites/glm-5-2-wb.html"
   },
   {
-    "file": "minimaxm3-workbuddy.html",
+    "file": "minimax-M3官网.html",
     "slug": "minimax-m3-wb",
     "category": "MiniMax",
     "model": "MiniMax M3",
-    "channel": "WorkBuddy",
+    "channel": "官网风格",
     "thumb": "thumbs/minimax-m3-wb.png",
     "src": "sites/minimax-m3-wb.html"
   },
