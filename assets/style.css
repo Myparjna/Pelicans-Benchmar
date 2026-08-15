@@ -413,6 +413,22 @@ body {
   border-top: 1px dashed var(--border);
 }
 
+/* 静态分数展示（无交互按钮） */
+.rating-static {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.viewer-rating .rating-static {
+  margin: 0;
+  padding: 0;
+  border-top: 0;
+}
+
 .rating-head {
   display: flex;
   align-items: center;

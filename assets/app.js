@@ -122,39 +122,21 @@
 
   function ratingHTML(s) {
     const cur = getRating(s.slug);
-    const btns = [];
-    for (let n = 1; n <= 10; n++) {
-      btns.push(`<button class="rating-btn${n === cur ? ' active' : ''}" type="button" data-score="${n}" aria-label="评 ${n} 分">${n}</button>`);
-    }
-    const clearBtn = cur ? `<button class="rating-clear" type="button" title="清除评分" aria-label="清除评分"><i class="ti ti-x"></i></button>` : '';
     const scoreText = cur ? `${cur} 分` : '未评分';
     return `
-      <div class="rating" data-slug="${escapeHtml(s.slug)}">
-        <div class="rating-head">
-          <span class="rating-label">我的评分</span>
-          <span class="rating-score${cur ? ' rated' : ''}">${scoreText}</span>
-          ${clearBtn}
-        </div>
-        <div class="rating-scale">${btns.join('')}</div>
+      <div class="rating-static">
+        <span class="rating-label">评分</span>
+        <span class="rating-score${cur ? ' rated' : ''}">${scoreText}</span>
       </div>`;
   }
 
   function viewerRatingHTML(s) {
     const cur = getRating(s.slug);
-    const btns = [];
-    for (let n = 1; n <= 10; n++) {
-      btns.push(`<button class="rating-btn${n === cur ? ' active' : ''}" type="button" data-score="${n}" aria-label="评 ${n} 分">${n}</button>`);
-    }
-    const clearBtn = cur ? `<button class="rating-clear" type="button" title="清除评分" aria-label="清除评分"><i class="ti ti-x"></i></button>` : '';
     const scoreText = cur ? `${cur} 分` : '未评分';
     return `
-      <div class="rating viewer-rating" data-slug="${escapeHtml(s.slug)}">
-        <div class="rating-head">
-          <span class="rating-label">我的评分</span>
-          <span class="rating-score${cur ? ' rated' : ''}">${scoreText}</span>
-          ${clearBtn}
-        </div>
-        <div class="rating-scale">${btns.join('')}</div>
+      <div class="rating-static">
+        <span class="rating-label">评分</span>
+        <span class="rating-score${cur ? ' rated' : ''}">${scoreText}</span>
       </div>`;
   }
 
@@ -225,7 +207,6 @@
           </div>
           <h3 class="card-title">${escapeHtml(s.model)}</h3>
           <p class="card-file">${escapeHtml(s.file)}</p>
-          <button class="open-btn" type="button"><i class="ti ti-eye"></i> 打开查看</button>
           ${ratingHTML(s)}
         </div>
       </article>
