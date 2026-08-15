@@ -72,7 +72,9 @@
     'hunyuan-hy3-wb': 7,
     'glm-5-3-wb': 10,
     'glm-5-2-wb': 6,
-    'minimax-m3-wb': 6
+    'minimax-m3-wb': 6,
+    'deepseek-v4-pro-0813-dsh-minimal': 9,
+    'deepseek-v4-flash-0731-dsh-minimal': 7
   };
   let ratings = loadRatings();
 
