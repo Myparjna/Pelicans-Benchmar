@@ -428,16 +428,18 @@
 
   /* ---------- 顶部提示词：点击复制 ---------- */
   const promptBox = document.getElementById('promptBox');
-  const promptCopyText = document.getElementById('promptCopyText');
+  const promptCopyIcon = document.getElementById('promptCopyIcon');
   const PROMPT_TEXT = '生成一个鹈鹕白天骑自行车的网页动画，单个html文件给我，要求能自适应网页宽度，兼容手机竖屏与电脑横屏显示。每过5秒进行晴天-阴天-雨天-晴天的天气自动切换。不使用任何skills。';
 
   function copyPrompt() {
     function done() {
       promptBox.classList.add('copied');
-      promptCopyText.textContent = '已复制';
+      promptCopyIcon.classList.remove('ti-copy');
+      promptCopyIcon.classList.add('ti-check');
       setTimeout(() => {
         promptBox.classList.remove('copied');
-        promptCopyText.textContent = '点击复制';
+        promptCopyIcon.classList.remove('ti-check');
+        promptCopyIcon.classList.add('ti-copy');
       }, 1600);
     }
     function legacyCopy() {
@@ -452,7 +454,6 @@
       try { ok = document.execCommand('copy'); } catch (e) { /* 忽略 */ }
       document.body.removeChild(ta);
       if (ok) done();
-      else promptCopyText.textContent = '复制失败';
     }
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(PROMPT_TEXT).then(done, legacyCopy);

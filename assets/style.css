@@ -349,13 +349,13 @@ body {
   color: var(--primary-dark);
 }
 
-/* Header 内提示词条（两行，点击复制） */
+/* Header 内提示词条（自适应换行，点击复制） */
 .prompt-box {
   position: relative;
   flex: 1 1 260px;
   min-width: 0;
   margin: 0;
-  padding: 10px 66px 10px 14px;
+  padding: 10px 36px 10px 14px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
@@ -373,25 +373,20 @@ body {
 }
 
 .prompt-line {
-  margin: 0 0 3px;
+  margin: 0;
   font-size: 12px;
   line-height: 1.6;
   color: var(--text);
 }
 
-.prompt-line:last-child {
-  margin-bottom: 0;
-}
-
 .prompt-copy-hint {
   position: absolute;
-  top: 8px;
+  top: 50%;
   right: 10px;
+  transform: translateY(-50%);
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 15px;
   color: var(--muted);
   transition: color 0.15s;
 }
