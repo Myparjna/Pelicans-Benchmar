@@ -102,16 +102,25 @@ window.SITES = [
     "file": "v4pro813API.html",
     "slug": "deepseek-v4-pro-api-0813",
     "category": "DeepSeek",
-    "model": "DeepSeek V4 Pro",
+    "model": "DeepSeek V4 Pro (0813)",
     "channel": "API 直连",
     "thumb": "thumbs/deepseek-v4-pro-api-0813.png",
     "src": "sites/deepseek-v4-pro-api-0813.html"
   },
   {
+    "file": "apideepseekv4flash0731.html",
+    "slug": "deepseek-v4-flash-api-0731",
+    "category": "DeepSeek",
+    "model": "DeepSeek V4 Flash (0731)",
+    "channel": "API 直连",
+    "thumb": "thumbs/deepseek-v4-flash-api-0731.png",
+    "src": "sites/deepseek-v4-flash-api-0731.html"
+  },
+  {
     "file": "deepseekv4pro424官网版本.html",
     "slug": "deepseek-v4-pro-0424",
     "category": "DeepSeek",
-    "model": "DeepSeek V4 Pro",
+    "model": "DeepSeek V4 Pro (0424)",
     "channel": "官网",
     "thumb": "thumbs/deepseek-v4-pro-0424.png",
     "src": "sites/deepseek-v4-pro-0424.html"
@@ -133,15 +142,6 @@ window.SITES = [
     "channel": "WorkBuddy",
     "thumb": "thumbs/deepseek-v4-pro-0424-wb.png",
     "src": "sites/deepseek-v4-pro-0424-wb.html"
-  },
-  {
-    "file": "apideepseekv4flash0731.html",
-    "slug": "deepseek-v4-flash-api-0731",
-    "category": "DeepSeek",
-    "model": "DeepSeek V4 Flash",
-    "channel": "API 直连",
-    "thumb": "thumbs/deepseek-v4-flash-api-0731.png",
-    "src": "sites/deepseek-v4-flash-api-0731.html"
   },
   {
     "file": "deepseekv4flash0424trae.html",
@@ -236,7 +236,7 @@ window.SITES = [
   {
     "file": "中转API的opus5.html",
     "slug": "opus-5-relay",
-    "category": "A·Claude",
+    "category": "A/Claude",
     "model": "Claude Opus 5",
     "channel": "中转API",
     "thumb": "thumbs/opus-5-relay.png",

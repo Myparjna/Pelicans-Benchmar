@@ -43,12 +43,35 @@
   /* ---------- 评分（localStorage 持久化） ---------- */
   const RATINGS_KEY = 'peilika_ratings_v1';
   // 预置默认评分：新访客直接看到这些分；用户本地手动改过/清除过的以本地为准
+  // 2026-08-15 由用户在本地展厅手动评出的基准分
   const DEFAULT_RATINGS = {
-    'qwen-3-8-max': 10,            // 通义千问 Qwen 3.8 Max
-    'gpt-5-6-codex': 9,            // GPT 5.6 (Codex)
-    'deepseek-v4-pro-api-0813': 9, // DeepSeek API V4 Pro
-    'kimi-k3-wb': 9,               // Kimi K3
-    'opus-5-relay': 9              // Claude Opus 5 (中转API)
+    'qwen-3-8-max': 10,
+    'gpt-5-6-codex': 9,
+    'deepseek-v4-pro-api-0813': 9,
+    'kimi-k3-wb': 10,
+    'opus-5-relay': 9,
+    'qwen-3-7-plus': 6,
+    'qwen-3-8-27b': 7,
+    'qwen-3-6-27b': 4,
+    'qianwen-3-6-flash': 2,
+    'gpt-5-6-luna-codex': 5,
+    'gemini-3-7': 7,
+    'gemini-3-6-flash': 6,
+    'gemini-3-1-pro': 4,
+    'grok-4-6': 1,
+    'deepseek-v4-pro-0424': 6,
+    'deepseek-0424-pro-trae': 7,
+    'deepseek-v4-pro-0424-wb': 7,
+    'deepseek-v4-flash-api-0731': 7,
+    'deepseek-v4-flash-0424-trae': 1,
+    'deepseek-flash-0424': 1,
+    'deepseek-v4-flash-0424-wb': 3,
+    'doubao-expert': 5,
+    'seed-2-1-pro-trae': 6,
+    'hunyuan-hy3-wb': 7,
+    'glm-5-3-wb': 10,
+    'glm-5-2-wb': 6,
+    'minimax-m3-wb': 6
   };
   let ratings = loadRatings();
 
