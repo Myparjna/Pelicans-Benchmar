@@ -58,7 +58,7 @@ window.SITES = [
     "slug": "deepseek-v4-pro-0813-dsh-minimal",
     "category": "DeepSeek",
     "model": "DeepSeek V4 Pro 极简 (0813)",
-    "channel": "DashScope",
+    "channel": "DSH",
     "src": "sites/deepseek-v4-pro-0813-dsh-minimal.html",
     "thumb": "thumbs/deepseek-v4-pro-0813-dsh-minimal.png"
   },
@@ -76,7 +76,7 @@ window.SITES = [
     "slug": "deepseek-v4-flash-0731-dsh-minimal",
     "category": "DeepSeek",
     "model": "DeepSeek V4 Flash 极简 (0731)",
-    "channel": "DashScope",
+    "channel": "DSH",
     "src": "sites/deepseek-v4-flash-0731-dsh-minimal.html",
     "thumb": "thumbs/deepseek-v4-flash-0731-dsh-minimal.png"
   },

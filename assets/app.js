@@ -34,7 +34,7 @@
     'Luna Codex': 'ch-amber',
     'Poe': 'ch-fuchsia',
     '火山方舟': 'ch-lime',
-    'DashScope': 'ch-sky'
+    'DSH': 'ch-sky'
   };
 
   function channelClass(ch) {
