@@ -225,7 +225,7 @@ window.SITES = [
     "src": "sites/hunyuan-hy3-wb.html"
   },
   {
-    "file": "kimik3workbuddy.html",
+    "file": "pelican-bike-weather.html",
     "slug": "kimi-k3-wb",
     "category": "月之暗面 · Kimi",
     "model": "Kimi K3",
