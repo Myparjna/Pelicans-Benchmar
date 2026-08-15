@@ -504,7 +504,7 @@
   bindPromptCopy(document.getElementById('promptBox'), 'promptCopyIcon');
   bindPromptCopy(document.getElementById('viewerPrompt'), 'viewerPromptIcon');
 
-  /* 提示词放大：悬停浮出 tooltip 并按两行排版（第一句 / 剩余），移出延迟收起 */
+  /* 提示词放大：悬停时浮出 tooltip 并跟随鼠标（覆盖鼠标点，避免收起闪烁），两行排版 */
   function setupPromptExpand(box) {
     const line = box.querySelector('.prompt-line');
     if (!line) return;
@@ -513,13 +513,22 @@
     if (idx < 0) return;
     const p1 = full.slice(0, idx + 1), p2 = full.slice(idx + 1);
     let timer = null;
-    function expand() {
+    function reposition(e) {
+      const w = box.offsetWidth, h = box.offsetHeight;
+      let x = e.clientX - w / 2, y = e.clientY - 26;
+      x = Math.max(8, Math.min(innerWidth - w - 8, x));
+      y = Math.max(8, Math.min(innerHeight - h - 8, y));
+      box.style.left = x + 'px';
+      box.style.top = y + 'px';
+    }
+    function expand(e) {
       clearTimeout(timer);
       box.classList.add('expanded');
       if (!line.dataset.split) {
         line.innerHTML = p1 + '<br>' + p2;
         line.dataset.split = '1';
       }
+      reposition(e);
     }
     function collapse() {
       timer = setTimeout(() => {
@@ -531,8 +540,9 @@
       }, 350);
     }
     box.addEventListener('mouseenter', expand);
+    box.addEventListener('mousemove', e => { if (box.classList.contains('expanded')) reposition(e); });
     box.addEventListener('mouseleave', collapse);
-    box.addEventListener('focus', expand);
+    box.addEventListener('focus', e => expand({ clientX: 12, clientY: 12 }));
     box.addEventListener('blur', collapse);
   }
 

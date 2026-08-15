@@ -392,12 +392,9 @@ body {
   border-color: var(--primary);
 }
 
-/* 悬停放大：浮出为 tooltip，真实放大字号并按两行排版 */
+/* 悬停放大：浮出为 tooltip（fixed 定位，由 JS 跟随鼠标，两行排版） */
 .prompt-box.expanded {
-  position: absolute;
-  left: 50%;
-  top: calc(100% + 8px);
-  transform: translateX(-50%);
+  position: fixed;
   width: min(1240px, 92vw);
   padding: 16px 46px 16px 18px;
   font-size: 20px;
@@ -405,6 +402,7 @@ body {
   z-index: 60;
   box-shadow: var(--shadow-lg);
   border-color: var(--primary);
+  margin: 0;
 }
 
 .prompt-box.expanded .prompt-line {
