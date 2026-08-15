@@ -19,6 +19,11 @@
           <p class="subtitle">鹈鹕自行车测试 · 27 个模型/版本生成效果对比</p>
         </div>
       </div>
+      <div class="prompt-box" id="promptBox" role="button" tabindex="0" title="点击复制提示词" aria-label="点击复制生成提示词">
+        <span class="prompt-copy-hint"><i class="ti ti-copy"></i><span id="promptCopyText">点击复制</span></span>
+        <p class="prompt-line">生成一个鹈鹕白天骑自行车的网页动画，单个html文件给我，要求能自适应网页宽度，兼容手机竖屏与电脑横屏显示。</p>
+        <p class="prompt-line">每过5秒进行晴天-阴天-雨天-晴天的天气自动切换。不使用任何skills。</p>
+      </div>
       <div class="header-actions">
         <label class="search-box" for="searchInput">
           <i class="ti ti-search"></i>
@@ -32,11 +37,6 @@
   </header>
 
   <main class="container">
-    <div class="prompt-box" id="promptBox" role="button" tabindex="0" title="点击复制提示词" aria-label="点击复制生成提示词">
-      <span class="prompt-copy-hint"><i class="ti ti-copy"></i><span id="promptCopyText">点击复制</span></span>
-      <p class="prompt-line">生成一个鹈鹕白天骑自行车的网页动画，单个html文件给我，要求能自适应网页宽度，兼容手机竖屏与电脑横屏显示。</p>
-      <p class="prompt-line">每过5秒进行晴天-阴天-雨天-晴天的天气自动切换。不使用任何skills。</p>
-    </div>
     <div class="filter-bar" id="filterBar" aria-label="分类筛选"></div>
     <div id="galleryRoot"></div>
   </main>
