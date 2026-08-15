@@ -230,7 +230,6 @@
           ${rankBadge}
           <img class="thumb-static" src="${escapeHtml(s.thumb)}" alt="${escapeHtml(s.model)} 缩略图" loading="lazy">
           <img class="thumb-anim" data-anim="${escapeHtml(s.thumb.replace(/\.png$/, '.webp'))}" alt="" aria-hidden="true">
-          <div class="card-overlay"><i class="ti ti-eye"></i> 预览</div>
         </div>
         <div class="card-body">
           <div class="card-meta">
@@ -458,20 +457,19 @@
   renderChips();
   applyFilters();
 
-  /* ---------- 顶部提示词：点击复制 ---------- */
-  const promptBox = document.getElementById('promptBox');
-  const promptCopyIcon = document.getElementById('promptCopyIcon');
+  /* ---------- 顶部提示词：点击复制（大厅 + 查看器两处） ---------- */
   const PROMPT_TEXT = '生成一个鹈鹕白天骑自行车的网页动画，单个html文件给我，要求能自适应网页宽度，兼容手机竖屏与电脑横屏显示。每过5秒进行晴天-阴天-雨天-晴天的天气自动切换。不使用任何skills。';
 
-  function copyPrompt() {
+  function bindPromptCopy(box, iconId) {
+    const icon = document.getElementById(iconId);
     function done() {
-      promptBox.classList.add('copied');
-      promptCopyIcon.classList.remove('ti-copy');
-      promptCopyIcon.classList.add('ti-check');
+      box.classList.add('copied');
+      icon.classList.remove('ti-copy');
+      icon.classList.add('ti-check');
       setTimeout(() => {
-        promptBox.classList.remove('copied');
-        promptCopyIcon.classList.remove('ti-check');
-        promptCopyIcon.classList.add('ti-copy');
+        box.classList.remove('copied');
+        icon.classList.remove('ti-check');
+        icon.classList.add('ti-copy');
       }, 1600);
     }
     function legacyCopy() {
@@ -487,18 +485,22 @@
       document.body.removeChild(ta);
       if (ok) done();
     }
-    if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(PROMPT_TEXT).then(done, legacyCopy);
-    } else {
-      legacyCopy();
+    function copy() {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(PROMPT_TEXT).then(done, legacyCopy);
+      } else {
+        legacyCopy();
+      }
     }
+    box.addEventListener('click', copy);
+    box.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        copy();
+      }
+    });
   }
 
-  promptBox.addEventListener('click', copyPrompt);
-  promptBox.addEventListener('keydown', e => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      copyPrompt();
-    }
-  });
+  bindPromptCopy(document.getElementById('promptBox'), 'promptCopyIcon');
+  bindPromptCopy(document.getElementById('viewerPrompt'), 'viewerPromptIcon');
 })();
