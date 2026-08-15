@@ -392,23 +392,49 @@ body {
   border-color: var(--primary);
 }
 
-/* 悬停放大：浮出为 tooltip（fixed 定位，由 JS 跟随鼠标，两行排版） */
-.prompt-box.expanded {
-  position: fixed;
+/* 标准 tooltip：悬停时固定在提示词下方显示，两行大字；鼠标在提示词或浮出块上均保持 */
+.prompt-tooltip {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
   width: min(1240px, 92vw);
   padding: 16px 46px 16px 18px;
+  background: var(--surface);
+  border: 1px solid var(--primary);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
   font-size: 20px;
   line-height: 1.6;
+  color: var(--text);
   z-index: 60;
-  box-shadow: var(--shadow-lg);
-  border-color: var(--primary);
-  margin: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+  pointer-events: none;
 }
 
-.prompt-box.expanded .prompt-line {
-  font-size: 20px;
-  line-height: 1.6;
-  transition: font-size 0.15s;
+.prompt-box:hover .prompt-tooltip,
+.prompt-box:focus-within .prompt-tooltip {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.prompt-tooltip p {
+  margin: 0 0 6px;
+}
+
+.prompt-tooltip p:last-child {
+  margin-bottom: 0;
+}
+
+.prompt-tooltip-copy {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  font-size: 16px;
+  color: var(--muted);
 }
 
 .prompt-box.copied {
