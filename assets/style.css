@@ -81,6 +81,25 @@ body {
   letter-spacing: -0.02em;
 }
 
+/* GitHub 仓库链接图标（标题左侧） */
+.github-link {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: -3px;
+  margin-right: 6px;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.github-link:hover {
+  color: #24292f;
+}
+
+.github-link .ti {
+  font-size: 18px;
+}
+
 .subtitle {
   margin: 2px 0 0;
   font-size: 13px;
