@@ -139,7 +139,8 @@ wrangler pages deploy TempFiles/dist --project-name peilika --commit-dirty=true
 
 ## 8. 已知问题 / 坑
 
-- **`qwen3.6flash官网.html` canvas bug**：原文件内 `ctx.quadraticCurve(...)` 拼写错误（应为 `quadraticCurveTo`），导致封面截图全黑。**按用户要求未修改原文件**，仅影响该卡片缩略图，不影响打开查看实际效果。
+- **`qwen3.6flash官网.html` canvas bug**：原文件内 `ctx.quadraticCurve(...)` 拼写错误（应为 `quadraticCurveTo`），导致封面截图全黑。**按用户要求未修改原文件**，仅影响该卡片缩略图，不影响打开查看实际效果。**该条目已于 2026-08-15 移除**（与 `千问官网3.6flash.html` 重复，保留后者）。
+- **`中转API的opus5.html` canvas bug**：`splash.filter` 内 `ctx.ellipse(s.x,s.y,s.r,...)` 的半径 `s.r` 偶发为负 → `IndexSizeError` 中断动画循环（画面停在暗帧，看起来像黑屏）。**原件不改**，已在副本 `sites/opus-5-relay.html` 打补丁（`const _sr=Math.max(s.r,0.01)`）。⚠️ **重跑 `build-sites-copies.mjs` 会用原件覆盖副本、丢失补丁**，之后需重新应用（`TempScr/patch-opus5.mjs` 或手动改该行）。
 - **部署前先确认端口未被占用**，被占用就换端口（不要用 `kill` 批量杀 Node/Python）。
 - **`encodeURIComponent(s.src)` 会把 `/` 编码成 `%2F`** 导致 404，查看器直接赋值 `s.src` 即可（已在代码中修正）。
 - **Cloudflare API Token 不可用**：用户曾提供 `cfut_...` 令牌验证为失效，最终用 OAuth 登录态部署，不要再用该 Token。
@@ -161,7 +162,9 @@ wrangler pages deploy TempFiles/dist --project-name peilika --commit-dirty=true
 | `44ef7ac` | 新增 Claude Opus 5（中转API）条目，恢复 24 卡 |
 | `07315da` | MiniMax M3 替换为官网风格新源，渠道 WorkBuddy→官网风格 |
 | `0f096b2` | 预置 5 个模型默认评分（qwen3.8max=10，其余 4 个=9），本地手动分优先 |
-| 本次 | 新增 Gemini 3.7（Poe）、Qwen 3.8 27B（Poe）、GLM 5.3（WorkBuddy）三张卡；Grok 4.5 替换为 Grok 4.6（真·官网）；新增 Poe 渠道徽标 ch-fuchsia；清单 28 卡，重新部署 peilika |
+| `75e5066` | 新增 Gemini 3.7（Poe）、Qwen 3.8 27B（Poe）、GLM 5.3（火山方舟）三张卡；Grok 4.5 替换为 Grok 4.6（真·官网）；新增 Poe 徽标 ch-fuchsia；28 卡 |
+| `1f91ffc` | 移除旧 Grok 4.5 副本与缩略图（已备份 Trash/） |
+| 本次 | 删重复的 qwen-3-6-flash（保留千问官网版）；Gemini 3.7→Gemini 3.7 Flash；DeepSeek V4 Flash(Trae)→加 (0424)；Seed 2.1 Pro 并入「字节 · 豆包」分类；豆包加 0813 版本标注；GLM 5.3 渠道 WorkBuddy→火山方舟（新增 ch-lime 徽标）；opus5 缩略图重截为晴天帧 + 副本修负半径 bug；清单 27 卡 |
 
 ---
 

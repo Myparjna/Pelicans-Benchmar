@@ -253,7 +253,7 @@ function frame(now){
   ctx.strokeStyle='rgba(220,238,255,.5)';ctx.lineWidth=Math.max(1,W*0.0015);
   splash=splash.filter(s=>{s.r+=W*0.05*dt;s.a-=dt*2.4;
     if(s.a<=0)return false;ctx.globalAlpha=s.a;ctx.beginPath();
-    ctx.ellipse(s.x,s.y,s.r,s.r*0.3,0,0,7);ctx.stroke();return true;});
+    const _sr=Math.max(s.r,0.01);ctx.ellipse(s.x,s.y,_sr,_sr*0.3,0,0,7);ctx.stroke();return true;});
   ctx.globalAlpha=1;
 
   if(w.dim>0.01){ctx.fillStyle=`rgba(20,28,42,${w.dim*0.42})`;ctx.fillRect(0,0,W,H);}

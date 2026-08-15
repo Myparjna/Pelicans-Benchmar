@@ -32,7 +32,8 @@
     '官网风格 · 专家模式': 'ch-rose',
     '中转API': 'ch-cyan',
     'Luna Codex': 'ch-amber',
-    'Poe': 'ch-fuchsia'
+    'Poe': 'ch-fuchsia',
+    '火山方舟': 'ch-lime'
   };
 
   function channelClass(ch) {

@@ -18,15 +18,6 @@ window.SITES = [
     "src": "sites/qwen-3-6-27b.html"
   },
   {
-    "file": "qwen3.6flash官网.html",
-    "slug": "qwen-3-6-flash",
-    "category": "阿里 · 通义千问",
-    "model": "通义千问 Qwen 3.6 Flash",
-    "channel": "官网风格",
-    "thumb": "thumbs/qwen-3-6-flash.png",
-    "src": "sites/qwen-3-6-flash.html"
-  },
-  {
     "file": "qwen3.8max.html",
     "slug": "qwen-3-8-max",
     "category": "阿里 · 通义千问",
@@ -93,7 +84,7 @@ window.SITES = [
     "file": "gemini3.7.html",
     "slug": "gemini-3-7",
     "category": "Google · Gemini",
-    "model": "Gemini 3.7",
+    "model": "Gemini 3.7 Flash",
     "channel": "Poe",
     "thumb": "thumbs/gemini-3-7.png",
     "src": "sites/gemini-3-7.html"
@@ -138,7 +129,7 @@ window.SITES = [
     "file": "deepseekv4flash0424trae.html",
     "slug": "deepseek-v4-flash-0424-trae",
     "category": "DeepSeek",
-    "model": "DeepSeek V4 Flash",
+    "model": "DeepSeek V4 Flash (0424)",
     "channel": "Trae",
     "thumb": "thumbs/deepseek-v4-flash-0424-trae.png",
     "src": "sites/deepseek-v4-flash-0424-trae.html"
@@ -183,7 +174,7 @@ window.SITES = [
     "file": "豆包官网专家模式.html",
     "slug": "doubao-expert",
     "category": "字节 · 豆包",
-    "model": "豆包 Doubao (专家模式)",
+    "model": "豆包 Doubao 0813 (专家模式)",
     "channel": "官网风格 · 专家模式",
     "thumb": "thumbs/doubao-expert.png",
     "src": "sites/doubao-expert.html"
@@ -191,7 +182,7 @@ window.SITES = [
   {
     "file": "seed21pro trae.html",
     "slug": "seed-2-1-pro-trae",
-    "category": "字节 · Seed",
+    "category": "字节 · 豆包",
     "model": "Seed 2.1 Pro",
     "channel": "Trae",
     "thumb": "thumbs/seed-2-1-pro-trae.png",
@@ -229,7 +220,7 @@ window.SITES = [
     "slug": "glm-5-3-wb",
     "category": "智谱 · GLM",
     "model": "智谱 GLM 5.3",
-    "channel": "WorkBuddy",
+    "channel": "火山方舟",
     "thumb": "thumbs/glm-5-3-wb.png",
     "src": "sites/glm-5-3-wb.html"
   },
