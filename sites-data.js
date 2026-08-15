@@ -54,6 +54,15 @@ window.SITES = [
     "src": "sites/deepseek-v4-pro-api-0813.html"
   },
   {
+    "file": "deepseekv4pro0813+dsh+极简模式.html",
+    "slug": "deepseek-v4-pro-0813-dsh-minimal",
+    "category": "DeepSeek",
+    "model": "DeepSeek V4 Pro 极简 (0813)",
+    "channel": "DashScope",
+    "src": "sites/deepseek-v4-pro-0813-dsh-minimal.html",
+    "thumb": "thumbs/deepseek-v4-pro-0813-dsh-minimal.png"
+  },
+  {
     "file": "apideepseekv4flash0731.html",
     "slug": "deepseek-v4-flash-api-0731",
     "category": "DeepSeek",
@@ -61,6 +70,15 @@ window.SITES = [
     "channel": "API 直连",
     "thumb": "thumbs/deepseek-v4-flash-api-0731.png",
     "src": "sites/deepseek-v4-flash-api-0731.html"
+  },
+  {
+    "file": "deepseekv4flash0731+dsh+极简模式.html",
+    "slug": "deepseek-v4-flash-0731-dsh-minimal",
+    "category": "DeepSeek",
+    "model": "DeepSeek V4 Flash 极简 (0731)",
+    "channel": "DashScope",
+    "src": "sites/deepseek-v4-flash-0731-dsh-minimal.html",
+    "thumb": "thumbs/deepseek-v4-flash-0731-dsh-minimal.png"
   },
   {
     "file": "deepseekv4pro424官网版本.html",

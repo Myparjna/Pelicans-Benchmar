@@ -33,7 +33,8 @@
     '中转API': 'ch-cyan',
     'Luna Codex': 'ch-amber',
     'Poe': 'ch-fuchsia',
-    '火山方舟': 'ch-lime'
+    '火山方舟': 'ch-lime',
+    'DashScope': 'ch-sky'
   };
 
   function channelClass(ch) {

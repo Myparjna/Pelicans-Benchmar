@@ -319,6 +319,7 @@ body {
 .channel-badge.ch-amber    { color: #92400e; background: #fef3c7; }
 .channel-badge.ch-fuchsia  { color: #a21caf; background: #fae8ff; }
 .channel-badge.ch-lime     { color: #3f6212; background: #ecfccb; }
+.channel-badge.ch-sky      { color: #0369a1; background: #e0f2fe; }
 
 .category-badge {
   color: var(--muted);
