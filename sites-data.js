@@ -236,7 +236,7 @@ window.SITES = [
   {
     "file": "中转API的opus5.html",
     "slug": "opus-5-relay",
-    "category": "Anthropic · Claude",
+    "category": "A·Claude",
     "model": "Claude Opus 5",
     "channel": "中转API",
     "thumb": "thumbs/opus-5-relay.png",
