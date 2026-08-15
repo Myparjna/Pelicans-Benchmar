@@ -202,7 +202,8 @@
       <article class="site-card" tabindex="0" role="button" aria-label="打开 ${escapeHtml(s.model)}" data-slug="${escapeHtml(s.slug)}">
         <div class="thumb-wrap">
           ${rankBadge}
-          <img src="${escapeHtml(s.thumb)}" alt="${escapeHtml(s.model)} 缩略图" loading="lazy">
+          <img class="thumb-static" src="${escapeHtml(s.thumb)}" alt="${escapeHtml(s.model)} 缩略图" loading="lazy">
+          <img class="thumb-anim" data-anim="${escapeHtml(s.thumb.replace(/\.png$/, '.webp'))}" alt="" aria-hidden="true">
           <div class="card-overlay"><i class="ti ti-eye"></i> 预览</div>
         </div>
         <div class="card-body">
@@ -220,6 +221,11 @@
   function bindCards() {
     document.querySelectorAll('.site-card').forEach(card => {
       const slug = card.dataset.slug;
+      // 首次悬停时才加载动图（避免 27 张动图全部预下载）
+      card.addEventListener('mouseenter', () => {
+        const anim = card.querySelector('.thumb-anim');
+        if (anim && !anim.src) anim.src = anim.dataset.anim;
+      });
       function activate(e) {
         if (e.target.closest('.open-btn')) e.stopPropagation();
         openViewer(slug);
