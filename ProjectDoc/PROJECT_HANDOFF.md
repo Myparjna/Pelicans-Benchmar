@@ -170,9 +170,10 @@ wrangler pages deploy TempFiles/dist --project-name peilika --commit-dirty=true
 
 ## 10. Git 约定
 
-- 分支 `main`；提交人 `workbuddy`，邮箱 `905443848@qq.com`。
+- 分支 `main`；提交人 `workbuddy`；历史提交邮箱已重写为 GitHub noreply（`48089881+Myparjna@users.noreply.github.com`），不会暴露个人 QQ 邮箱。
 - commit message 用中文，写清改动。较大更新主动提交（如本次）。
-- 默认本地开发；用户明确要求才推 GitHub（目前未推送）。
+- **已推送 GitHub**：仓库 `https://github.com/Myparjna/Pelicans-Benchmar`（公开，main 分支；`Trash/` 已 gitignore，本地保留可恢复）。
+- 本地开发为主；推 GitHub 需用户明确要求。
 
 ## 11. 验收 / 自验证约定（重要）
 
