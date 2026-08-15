@@ -22,14 +22,14 @@
   const btnClose = document.getElementById('btnClose');
 
   const CHANNEL_CLASS = {
-    '官网风格': 'ch-blue',
+    '官网': 'ch-blue',
     '真·官网': 'ch-indigo',
     '标准': 'ch-gray',
     'API 直连': 'ch-orange',
     'Trae': 'ch-purple',
     'WorkBuddy': 'ch-teal',
     'Sol Codex': 'ch-green',
-    '官网风格 · 专家模式': 'ch-rose',
+    '官网 · 专家模式': 'ch-rose',
     '中转API': 'ch-cyan',
     'Luna Codex': 'ch-amber',
     'Poe': 'ch-fuchsia',
