@@ -503,4 +503,38 @@
 
   bindPromptCopy(document.getElementById('promptBox'), 'promptCopyIcon');
   bindPromptCopy(document.getElementById('viewerPrompt'), 'viewerPromptIcon');
+
+  /* 提示词放大：悬停浮出 tooltip 并按两行排版（第一句 / 剩余），移出延迟收起 */
+  function setupPromptExpand(box) {
+    const line = box.querySelector('.prompt-line');
+    if (!line) return;
+    const full = line.textContent;
+    const idx = full.indexOf('。');
+    if (idx < 0) return;
+    const p1 = full.slice(0, idx + 1), p2 = full.slice(idx + 1);
+    let timer = null;
+    function expand() {
+      clearTimeout(timer);
+      box.classList.add('expanded');
+      if (!line.dataset.split) {
+        line.innerHTML = p1 + '<br>' + p2;
+        line.dataset.split = '1';
+      }
+    }
+    function collapse() {
+      timer = setTimeout(() => {
+        box.classList.remove('expanded');
+        if (line.dataset.split) {
+          line.textContent = full;
+          delete line.dataset.split;
+        }
+      }, 350);
+    }
+    box.addEventListener('mouseenter', expand);
+    box.addEventListener('mouseleave', collapse);
+    box.addEventListener('focus', expand);
+    box.addEventListener('blur', collapse);
+  }
+
+  setupPromptExpand(document.getElementById('promptBox'));
 })();
