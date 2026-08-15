@@ -128,7 +128,7 @@ window.SITES = [
   {
     "file": "gpt5.6solcodex.html",
     "slug": "gpt-5-6-codex",
-    "category": "OpenAI",
+    "category": "GPT",
     "model": "GPT-5.6 Codex",
     "channel": "Sol Codex",
     "thumb": "thumbs/gpt-5-6-codex.png",
@@ -137,7 +137,7 @@ window.SITES = [
   {
     "file": "gpt5.6luna-codex.html",
     "slug": "gpt-5-6-luna-codex",
-    "category": "OpenAI",
+    "category": "GPT",
     "model": "GPT-5.6 Luna Codex",
     "channel": "Luna Codex",
     "thumb": "thumbs/gpt-5-6-luna-codex.png",
@@ -146,7 +146,7 @@ window.SITES = [
   {
     "file": "gemini3.7.html",
     "slug": "gemini-3-7",
-    "category": "Google · Gemini",
+    "category": "Gemini",
     "model": "Gemini 3.7 Flash",
     "channel": "Poe",
     "thumb": "thumbs/gemini-3-7.png",
@@ -155,7 +155,7 @@ window.SITES = [
   {
     "file": "gemini3.6flash官网.html",
     "slug": "gemini-3-6-flash",
-    "category": "Google · Gemini",
+    "category": "Gemini",
     "model": "Gemini 3.6 Flash",
     "channel": "官网",
     "thumb": "thumbs/gemini-3-6-flash.png",
@@ -164,7 +164,7 @@ window.SITES = [
   {
     "file": "gemini31pro官网.html",
     "slug": "gemini-3-1-pro",
-    "category": "Google · Gemini",
+    "category": "Gemini",
     "model": "Gemini 3.1 Pro",
     "channel": "官网",
     "thumb": "thumbs/gemini-3-1-pro.png",
@@ -173,7 +173,7 @@ window.SITES = [
   {
     "file": "grok4.6.html",
     "slug": "grok-4-6",
-    "category": "xAI · Grok",
+    "category": "Grok",
     "model": "Grok 4.6",
     "channel": "真·官网",
     "thumb": "thumbs/grok-4-6.png",
