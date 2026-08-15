@@ -120,24 +120,28 @@
     sortToggle.setAttribute('aria-pressed', String(sortByRating));
   }
 
-  function ratingHTML(s) {
-    const cur = getRating(s.slug);
+  /* 星星评分：5 颗星 × 半星粒度 = 10 分制；底层镂空灰星，上层实心黄星按填充比例裁剪（0/50/100%） */
+  function starHTML(cur, slug) {
+    const stars = cur ? cur / 2 : 0;
+    let html = '';
+    for (let i = 0; i < 5; i++) {
+      const fill = Math.max(0, Math.min(1, stars - i)) * 100;
+      html += `<span class="star"><i class="ti ti-star"></i><i class="ti ti-star-filled fill" style="width:${fill.toFixed(1)}%"></i></span>`;
+    }
     const scoreText = cur ? `${cur} 分` : '未评分';
     return `
-      <div class="rating-static">
-        <span class="rating-label">评分</span>
-        <span class="rating-score${cur ? ' rated' : ''}">${scoreText}</span>
+      <div class="star-rating" data-slug="${escapeHtml(slug)}">
+        <div class="stars" role="slider" tabindex="0" aria-label="评分（方向键微调）">${html}</div>
+        <span class="star-score${cur ? ' rated' : ''}">${scoreText}</span>
       </div>`;
   }
 
+  function ratingHTML(s) {
+    return starHTML(getRating(s.slug), s.slug);
+  }
+
   function viewerRatingHTML(s) {
-    const cur = getRating(s.slug);
-    const scoreText = cur ? `${cur} 分` : '未评分';
-    return `
-      <div class="rating-static">
-        <span class="rating-label">评分</span>
-        <span class="rating-score${cur ? ' rated' : ''}">${scoreText}</span>
-      </div>`;
+    return starHTML(getRating(s.slug), s.slug);
   }
 
   function renderGallery() {
@@ -232,29 +236,56 @@
     bindRatings(root);
   }
 
+  /* 星星交互：悬停预览、点击（左半=半星）/方向键微调，保存后回调 onSave */
+  function attachStars(wrap, slug, onSave) {
+    const starsEl = wrap.querySelector('.stars');
+    const scoreEl = wrap.querySelector('.star-score');
+
+    function applyPreview(stars) {
+      [...starsEl.children].forEach((st, i) => {
+        const fill = Math.max(0, Math.min(1, stars - i)) * 100;
+        st.querySelector('.fill').style.width = fill.toFixed(1) + '%';
+      });
+      const score = Math.round(stars * 2);
+      scoreEl.textContent = score > 0 ? `${score} 分` : '未评分';
+      scoreEl.classList.toggle('rated', score > 0);
+    }
+    function restore() {
+      applyPreview(getRating(slug) / 2);
+    }
+    function calc(e) {
+      const rect = starsEl.getBoundingClientRect();
+      const raw = (e.clientX - rect.left) / rect.width * 5;
+      return Math.max(0.5, Math.min(5, Math.round(raw * 2) / 2));
+    }
+
+    starsEl.addEventListener('pointermove', e => applyPreview(calc(e)));
+    starsEl.addEventListener('pointerleave', restore);
+    starsEl.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      onSave(Math.round(calc(e) * 2));
+      restore();
+    });
+    starsEl.addEventListener('keydown', e => {
+      const cur = getRating(slug) / 2 || 0;
+      let next = null;
+      if (e.key === 'ArrowRight') next = Math.min(5, cur + 0.5);
+      else if (e.key === 'ArrowLeft') next = Math.max(0, cur - 0.5);
+      if (next != null) {
+        e.preventDefault();
+        onSave(Math.round(next * 2));
+        restore();
+      }
+    });
+  }
+
   function bindRatings(scope) {
-    scope.querySelectorAll('.rating-btn').forEach(btn => {
-      btn.addEventListener('click', e => {
-        e.stopPropagation();
-        const wrap = btn.closest('.rating');
-        const slug = wrap.dataset.slug;
-        const score = parseInt(btn.dataset.score, 10);
+    scope.querySelectorAll('.star-rating').forEach(wrap => {
+      const slug = wrap.dataset.slug;
+      attachStars(wrap, slug, score => {
         saveRating(slug, score);
         if (sortByRating) {
-          renderGallery(); // 排序视图下实时重排
-        } else {
-          updateCardRating(wrap, slug);
-        }
-      });
-    });
-    scope.querySelectorAll('.rating-clear').forEach(btn => {
-      btn.addEventListener('click', e => {
-        e.stopPropagation();
-        const wrap = btn.closest('.rating');
-        const slug = wrap.dataset.slug;
-        saveRating(slug, null);
-        if (sortByRating) {
-          renderGallery();
+          renderGallery(); // 排序视图实时重排
         } else {
           updateCardRating(wrap, slug);
         }
@@ -272,25 +303,13 @@
   }
 
   function bindViewerRating() {
-    const wrap = viewerRating.querySelector('.rating.viewer-rating');
+    const wrap = viewerRating.querySelector('.star-rating');
     if (!wrap) return;
     const slug = wrap.dataset.slug;
-    wrap.querySelectorAll('.rating-btn').forEach(btn => {
-      btn.addEventListener('click', e => {
-        e.stopPropagation();
-        const score = parseInt(btn.dataset.score, 10);
-        saveRating(slug, score);
-        updateViewerRating(siteBySlug[slug]);
-        syncCardRating(slug);
-      });
-    });
-    wrap.querySelectorAll('.rating-clear').forEach(btn => {
-      btn.addEventListener('click', e => {
-        e.stopPropagation();
-        saveRating(slug, null);
-        updateViewerRating(siteBySlug[slug]);
-        syncCardRating(slug);
-      });
+    attachStars(wrap, slug, score => {
+      saveRating(slug, score);
+      updateViewerRating(siteBySlug[slug]);
+      syncCardRating(slug);
     });
   }
 

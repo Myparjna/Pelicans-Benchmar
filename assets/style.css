@@ -413,8 +413,8 @@ body {
   border-top: 1px dashed var(--border);
 }
 
-/* 静态分数展示（无交互按钮） */
-.rating-static {
+/* 星星评分（实心/半星/灰色镂空，点击可改分） */
+.star-rating {
   margin-top: 12px;
   padding-top: 12px;
   border-top: 1px dashed var(--border);
@@ -423,7 +423,45 @@ body {
   gap: 8px;
 }
 
-.viewer-rating .rating-static {
+.stars {
+  display: inline-flex;
+  gap: 2px;
+  cursor: pointer;
+}
+
+.star {
+  position: relative;
+  width: 20px;
+  height: 20px;
+}
+
+.star i {
+  position: absolute;
+  inset: 0;
+  font-size: 18px;
+  line-height: 20px;
+}
+
+.star .ti-star {
+  color: #cbd5e1; /* 灰色镂空星（底） */
+}
+
+.star .ti-star-filled.fill {
+  color: #f5b50a; /* 实心金星（覆盖，按宽度裁切出半星） */
+  overflow: hidden;
+}
+
+.star-score {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.star-score.rated {
+  color: var(--primary-dark);
+}
+
+.viewer-rating .star-rating {
   margin: 0;
   padding: 0;
   border-top: 0;
