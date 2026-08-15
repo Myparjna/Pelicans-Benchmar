@@ -36,6 +36,15 @@ window.SITES = [
     "src": "sites/qwen-3-8-max.html"
   },
   {
+    "file": "qwen3.827b.html",
+    "slug": "qwen-3-8-27b",
+    "category": "阿里 · 通义千问",
+    "model": "通义千问 Qwen 3.8 27B",
+    "channel": "Poe",
+    "thumb": "thumbs/qwen-3-8-27b.png",
+    "src": "sites/qwen-3-8-27b.html"
+  },
+  {
     "file": "千问官网3.6flash.html",
     "slug": "qianwen-3-6-flash",
     "category": "阿里 · 通义千问",
@@ -81,13 +90,22 @@ window.SITES = [
     "src": "sites/gemini-3-1-pro.html"
   },
   {
-    "file": "grok45真.html",
-    "slug": "grok-4-5-real",
+    "file": "gemini3.7.html",
+    "slug": "gemini-3-7",
+    "category": "Google · Gemini",
+    "model": "Gemini 3.7",
+    "channel": "Poe",
+    "thumb": "thumbs/gemini-3-7.png",
+    "src": "sites/gemini-3-7.html"
+  },
+  {
+    "file": "grok4.6.html",
+    "slug": "grok-4-6",
     "category": "xAI · Grok",
-    "model": "Grok 4.5",
+    "model": "Grok 4.6",
     "channel": "真·官网",
-    "thumb": "thumbs/grok-4-5-real.png",
-    "src": "sites/grok-4-5-real.html"
+    "thumb": "thumbs/grok-4-6.png",
+    "src": "sites/grok-4-6.html"
   },
   {
     "file": "apideepseekv4flash0731.html",
@@ -205,6 +223,15 @@ window.SITES = [
     "channel": "WorkBuddy",
     "thumb": "thumbs/glm-5-2-wb.png",
     "src": "sites/glm-5-2-wb.html"
+  },
+  {
+    "file": "GLM5.3.html",
+    "slug": "glm-5-3-wb",
+    "category": "智谱 · GLM",
+    "model": "智谱 GLM 5.3",
+    "channel": "WorkBuddy",
+    "thumb": "thumbs/glm-5-3-wb.png",
+    "src": "sites/glm-5-3-wb.html"
   },
   {
     "file": "minimax-M3官网.html",

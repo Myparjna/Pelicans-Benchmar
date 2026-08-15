@@ -1,0 +1,555 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="x-poe-datastore-behavior" content="local_only"><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>鹈鹕骑自行车</title>
+  <style>
+    :root {
+      --transition: 1s;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #000;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    .scene {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    /* 天空 */
+    .sky {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity var(--transition) ease;
+    }
+
+    .sky-sunny {
+      background: linear-gradient(180deg, #63c0ff 0%, #b6e9ff 58%, #f8ffcf 100%);
+    }
+
+    .sky-cloudy {
+      background: linear-gradient(180deg, #8e9bab 0%, #c3ccd7 55%, #e6e9e2 100%);
+    }
+
+    .sky-rainy {
+      background: linear-gradient(180deg, #526477 0%, #7b8f9d 55%, #9caab4 100%);
+    }
+
+    body.weather-sunny .sky-sunny,
+    body.weather-cloudy .sky-cloudy,
+    body.weather-rainy .sky-rainy {
+      opacity: 1;
+    }
+
+    /* 太阳 */
+    .sun {
+      position: absolute;
+      top: 7vh;
+      right: 11vw;
+      width: 15vmin;
+      height: 15vmin;
+      max-width: 150px;
+      max-height: 150px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 38% 36%, #fffce7, #ffd960 58%, #ff9d36);
+      box-shadow: 0 0 6vmin rgba(255, 203, 79, .55);
+      opacity: 0;
+      transform: scale(.88);
+      transition: opacity 1s ease, transform 1s ease;
+      z-index: 2;
+    }
+
+    .sun::after {
+      content: "";
+      position: absolute;
+      inset: -30%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 216, 95, .28) 0 45%, transparent 46%);
+    }
+
+    body.weather-sunny .sun {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    body.weather-cloudy .sun {
+      opacity: .08;
+      transform: scale(.92);
+    }
+
+    body.weather-rainy .sun {
+      opacity: 0;
+      transform: scale(.85);
+    }
+
+    /* 云 */
+    .clouds {
+      position: absolute;
+      inset: 0;
+      opacity: .35;
+      transition: opacity 1s ease, filter 1s ease;
+      z-index: 3;
+    }
+
+    body.weather-cloudy .clouds {
+      opacity: 1;
+      filter: brightness(.85) saturate(.88);
+    }
+
+    body.weather-rainy .clouds {
+      opacity: 1;
+      filter: brightness(.68) saturate(.74);
+    }
+
+    .cloud {
+      position: absolute;
+      width: 26vmin;
+      height: 8vmin;
+      background: #fff;
+      border-radius: 100px;
+      filter: blur(.3px);
+      opacity: .88;
+    }
+
+    .cloud::before,
+    .cloud::after {
+      content: "";
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+    }
+
+    .cloud::before {
+      left: 10%;
+      top: -62%;
+      width: 48%;
+      height: 130%;
+    }
+
+    .cloud::after {
+      right: 8%;
+      top: -84%;
+      width: 56%;
+      height: 170%;
+    }
+
+    .cloud-1 {
+      top: 10vh;
+      animation: cloudMove 36s linear infinite;
+    }
+
+    .cloud-2 {
+      top: 22vh;
+      animation: cloudMove 52s linear infinite;
+      animation-delay: -18s;
+    }
+
+    .cloud-3 {
+      top: 6vh;
+      animation: cloudMove 62s linear infinite;
+      animation-delay: -32s;
+    }
+
+    .cloud-4 {
+      top: 32vh;
+      animation: cloudMove 44s linear infinite;
+      animation-delay: -10s;
+    }
+
+    @keyframes cloudMove {
+      from {
+        transform: translateX(-45vw) scale(.9);
+      }
+
+      to {
+        transform: translateX(135vw) scale(.9);
+      }
+    }
+
+    /* 雨 */
+    .rain {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .8s ease;
+      z-index: 4;
+      background:
+        repeating-linear-gradient(112deg, transparent 0 1.2vmin, rgba(234, 244, 255, .30) 1.2vmin 1.5vmin),
+        repeating-linear-gradient(112deg, transparent 0 2.8vmin, rgba(234, 244, 255, .18) 2.8vmin 3.1vmin);
+      animation: rainMove .55s linear infinite;
+    }
+
+    .rain::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle, rgba(236, 246, 255, .38) 0 .12vmin, transparent .14vmin);
+      background-size: 2.2vmin 3.4vmin;
+      opacity: .45;
+      animation: rainDots .55s linear infinite;
+    }
+
+    body.weather-rainy .rain {
+      opacity: .9;
+    }
+
+    @keyframes rainMove {
+      from {
+        background-position: 0 0, 0 0;
+      }
+
+      to {
+        background-position: -10vmin 18vmin, -16vmin 30vmin;
+      }
+    }
+
+    @keyframes rainDots {
+      to {
+        background-position: -10vmin 18vmin;
+      }
+    }
+
+    /* 地面与道路 */
+    .ground {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 34%;
+      background: linear-gradient(180deg, #a5d76a 0%, #7bb847 55%, #5c9936 100%);
+      transition: filter 1s ease;
+      z-index: 1;
+    }
+
+    body.weather-rainy .ground {
+      filter: brightness(.76) saturate(.88);
+    }
+
+    .road {
+      position: absolute;
+      left: -5%;
+      right: -5%;
+      bottom: 6vh;
+      height: 14vh;
+      background: linear-gradient(180deg, #67738a 0%, #3a4352 100%);
+      border-radius: 2vh;
+      box-shadow: 0 1vh 2vh rgba(0, 0, 0, .15);
+      overflow: hidden;
+      transition: filter 1s ease;
+      z-index: 2;
+    }
+
+    body.weather-rainy .road {
+      filter: brightness(.72);
+    }
+
+    .road::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-top: .6vh solid #efe6b8;
+      opacity: .8;
+      border-radius: 2vh;
+    }
+
+    .road::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(90deg, transparent 0 4vmin, #f4efd3 4vmin 7vmin);
+      animation: roadMove .8s linear infinite;
+      opacity: .85;
+    }
+
+    @keyframes roadMove {
+      from {
+        background-position: 0 0;
+      }
+
+      to {
+        background-position: -7vmin 0;
+      }
+    }
+
+    /* 鹈鹕 + 自行车 */
+    .character {
+      position: absolute;
+      left: 50%;
+      bottom: 10vh;
+      transform: translateX(-50%);
+      width: min(94vw, 72vh);
+      max-width: 1100px;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .character svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 1vh 1vh rgba(0, 0, 0, .14));
+    }
+
+    #bikePelican {
+      animation: bob 1s ease-in-out infinite;
+    }
+
+    .wheel {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: spin .95s linear infinite;
+    }
+
+    .pedal-crank {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: spin .95s linear infinite;
+    }
+
+    .wing {
+      transform-box: fill-box;
+      transform-origin: 10% 50%;
+      animation: flap 1s ease-in-out infinite;
+    }
+
+    @keyframes bob {
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-7px);
+      }
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes flap {
+      0%,
+      100% {
+        transform: rotate(0deg);
+      }
+
+      50% {
+        transform: rotate(-10deg);
+      }
+    }
+
+    /* 天气提示 */
+    .hud {
+      position: absolute;
+      top: 1.6vh;
+      left: 1.8vw;
+      z-index: 10;
+      padding: .9vh 1.4vw;
+      border-radius: 2vmin;
+      background: rgba(15, 23, 42, .28);
+      color: #fff;
+      font-size: clamp(12px, 2.2vw, 20px);
+      letter-spacing: .08em;
+      backdrop-filter: blur(4px);
+    }
+
+    /* 减少动效偏好 */
+    @media (prefers-reduced-motion: reduce) {
+      .wheel,
+      .pedal-crank,
+      .wing,
+      #bikePelican,
+      .cloud,
+      .rain,
+      .rain::after,
+      .road::after {
+        animation: none !important;
+      }
+
+      .sky,
+      .sun,
+      .clouds,
+      .rain,
+      .ground,
+      .road {
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body class="weather-sunny">
+  <div class="scene">
+    <div class="sky sky-sunny"></div>
+    <div class="sky sky-cloudy"></div>
+    <div class="sky sky-rainy"></div>
+
+    <div class="sun"></div>
+
+    <div class="clouds">
+      <div class="cloud cloud-1"></div>
+      <div class="cloud cloud-2"></div>
+      <div class="cloud cloud-3"></div>
+      <div class="cloud cloud-4"></div>
+    </div>
+
+    <div class="rain"></div>
+
+    <div class="ground"></div>
+    <div class="road"></div>
+
+    <div class="character">
+      <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="鹈鹕骑自行车">
+        <defs>
+          <linearGradient id="bodyShade" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#ffffff"></stop>
+            <stop offset="1" stop-color="#e7eef7"></stop>
+          </linearGradient>
+
+          <linearGradient id="beak" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#ffb35a"></stop>
+            <stop offset="1" stop-color="#ff8a2b"></stop>
+          </linearGradient>
+
+          <linearGradient id="frame" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#27b0a4"></stop>
+            <stop offset="1" stop-color="#158a81"></stop>
+          </linearGradient>
+        </defs>
+
+        <ellipse class="shadow" cx="400" cy="445" rx="170" ry="18" fill="rgba(20,30,45,.22)"></ellipse>
+
+        <g id="bikePelican">
+          <!-- 后轮 -->
+          <g transform="translate(235,360)">
+            <g class="wheel">
+              <circle r="52" fill="none" stroke="#26324a" stroke-width="9"></circle>
+              <circle r="10" fill="#48566d"></circle>
+              <g stroke="#9aa8bd" stroke-width="4" stroke-linecap="round">
+                <line x1="0" y1="-48" x2="0" y2="48"></line>
+                <line x1="-48" y1="0" x2="48" y2="0"></line>
+                <line x1="-34" y1="-34" x2="34" y2="34"></line>
+                <line x1="-34" y1="34" x2="34" y2="-34"></line>
+              </g>
+            </g>
+          </g>
+
+          <!-- 前轮 -->
+          <g transform="translate(565,360)">
+            <g class="wheel">
+              <circle r="52" fill="none" stroke="#26324a" stroke-width="9"></circle>
+              <circle r="10" fill="#48566d"></circle>
+              <g stroke="#9aa8bd" stroke-width="4" stroke-linecap="round">
+                <line x1="0" y1="-48" x2="0" y2="48"></line>
+                <line x1="-48" y1="0" x2="48" y2="0"></line>
+                <line x1="-34" y1="-34" x2="34" y2="34"></line>
+                <line x1="-34" y1="34" x2="34" y2="-34"></line>
+              </g>
+            </g>
+          </g>
+
+          <!-- 车架 -->
+          <g class="frame" stroke="url(#frame)" stroke-width="10" stroke-linecap="round" fill="none">
+            <path d="M235,360 L400,360 L365,245 Z"></path>
+            <path d="M365,245 L520,260 L565,360"></path>
+            <path d="M400,360 L520,260"></path>
+            <path d="M365,245 L360,230"></path>
+            <path d="M520,260 Q548,232 575,240"></path>
+          </g>
+
+          <!-- 车座 -->
+          <rect x="342" y="228" width="48" height="12" rx="6" fill="#26324a"></rect>
+
+          <!-- 踏板曲柄 -->
+          <g class="pedal-crank">
+            <line x1="400" y1="302" x2="400" y2="418" stroke="#26324a" stroke-width="10" stroke-linecap="round"></line>
+            <rect x="383" y="301" width="34" height="11" rx="5" fill="#162033"></rect>
+            <rect x="383" y="407" width="34" height="11" rx="5" fill="#162033"></rect>
+            <circle cx="400" cy="360" r="11" fill="#162033"></circle>
+          </g>
+
+          <!-- 鹈鹕 -->
+          <g class="pelican">
+            <!-- 尾巴 -->
+            <path d="M300,210 Q245,185 268,238 Q295,262 328,238 Z" fill="#dce8f6"></path>
+
+            <!-- 身体 -->
+            <ellipse cx="365" cy="215" rx="86" ry="55" fill="url(#bodyShade)" stroke="#cfdce9" stroke-width="3"></ellipse>
+
+            <!-- 翅膀 -->
+            <g class="wing">
+              <path d="M350,172 Q425,148 470,186 Q430,214 365,206 Z" fill="#e3edf8" stroke="#cfdce9" stroke-width="2"></path>
+            </g>
+
+            <!-- 脖子 -->
+            <path d="M395,170 Q430,105 465,120" fill="none" stroke="#f8fbff" stroke-width="34" stroke-linecap="round"></path>
+
+            <!-- 头 -->
+            <ellipse cx="468" cy="122" rx="38" ry="34" fill="url(#bodyShade)" stroke="#cfdce9" stroke-width="3"></ellipse>
+
+            <!-- 大嘴 -->
+            <path d="M486,112 C565,82 655,100 690,140 C652,170 565,180 500,150 Z" fill="url(#beak)" stroke="#d96f1c" stroke-width="2"></path>
+
+            <!-- 喉囊 -->
+            <path d="M500,150 C560,176 640,166 686,138 C650,186 575,194 502,160 Z" fill="#ffca7a" opacity=".85"></path>
+
+            <!-- 眼睛 -->
+            <circle cx="486" cy="112" r="7" fill="#1f2937"></circle>
+            <circle cx="489" cy="109" r="2.2" fill="#fff"></circle>
+
+            <!-- 腿 -->
+            <path d="M385,262 Q392,315 400,385 L418,410" fill="none" stroke="#ff9f3c" stroke-width="13" stroke-linecap="round"></path>
+
+            <!-- 脚 -->
+            <path d="M418,410 L436,406" fill="none" stroke="#ff9f3c" stroke-width="8" stroke-linecap="round"></path>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <div class="hud">
+      天气：<span id="weatherText">晴天</span>
+    </div>
+  </div>
+
+  <script>
+    const weatherCycle = [
+      { cls: "weather-sunny", text: "晴天" },
+      { cls: "weather-cloudy", text: "阴天" },
+      { cls: "weather-rainy", text: "雨天" }
+    ];
+
+    let index = 0;
+    const body = document.body;
+    const weatherText = document.getElementById("weatherText");
+
+    function applyWeather(i) {
+      body.classList.remove("weather-sunny", "weather-cloudy", "weather-rainy");
+      body.classList.add(weatherCycle[i].cls);
+      weatherText.textContent = weatherCycle[i].text;
+    }
+
+    applyWeather(index);
+
+    setInterval(() => {
+      index = (index + 1) % weatherCycle.length;
+      applyWeather(index);
+    }, 5000);
+  </script>
+
+
+</body></html>

@@ -31,7 +31,8 @@
     'Sol Codex': 'ch-green',
     '官网风格 · 专家模式': 'ch-rose',
     '中转API': 'ch-cyan',
-    'Luna Codex': 'ch-amber'
+    'Luna Codex': 'ch-amber',
+    'Poe': 'ch-fuchsia'
   };
 
   function channelClass(ch) {

@@ -161,6 +161,7 @@ wrangler pages deploy TempFiles/dist --project-name peilika --commit-dirty=true
 | `44ef7ac` | 新增 Claude Opus 5（中转API）条目，恢复 24 卡 |
 | `07315da` | MiniMax M3 替换为官网风格新源，渠道 WorkBuddy→官网风格 |
 | `0f096b2` | 预置 5 个模型默认评分（qwen3.8max=10，其余 4 个=9），本地手动分优先 |
+| 本次 | 新增 Gemini 3.7（Poe）、Qwen 3.8 27B（Poe）、GLM 5.3（WorkBuddy）三张卡；Grok 4.5 替换为 Grok 4.6（真·官网）；新增 Poe 渠道徽标 ch-fuchsia；清单 28 卡，重新部署 peilika |
 
 ---
 
