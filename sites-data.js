@@ -45,60 +45,6 @@ window.SITES = [
     "src": "sites/qianwen-3-6-flash.html"
   },
   {
-    "file": "gpt5.6solcodex.html",
-    "slug": "gpt-5-6-codex",
-    "category": "OpenAI",
-    "model": "GPT-5.6 Codex",
-    "channel": "Sol Codex",
-    "thumb": "thumbs/gpt-5-6-codex.png",
-    "src": "sites/gpt-5-6-codex.html"
-  },
-  {
-    "file": "gpt5.6luna-codex.html",
-    "slug": "gpt-5-6-luna-codex",
-    "category": "OpenAI",
-    "model": "GPT-5.6 Luna Codex",
-    "channel": "Luna Codex",
-    "thumb": "thumbs/gpt-5-6-luna-codex.png",
-    "src": "sites/gpt-5-6-luna-codex.html"
-  },
-  {
-    "file": "gemini3.7.html",
-    "slug": "gemini-3-7",
-    "category": "Google · Gemini",
-    "model": "Gemini 3.7 Flash",
-    "channel": "Poe",
-    "thumb": "thumbs/gemini-3-7.png",
-    "src": "sites/gemini-3-7.html"
-  },
-  {
-    "file": "gemini3.6flash官网.html",
-    "slug": "gemini-3-6-flash",
-    "category": "Google · Gemini",
-    "model": "Gemini 3.6 Flash",
-    "channel": "官网",
-    "thumb": "thumbs/gemini-3-6-flash.png",
-    "src": "sites/gemini-3-6-flash.html"
-  },
-  {
-    "file": "gemini31pro官网.html",
-    "slug": "gemini-3-1-pro",
-    "category": "Google · Gemini",
-    "model": "Gemini 3.1 Pro",
-    "channel": "官网",
-    "thumb": "thumbs/gemini-3-1-pro.png",
-    "src": "sites/gemini-3-1-pro.html"
-  },
-  {
-    "file": "grok4.6.html",
-    "slug": "grok-4-6",
-    "category": "xAI · Grok",
-    "model": "Grok 4.6",
-    "channel": "真·官网",
-    "thumb": "thumbs/grok-4-6.png",
-    "src": "sites/grok-4-6.html"
-  },
-  {
     "file": "v4pro813API.html",
     "slug": "deepseek-v4-pro-api-0813",
     "category": "DeepSeek",
@@ -171,6 +117,69 @@ window.SITES = [
     "src": "sites/deepseek-v4-flash-0424-wb.html"
   },
   {
+    "file": "中转API的opus5.html",
+    "slug": "opus-5-relay",
+    "category": "A/Claude",
+    "model": "Claude Opus 5",
+    "channel": "中转API",
+    "thumb": "thumbs/opus-5-relay.png",
+    "src": "sites/opus-5-relay.html"
+  },
+  {
+    "file": "gpt5.6solcodex.html",
+    "slug": "gpt-5-6-codex",
+    "category": "OpenAI",
+    "model": "GPT-5.6 Codex",
+    "channel": "Sol Codex",
+    "thumb": "thumbs/gpt-5-6-codex.png",
+    "src": "sites/gpt-5-6-codex.html"
+  },
+  {
+    "file": "gpt5.6luna-codex.html",
+    "slug": "gpt-5-6-luna-codex",
+    "category": "OpenAI",
+    "model": "GPT-5.6 Luna Codex",
+    "channel": "Luna Codex",
+    "thumb": "thumbs/gpt-5-6-luna-codex.png",
+    "src": "sites/gpt-5-6-luna-codex.html"
+  },
+  {
+    "file": "gemini3.7.html",
+    "slug": "gemini-3-7",
+    "category": "Google · Gemini",
+    "model": "Gemini 3.7 Flash",
+    "channel": "Poe",
+    "thumb": "thumbs/gemini-3-7.png",
+    "src": "sites/gemini-3-7.html"
+  },
+  {
+    "file": "gemini3.6flash官网.html",
+    "slug": "gemini-3-6-flash",
+    "category": "Google · Gemini",
+    "model": "Gemini 3.6 Flash",
+    "channel": "官网",
+    "thumb": "thumbs/gemini-3-6-flash.png",
+    "src": "sites/gemini-3-6-flash.html"
+  },
+  {
+    "file": "gemini31pro官网.html",
+    "slug": "gemini-3-1-pro",
+    "category": "Google · Gemini",
+    "model": "Gemini 3.1 Pro",
+    "channel": "官网",
+    "thumb": "thumbs/gemini-3-1-pro.png",
+    "src": "sites/gemini-3-1-pro.html"
+  },
+  {
+    "file": "grok4.6.html",
+    "slug": "grok-4-6",
+    "category": "xAI · Grok",
+    "model": "Grok 4.6",
+    "channel": "真·官网",
+    "thumb": "thumbs/grok-4-6.png",
+    "src": "sites/grok-4-6.html"
+  },
+  {
     "file": "豆包官网专家模式.html",
     "slug": "doubao-expert",
     "category": "字节 · 豆包",
@@ -232,14 +241,5 @@ window.SITES = [
     "channel": "官网",
     "thumb": "thumbs/minimax-m3-wb.png",
     "src": "sites/minimax-m3-wb.html"
-  },
-  {
-    "file": "中转API的opus5.html",
-    "slug": "opus-5-relay",
-    "category": "A/Claude",
-    "model": "Claude Opus 5",
-    "channel": "中转API",
-    "thumb": "thumbs/opus-5-relay.png",
-    "src": "sites/opus-5-relay.html"
   }
 ];
