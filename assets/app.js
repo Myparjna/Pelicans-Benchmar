@@ -62,9 +62,7 @@
     'grok-4-6': 1,
     'deepseek-v4-pro-0424': 6,
     'deepseek-0424-pro-trae': 7,
-    'deepseek-v4-pro-0424-wb': 7,
     'deepseek-v4-flash-api-0731': 7,
-    'deepseek-v4-flash-0424-trae': 1,
     'deepseek-flash-0424': 1,
     'deepseek-v4-flash-0424-wb': 3,
     'doubao-expert': 5,
@@ -72,9 +70,7 @@
     'hunyuan-hy3-wb': 7,
     'glm-5-3-wb': 10,
     'glm-5-2-wb': 6,
-    'minimax-m3-wb': 6,
-    'deepseek-v4-pro-0813-dsh-minimal': 9,
-    'deepseek-v4-flash-0731-dsh-minimal': 7
+    'minimax-m3-wb': 6
   };
   let ratings = loadRatings();
 

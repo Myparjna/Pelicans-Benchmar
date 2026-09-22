@@ -6,7 +6,7 @@
 
 ## 1. 项目背景与目标
 
-把 24 个国内外 AI 模型/平台生成的「鹈鹕自行车」主题网页集中到一个可对比的展厅里：
+把 25 个国内外 AI 模型/平台生成的「鹈鹕自行车」主题网页集中到一个可对比的展厅里：
 
 - 每张卡片有缩略图封面、渠道/厂商标签、1-10 分评分。
 - 可分类筛选、搜索，点开后用 iframe 全屏看真实效果（上一/下一个、键盘方向键、Esc 关闭）。
@@ -35,13 +35,13 @@
 ```
 鹈鹕自行车测试/
 ├─ index.html              # 页面骨架：header(搜索框+排序按钮+品牌图标)、filter-bar、galleryRoot、viewer 弹窗
-├─ sites-data.js           # 24 条元数据：file / slug / category / model / channel / thumb / src
+├─ sites-data.js           # 25 条元数据：file / slug / category / model / channel / thumb / src
 ├─ favicon.webp            # 网站 favicon 与左上角品牌图标（同一张）
 ├─ assets/
 │  ├─ style.css            # 浅色主题 + 响应式样式
 │  └─ app.js               # 画廊渲染、分类/搜索、评分、排序、iframe 查看器
-├─ sites/                  # 24 个 ASCII 命名干净副本（部署用，不含原中文名）
-├─ thumbs/                 # 24 张缩略图 PNG（封面）
+├─ sites/                  # 25 个 ASCII 命名干净副本（部署用，不含原中文名）
+├─ thumbs/                 # 25 张缩略图 PNG（封面）
 ├─ ProjectDoc/             # 本项目交接文档
 ├─ OpsDev/
 │  └─ deploy-pages.sh      # 构建 dist 并 wrangler 部署脚本
@@ -165,6 +165,7 @@ wrangler pages deploy TempFiles/dist --project-name peilika --commit-dirty=true
 | `75e5066` | 新增 Gemini 3.7（Poe）、Qwen 3.8 27B（Poe）、GLM 5.3（火山方舟）三张卡；Grok 4.5 替换为 Grok 4.6（真·官网）；新增 Poe 徽标 ch-fuchsia；28 卡 |
 | `1f91ffc` | 移除旧 Grok 4.5 副本与缩略图（已备份 Trash/） |
 | 本次 | 删重复的 qwen-3-6-flash（保留千问官网版）；Gemini 3.7→Gemini 3.7 Flash；DeepSeek V4 Flash(Trae)→加 (0424)；Seed 2.1 Pro 并入「字节 · 豆包」分类；豆包加 0813 版本标注；GLM 5.3 渠道 WorkBuddy→火山方舟（新增 ch-lime 徽标）；opus5 缩略图重截为晴天帧 + 副本修负半径 bug；清单 27 卡 |
+| 本次 | 删除 4 个 DeepSeek 展示条目及其 `sites/` 副本和缩略图；根目录对应原始文件按当前用户操作移除；清单降为 25 卡 |
 
 ---
 
