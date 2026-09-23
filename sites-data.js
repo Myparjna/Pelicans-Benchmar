@@ -54,15 +54,6 @@ window.SITES = [
     "src": "sites/deepseek-v4-pro-api-0813.html"
   },
   {
-    "file": "deepseekv4pro0813+dsh+极简模式.html",
-    "slug": "deepseek-v4-pro-0813-dsh-minimal",
-    "category": "DeepSeek",
-    "model": "DeepSeek V4 Pro 极简 (0813)",
-    "channel": "DSH",
-    "src": "sites/deepseek-v4-pro-0813-dsh-minimal.html",
-    "thumb": "thumbs/deepseek-v4-pro-0813-dsh-minimal.png"
-  },
-  {
     "file": "apideepseekv4flash0731.html",
     "slug": "deepseek-v4-flash-api-0731",
     "category": "DeepSeek",
@@ -70,15 +61,6 @@ window.SITES = [
     "channel": "API 直连",
     "thumb": "thumbs/deepseek-v4-flash-api-0731.png",
     "src": "sites/deepseek-v4-flash-api-0731.html"
-  },
-  {
-    "file": "deepseekv4flash0731+dsh+极简模式.html",
-    "slug": "deepseek-v4-flash-0731-dsh-minimal",
-    "category": "DeepSeek",
-    "model": "DeepSeek V4 Flash 极简 (0731)",
-    "channel": "DSH",
-    "src": "sites/deepseek-v4-flash-0731-dsh-minimal.html",
-    "thumb": "thumbs/deepseek-v4-flash-0731-dsh-minimal.png"
   },
   {
     "file": "deepseekv4pro424官网版本.html",
@@ -90,15 +72,6 @@ window.SITES = [
     "src": "sites/deepseek-v4-pro-0424.html"
   },
   {
-    "file": "deepseek0424pro trae.html",
-    "slug": "deepseek-0424-pro-trae",
-    "category": "DeepSeek",
-    "model": "DeepSeek V4 Pro (0424)",
-    "channel": "Trae",
-    "thumb": "thumbs/deepseek-0424-pro-trae.png",
-    "src": "sites/deepseek-0424-pro-trae.html"
-  },
-  {
     "file": "deepseekv4pro-0424-workbuddy.html",
     "slug": "deepseek-v4-pro-0424-wb",
     "category": "DeepSeek",
@@ -108,13 +81,13 @@ window.SITES = [
     "src": "sites/deepseek-v4-pro-0424-wb.html"
   },
   {
-    "file": "deepseekv4flash0424trae.html",
-    "slug": "deepseek-v4-flash-0424-trae",
+    "file": "deepseek-v4.1-flash（trae-）.html",
+    "slug": "deepseek-v4-1-flash-trae",
     "category": "DeepSeek",
-    "model": "DeepSeek V4 Flash (0424)",
+    "model": "DeepSeek V4.1 Flash",
     "channel": "Trae",
-    "thumb": "thumbs/deepseek-v4-flash-0424-trae.png",
-    "src": "sites/deepseek-v4-flash-0424-trae.html"
+    "thumb": "thumbs/deepseek-v4-1-flash-trae.png",
+    "src": "sites/deepseek-v4-1-flash-trae.html"
   },
   {
     "file": "deepseekflash0424官网版.html",
@@ -225,6 +198,15 @@ window.SITES = [
     "src": "sites/hunyuan-hy3-wb.html"
   },
   {
+    "file": "Hy4-preview.html",
+    "slug": "hy4-preview",
+    "category": "腾讯 · 混元",
+    "model": "混元 HY4 Preview",
+    "channel": "官网",
+    "thumb": "thumbs/hy4-preview.png",
+    "src": "sites/hy4-preview.html"
+  },
+  {
     "file": "pelican-bike-weather.html",
     "slug": "kimi-k3-wb",
     "category": "月之暗面 · Kimi",
@@ -259,5 +241,14 @@ window.SITES = [
     "channel": "官网",
     "thumb": "thumbs/minimax-m3-wb.png",
     "src": "sites/minimax-m3-wb.html"
+  },
+  {
+    "file": "mimo-v2.6-pro.html",
+    "slug": "mimo-v2-6-pro",
+    "category": "小米 · MiMo",
+    "model": "MiMo V2.6 Pro",
+    "channel": "官网",
+    "thumb": "thumbs/mimo-v2-6-pro.png",
+    "src": "sites/mimo-v2-6-pro.html"
   }
 ];

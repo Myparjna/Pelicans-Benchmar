@@ -78,7 +78,25 @@
     </div>
   </footer>
 
-  <script src="sites-data.js"></script>
-  <script src="assets/app.js"></script>
+  <script>
+    // 配置经常增删；每次进入展厅都绕过浏览器/CDN 对旧 sites-data.js 的缓存。
+    (() => {
+      const version = `?v=${Date.now()}`;
+      const dataScript = document.createElement('script');
+      dataScript.src = `sites-data.js${version}`;
+      dataScript.onload = () => {
+        const appScript = document.createElement('script');
+        appScript.src = `assets/app.js${version}`;
+        document.body.appendChild(appScript);
+      };
+      dataScript.onerror = () => {
+        const message = document.createElement('div');
+        message.className = 'empty-state';
+        message.textContent = '展厅配置加载失败，请刷新后重试。';
+        document.getElementById('galleryRoot').replaceChildren(message);
+      };
+      document.body.appendChild(dataScript);
+    })();
+  </script>
 </body>
 </html>
