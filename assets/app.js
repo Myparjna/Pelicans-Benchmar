@@ -253,45 +253,31 @@
       groups.get(s.category).push(s);
     }
 
-    // 小分类合并：把相邻的“不足一行”的分类拼成一个 band，共用同一张网格
-    // 例如 小米·MiMo(2) + MiniMax(2) 合成一行 4 张，避免右侧大片留白
-    const MIN_ROW = 4;
-    const bands = [];
-    let band = null;
-    for (const [category, items] of groups) {
-      if (items.length >= MIN_ROW) {
-        if (band) { bands.push(band); band = null; }
-        bands.push([{ category, items }]);
-        continue;
-      }
-      if (!band) band = [];
-      band.push({ category, items });
-      const total = band.reduce((n, g) => n + g.items.length, 0);
-      if (total >= MIN_ROW) { bands.push(band); band = null; }
-    }
-    if (band) bands.push(band);
+    // 分类并列组合（按用户指定顺序，数据数组顺序即展示顺序）：
+    // 智谱+腾讯、Kimi+Grok、豆包+阶跃、MiniMax+小米 合并成 band，其余分类独立成组
+    const CATEGORY_BANDS = [
+      ['智谱 · GLM', '腾讯 · 混元'],
+      ['月之暗面 · Kimi', 'Grok'],
+      ['字节 · 豆包', '阶跃星辰 · Step'],
+      ['MiniMax', '小米 · MiMo'],
+    ];
+    const bandOf = new Map();
+    for (const [a, b] of CATEGORY_BANDS) { bandOf.set(a, b); bandOf.set(b, a); }
+    const consumed = new Set();
 
     const html = [];
-    for (const bandGroups of bands) {
-      const merged = bandGroups.length > 1;
-      if (!merged) {
-        const g = bandGroups[0];
-        html.push(`
-          <section class="category-section">
-            <div class="category-title">
-              <span class="category-name">${escapeHtml(g.category)}</span>
-              <span class="category-count">${g.items.length} 个</span>
-            </div>
-            <div class="site-grid">
-              ${g.items.map(s => cardHTML(s)).join('')}
-            </div>
-          </section>
-        `);
-        continue;
-      }
-      // 合并 band：每组“标题+卡片”作为一个占位块，占位宽度 = 自己的卡片数，
-      // 这样标题正好落在自己那几张卡的上方
-      const cells = bandGroups.map(g => `
+    for (const [category, items] of groups) {
+      if (consumed.has(category)) continue;
+      const partner = bandOf.get(category);
+      if (partner && groups.has(partner)) {
+        const pairGroups = [
+          { category, items },
+          { category: partner, items: groups.get(partner) },
+        ];
+        consumed.add(partner);
+        // 每组“标题+卡片”作为一个占位块，占位宽度 = 自己的卡片数，
+        // 这样标题正好落在自己那几张卡的上方
+        const cells = pairGroups.map(g => `
             <div class="band-group" style="grid-column: span ${Math.max(1, g.items.length)}">
               <div class="band-title">
                 <span class="category-name">${escapeHtml(g.category)}</span>
@@ -301,10 +287,23 @@
                 ${g.items.map(s => cardHTML(s, 0, true)).join('')}
               </div>
             </div>`).join('');
+        html.push(`
+          <section class="category-section merged-band">
+            <div class="site-grid">
+              ${cells}
+            </div>
+          </section>
+        `);
+        continue;
+      }
       html.push(`
-        <section class="category-section merged-band">
+        <section class="category-section">
+          <div class="category-title">
+            <span class="category-name">${escapeHtml(category)}</span>
+            <span class="category-count">${items.length} 个</span>
+          </div>
           <div class="site-grid">
-            ${cells}
+            ${items.map(s => cardHTML(s)).join('')}
           </div>
         </section>
       `);
