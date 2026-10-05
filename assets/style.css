@@ -212,24 +212,20 @@ body {
   font-weight: 700;
 }
 
-/* 合并 band：多个分类共用一行网格时，标题分段横向排列 */
-.merged-band .category-title {
-  gap: 8px 0;
-  flex-wrap: wrap;
-  border-left: 0;
-  padding-left: 0;
-}
-
-.merged-band .title-item {
-  display: inline-flex;
+/* 合并 band：每组“标题+卡片”占对应列宽，标题正好在自己卡片上方 */
+.band-title {
+  display: flex;
   align-items: baseline;
-  gap: 8px;
+  gap: 10px;
+  margin-bottom: 16px;
   padding-left: 12px;
   border-left: 4px solid var(--primary);
 }
 
-.merged-band .title-item + .title-item {
-  margin-left: 22px;
+.band-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
 }
 
 .category-chip {

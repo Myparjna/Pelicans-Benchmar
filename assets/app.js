@@ -275,21 +275,37 @@
     const html = [];
     for (const bandGroups of bands) {
       const merged = bandGroups.length > 1;
-      const titles = bandGroups.map(g => `
-            <span class="title-item">
+      if (!merged) {
+        const g = bandGroups[0];
+        html.push(`
+          <section class="category-section">
+            <div class="category-title">
               <span class="category-name">${escapeHtml(g.category)}</span>
               <span class="category-count">${g.items.length} 个</span>
-            </span>`).join('');
-      const cards = bandGroups
-        .map(g => g.items.map(s => cardHTML(s, 0, merged)).join(''))
-        .join('');
+            </div>
+            <div class="site-grid">
+              ${g.items.map(s => cardHTML(s)).join('')}
+            </div>
+          </section>
+        `);
+        continue;
+      }
+      // 合并 band：每组“标题+卡片”作为一个占位块，占位宽度 = 自己的卡片数，
+      // 这样标题正好落在自己那几张卡的上方
+      const cells = bandGroups.map(g => `
+            <div class="band-group" style="grid-column: span ${Math.max(1, g.items.length)}">
+              <div class="band-title">
+                <span class="category-name">${escapeHtml(g.category)}</span>
+                <span class="category-count">${g.items.length} 个</span>
+              </div>
+              <div class="band-cards">
+                ${g.items.map(s => cardHTML(s, 0, true)).join('')}
+              </div>
+            </div>`).join('');
       html.push(`
-        <section class="category-section${merged ? ' merged-band' : ''}">
-          <div class="category-title">
-            ${titles}
-          </div>
+        <section class="category-section merged-band">
           <div class="site-grid">
-            ${cards}
+            ${cells}
           </div>
         </section>
       `);
