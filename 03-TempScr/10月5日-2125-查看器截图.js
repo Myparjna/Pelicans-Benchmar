@@ -1,0 +1,20 @@
+const PORT = 9303;
+let ws, id = 0; const pending = new Map();
+const send = (method, params = {}) => new Promise((res, rej) => { const i = ++id; pending.set(i, { res, rej }); ws.send(JSON.stringify({ id: i, method, params })); });
+(async () => {
+  const tabs = await (await fetch(`http://127.0.0.1:${PORT}/json/list`)).json();
+  const page = tabs.find(t => t.type === 'page' && t.url.startsWith('http://127.0.0.1:8137'));
+  ws = new WebSocket(page.webSocketDebuggerUrl);
+  await new Promise(r => ws.onopen = r);
+  ws.onmessage = ev => { const m = JSON.parse(ev.data); if (pending.has(m.id)) { const p = pending.get(m.id); pending.delete(m.id); m.error ? p.rej(new Error(JSON.stringify(m.error))) : p.res(m.result); } };
+  const ev = async e => (await send('Runtime.evaluate', { expression: e, returnByValue: true })).result.value;
+  await send('Page.enable');
+  await send('Page.reload'); await new Promise(r => setTimeout(r, 2500));
+  await ev(`document.querySelector('.site-card[data-slug="hy4-preview"]').click()`);
+  await new Promise(r => setTimeout(r, 2500));
+  const shot = await send('Page.captureScreenshot', { format: 'png' });
+  const fs = require('fs');
+  fs.writeFileSync('C:/Users/mypra/Desktop/VibeCoding指南/skills测评项目/03-鹈鹕自行车测试/02-TempFiles/viewer-open-功能验收.png', Buffer.from(shot.data, 'base64'));
+  console.log('截图完成');
+  ws.close(); process.exit(0);
+})().catch(e => { console.error('失败:', e.message); process.exit(1); });
