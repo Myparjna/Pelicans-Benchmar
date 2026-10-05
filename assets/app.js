@@ -14,7 +14,6 @@
   const viewer = document.getElementById('viewer');
   const viewerIframe = document.getElementById('viewerIframe');
   const viewerTitle = document.getElementById('viewerTitle');
-  const viewerBadge = document.getElementById('viewerBadge');
   const viewerParams = document.getElementById('viewerParams');
   const viewerCutoff = document.getElementById('viewerCutoff');
   const viewerCategory = document.getElementById('viewerCategory');
@@ -174,7 +173,7 @@
     const term = searchTerm.trim().toLowerCase();
     filteredSites = sites.filter(s => {
       const catOk = activeCategory === '全部' || s.category === activeCategory;
-      const hay = (s.model + ' ' + s.category + ' ' + s.channel + ' ' + s.file).toLowerCase();
+      const hay = (s.model + ' ' + s.category + ' ' + s.file).toLowerCase();
       const termOk = !term || hay.includes(term);
       return catOk && termOk;
     });
@@ -329,7 +328,6 @@
         <div class="card-body">
           <div class="card-meta">
             ${categoryBadge}
-            <span class="channel-badge ${channelClass(s.channel)}">${escapeHtml(s.channel)}</span>
             ${paramsBadge}
             ${cutoffBadge}
           </div>
@@ -520,8 +518,6 @@
     const s = filteredSites[currentIndex];
     viewerTitle.textContent = s.model;
     viewerCategory.textContent = s.category;
-    viewerBadge.textContent = s.channel;
-    viewerBadge.className = 'channel-badge ' + channelClass(s.channel);
     if (viewerParams) {
       viewerParams.textContent = s.params || '';
       viewerParams.style.display = s.params ? '' : 'none';
