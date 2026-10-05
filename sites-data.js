@@ -415,7 +415,7 @@ window.SITES = [
     "channel": "—",
     "thumb": "thumbs/seed-2-1-pro-0915.png",
     "src": "sites/seed-2-1-pro-0915.html",
-    "params": "—",
+    "params": "未公开",
     "cutoff": "—",
     "released": 1791194184
   },
@@ -427,8 +427,8 @@ window.SITES = [
     "channel": "Sol Codex",
     "thumb": "thumbs/gpt-6-sol.png",
     "src": "sites/gpt-6-sol.html",
-    "params": "—",
-    "cutoff": "—",
+    "params": "未公开",
+    "cutoff": "2026-04",
     "released": 1791193923
   },
   {
@@ -439,8 +439,8 @@ window.SITES = [
     "channel": "Luna Codex",
     "thumb": "thumbs/gpt-6-luna.png",
     "src": "sites/gpt-6-luna.html",
-    "params": "—",
-    "cutoff": "—",
+    "params": "未公开",
+    "cutoff": "2026-05",
     "released": 1791193894
   },
   {
@@ -451,8 +451,8 @@ window.SITES = [
     "channel": "Sol Codex",
     "thumb": "thumbs/gpt-6-1-sol.png",
     "src": "sites/gpt-6-1-sol.html",
-    "params": "—",
-    "cutoff": "—",
+    "params": "未公开",
+    "cutoff": "2026-04",
     "released": 1791193889
   },
   {
@@ -463,7 +463,7 @@ window.SITES = [
     "channel": "官网",
     "thumb": "thumbs/step-5-preview.png",
     "src": "sites/step-5-preview.html",
-    "params": "—",
+    "params": "600B(A27B)",
     "cutoff": "—",
     "released": 1791193351
   },
@@ -475,7 +475,7 @@ window.SITES = [
     "channel": "WorkBuddy",
     "thumb": "thumbs/hy4-preview.png",
     "src": "sites/hy4-preview.html",
-    "params": "—",
+    "params": "770B(A49B)",
     "cutoff": "—",
     "released": 1791192923
   },
@@ -499,7 +499,7 @@ window.SITES = [
     "channel": "—",
     "thumb": "thumbs/kimi-k2-8.png",
     "src": "sites/kimi-k2-8.html",
-    "params": "—",
+    "params": "未公开",
     "cutoff": "—",
     "released": 1791191905
   },
@@ -511,8 +511,8 @@ window.SITES = [
     "channel": "官网",
     "thumb": "thumbs/claude-sonnet-5-5.png",
     "src": "sites/claude-sonnet-5-5.html",
-    "params": "—",
-    "cutoff": "—",
+    "params": "未公开",
+    "cutoff": "2026-06",
     "released": 1791191191
   },
   {
@@ -523,8 +523,8 @@ window.SITES = [
     "channel": "ZCode",
     "thumb": "thumbs/claude-opus-5-5-zcode.png",
     "src": "sites/claude-opus-5-5-zcode.html",
-    "params": "—",
-    "cutoff": "—",
+    "params": "未公开",
+    "cutoff": "2026-06",
     "released": 1791190272
   }
 ];
