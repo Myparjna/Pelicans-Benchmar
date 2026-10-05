@@ -254,16 +254,42 @@
       groups.get(s.category).push(s);
     }
 
-    const html = [];
+    // 小分类合并：把相邻的“不足一行”的分类拼成一个 band，共用同一张网格
+    // 例如 小米·MiMo(2) + MiniMax(2) 合成一行 4 张，避免右侧大片留白
+    const MIN_ROW = 4;
+    const bands = [];
+    let band = null;
     for (const [category, items] of groups) {
+      if (items.length >= MIN_ROW) {
+        if (band) { bands.push(band); band = null; }
+        bands.push([{ category, items }]);
+        continue;
+      }
+      if (!band) band = [];
+      band.push({ category, items });
+      const total = band.reduce((n, g) => n + g.items.length, 0);
+      if (total >= MIN_ROW) { bands.push(band); band = null; }
+    }
+    if (band) bands.push(band);
+
+    const html = [];
+    for (const bandGroups of bands) {
+      const merged = bandGroups.length > 1;
+      const titles = bandGroups.map(g => `
+            <span class="title-item">
+              <span class="category-name">${escapeHtml(g.category)}</span>
+              <span class="category-count">${g.items.length} 个</span>
+            </span>`).join('');
+      const cards = bandGroups
+        .map(g => g.items.map(s => cardHTML(s, 0, merged)).join(''))
+        .join('');
       html.push(`
-        <section class="category-section">
+        <section class="category-section${merged ? ' merged-band' : ''}">
           <div class="category-title">
-            <span class="category-name">${escapeHtml(category)}</span>
-            <span class="category-count">${items.length} 个</span>
+            ${titles}
           </div>
           <div class="site-grid">
-            ${items.map(s => cardHTML(s)).join('')}
+            ${cards}
           </div>
         </section>
       `);
@@ -272,8 +298,9 @@
     bindCards();
   }
 
-  function cardHTML(s, rank) {
+  function cardHTML(s, rank, showCategory) {
     const rankBadge = rank ? `<span class="rank-badge">No.${rank}</span>` : '';
+    const categoryBadge = showCategory ? `<span class="category-chip">${escapeHtml(s.category)}</span>` : '';
     const paramsBadge = s.params ? `<span class="params-badge" title="模型总参（激活参未列出）">${escapeHtml(s.params)}</span>` : '';
     const cutoffBadge = s.cutoff ? `<span class="cutoff-badge" title="知识截止日期">截止 ${escapeHtml(s.cutoff)}</span>` : '';
     return `
@@ -285,6 +312,7 @@
         </div>
         <div class="card-body">
           <div class="card-meta">
+            ${categoryBadge}
             <span class="channel-badge ${channelClass(s.channel)}">${escapeHtml(s.channel)}</span>
             ${paramsBadge}
             ${cutoffBadge}
