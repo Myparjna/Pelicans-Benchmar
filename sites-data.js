@@ -396,7 +396,7 @@ window.SITES = [
     "released": 1784646733
   },
   {
-    "file": "pelican-bike-weather.html",
+    "file": "kimik3.html",
     "slug": "kimi-k3-wb",
     "category": "月之暗面 · Kimi",
     "model": "Kimi K3",
@@ -504,30 +504,6 @@ window.SITES = [
     "released": 1766504997
   },
   {
-    "file": "deepseekv4pro424官网版本.html",
-    "slug": "deepseek-v4-pro-0424",
-    "category": "DeepSeek",
-    "model": "DeepSeek V4 Pro (0424)",
-    "channel": "官网",
-    "thumb": "thumbs/deepseek-v4-pro-0424.png",
-    "src": "sites/deepseek-v4-pro-0424.html",
-    "params": "685B",
-    "cutoff": "2025-05",
-    "released": 1764594642
-  },
-  {
-    "file": "deepseek0424pro trae.html",
-    "slug": "deepseek-0424-pro-trae",
-    "category": "DeepSeek",
-    "model": "DeepSeek V4 Pro (0424)",
-    "channel": "Trae",
-    "thumb": "thumbs/deepseek-0424-pro-trae.png",
-    "src": "sites/deepseek-0424-pro-trae.html",
-    "params": "685B",
-    "cutoff": "2025-05",
-    "released": 1764594642
-  },
-  {
     "file": "deepseekv4pro-0424-workbuddy.html",
     "slug": "deepseek-v4-pro-0424-wb",
     "category": "DeepSeek",
@@ -538,30 +514,6 @@ window.SITES = [
     "params": "685B",
     "cutoff": "2025-05",
     "released": 1764594642
-  },
-  {
-    "file": "deepseekv4flash0424trae.html",
-    "slug": "deepseek-v4-flash-0424-trae",
-    "category": "DeepSeek",
-    "model": "DeepSeek V4 Flash (0424)",
-    "channel": "Trae",
-    "thumb": "thumbs/deepseek-v4-flash-0424-trae.png",
-    "src": "sites/deepseek-v4-flash-0424-trae.html",
-    "params": "685B",
-    "cutoff": "2025-03",
-    "released": 1755779628
-  },
-  {
-    "file": "deepseekflash0424官网版.html",
-    "slug": "deepseek-flash-0424",
-    "category": "DeepSeek",
-    "model": "DeepSeek V4 Flash (0424)",
-    "channel": "官网",
-    "thumb": "thumbs/deepseek-flash-0424.png",
-    "src": "sites/deepseek-flash-0424.html",
-    "params": "685B",
-    "cutoff": "2025-03",
-    "released": 1755779628
   },
   {
     "file": "deepseekv4flash0424-workbuddy.html",

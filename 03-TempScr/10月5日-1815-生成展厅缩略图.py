@@ -14,16 +14,7 @@ TMP = r"C:\Users\mypra\AppData\Local\Temp\pel-thumbs"
 CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 
 SLUGS = [
-    "seed-2-1-pro-0915",
-    "gpt-6-sol",
-    "gpt-6-luna",
-    "gpt-6-1-sol",
-    "step-5-preview",
-    "hy4-preview",
-    "spacebunny",
-    "kimi-k2-8",
-    "claude-sonnet-5-5",
-    "claude-opus-5-5-zcode",
+    "kimi-k3-wb",
 ]
 
 # 虚拟时间点（毫秒），逐帧推进以抓取不同动画时刻
