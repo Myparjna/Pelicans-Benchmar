@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI模型鹈鹕自行车测试 · 44 个模型对比</title>
+  <meta name="description" content="对比 44 个国内外大模型/平台生成的鹈鹕自行车主题网页效果，支持分类筛选、逐一预览与全屏 iframe 查看。">
+  <link rel="icon" href="favicon.webp" type="image/webp">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <img class="brand-icon" src="favicon.webp" alt="展厅图标">
+        <div>
+          <h1><a class="github-link" href="https://github.com/Myparjna/Pelicans-Benchmar" target="_blank" rel="noopener" aria-label="GitHub 仓库"><i class="ti ti-brand-github"></i></a>更新至 2026-10-05</h1>
+          <p class="subtitle">鹈鹕自行车测试 · 44 个模型/版本生成效果对比</p>
+        </div>
+      </div>
+      <div class="prompt-box" id="promptBox" role="button" tabindex="0" title="点击复制提示词" aria-label="点击复制生成提示词">
+        <span class="prompt-copy-hint" id="promptCopyHint"><i class="ti ti-copy" id="promptCopyIcon"></i></span>
+        <p class="prompt-line">生成一个鹈鹕白天骑自行车的网页动画，单个html文件给我，要求能自适应网页宽度，兼容手机竖屏与电脑横屏显示。每过5秒进行晴天-阴天-雨天-晴天的天气自动切换。不使用任何skills。</p>
+        <div class="prompt-tooltip">
+          <span class="prompt-tooltip-copy"><i class="ti ti-copy"></i></span>
+          <p>生成一个鹈鹕白天骑自行车的网页动画，单个html文件给我，要求能自适应网页宽度，兼容手机竖屏与电脑横屏显示。</p>
+          <p>每过5秒进行晴天-阴天-雨天-晴天的天气自动切换。不使用任何skills。</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <label class="search-box" for="searchInput">
+          <i class="ti ti-search"></i>
+          <input type="search" id="searchInput" placeholder="搜索模型、厂商或渠道…" autocomplete="off">
+        </label>
+        <button class="sort-toggle" id="sortToggle" type="button" aria-pressed="false">
+          <i class="ti ti-sort-descending-2"></i> 按评分排序
+        </button>
+        <button class="export-btn" id="exportRatings" type="button" title="导出当前所有评分为 JSON 文件" aria-label="导出评分">
+          <i class="ti ti-download"></i> 导出评分
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="filter-bar" id="filterBar" aria-label="分类筛选"></div>
+    <div id="galleryRoot"></div>
+  </main>
+
+  <div class="viewer" id="viewer" aria-hidden="true" role="dialog" aria-modal="true" aria-label="网页预览">
+    <div class="viewer-backdrop"></div>
+    <div class="viewer-frame">
+      <header class="viewer-header">
+        <div class="viewer-info">
+          <span class="viewer-count" id="viewerCount"></span>
+          <h2 id="viewerTitle"></h2>
+          <span class="channel-badge" id="viewerBadge"></span>
+          <span class="category-badge" id="viewerCategory"></span>
+          <span class="params-badge" id="viewerParams" title="模型总参（激活参未列出）"></span>
+          <span class="cutoff-badge" id="viewerCutoff" title="知识截止日期"></span>
+          <div class="viewer-rating" id="viewerRating" aria-label="当前站点评分"></div>
+        </div>
+        <div class="viewer-controls">
+          <button class="icon-btn" id="btnPrev" title="上一个 (←)" aria-label="上一个"><i class="ti ti-chevron-left"></i></button>
+          <button class="icon-btn" id="btnNext" title="下一个 (→)" aria-label="下一个"><i class="ti ti-chevron-right"></i></button>
+          <button class="icon-btn" id="btnClose" title="关闭 (Esc)" aria-label="关闭"><i class="ti ti-x"></i></button>
+        </div>
+      </header>
+      <div class="viewer-body">
+        <div class="viewer-prompt" id="viewerPrompt" role="button" tabindex="0" title="点击复制提示词" aria-label="点击复制生成提示词">
+          <span class="viewer-prompt-copy"><i class="ti ti-copy" id="viewerPromptIcon"></i></span>
+          <span class="viewer-prompt-text">生成一个鹈鹕白天骑自行车的网页动画，单个html文件给我，要求能自适应网页宽度，兼容手机竖屏与电脑横屏显示。每过5秒进行晴天-阴天-雨天-晴天的天气自动切换。不使用任何skills。</span>
+        </div>
+        <iframe id="viewerIframe" src="about:blank" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>共 <strong id="totalCount">0</strong> 个站点 · 按厂商分类 · 每张卡片可打 1-10 分(本地保存) · 一键按评分排序 · 点击卡片看效果</p>
+    </div>
+  </footer>
+
+  <script src="sites-data.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>

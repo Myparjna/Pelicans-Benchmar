@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+<meta name="theme-color" content="#8ecbf0" />
+<title>鹈鹕的骑行日记 · 天气自动切换</title>
+<style>
+  *{ box-sizing:border-box; }
+  html,body{
+    margin:0; padding:0; height:100%; width:100%;
+    overflow:hidden; background:#9fd0ee;
+    -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation;
+  }
+  body{
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    color:#28323c;
+  }
+  #scene{
+    position:fixed; inset:0; display:block; width:100%; height:100%;
+  }
+  .vignette{
+    position:fixed; inset:0; pointer-events:none;
+    background:radial-gradient(120% 85% at 50% 42%, rgba(255,255,255,0) 52%, rgba(38,52,66,0.20) 100%);
+  }
+  .badge{
+    position:fixed; left:16px; top:16px;
+    display:flex; align-items:center; gap:9px;
+    padding:9px 14px 9px 10px;
+    border-radius:999px;
+    background:rgba(255,255,255,0.72);
+    border:1px solid rgba(255,255,255,0.85);
+    box-shadow:0 6px 18px rgba(40,58,74,0.14);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    font-size:14px; letter-spacing:.02em;
+    user-select:none;
+  }
+  .badge .ring{ display:block; }
+  .badge .txt{ display:flex; flex-direction:column; line-height:1.15; }
+  .badge .txt b{ font-size:14px; font-weight:600; }
+  .badge .txt span{ font-size:11px; color:#5f6b78; margin-top:2px; }
+  @media (max-width:420px){
+    .badge{ left:12px; top:12px; padding:8px 12px 8px 9px; font-size:13px; }
+  }
+</style>
+</head>
+<body>
+<canvas id="scene"></canvas>
+<div class="vignette"></div>
+<div class="badge">
+  <svg class="ring" width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+    <circle cx="13" cy="13" r="10.5" fill="none" stroke="rgba(40,58,74,0.16)" stroke-width="2.4"></circle>
+    <circle id="prog" cx="13" cy="13" r="10.5" fill="none" stroke="#3f8fbf" stroke-width="2.4"
+            stroke-linecap="round" transform="rotate(-90 13 13)"
+            stroke-dasharray="65.97" stroke-dashoffset="65.97"></circle>
+  </svg>
+  <span class="txt"><b id="wname">晴天</b><span id="wtip">阳光正好，适合出发</span></span>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ------------------------------------------------------------------ *
+   * 画布与自适应：以「画布高度 = 100 个世界单位」为基准做归一化，     *
+   * 横向宽度随屏幕比例自动伸缩，因此手机竖屏与桌面横屏共用一套布局。  *
+   * ------------------------------------------------------------------ */
+  var canvas = document.getElementById('scene');
+  var ctx = canvas.getContext('2d');
+
+  var W = 0, H = 0, DPR = 1, S = 1, worldW = 100;
+  var GROUND_Y = 92, HORIZON_Y = 54;
+
+  function resize() {
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = Math.max(1, window.innerWidth);
+    H = Math.max(1, window.innerHeight);
+    canvas.width = Math.floor(W * DPR);
+    canvas.height = Math.floor(H * DPR);
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    S = H / 100;                 // 每个世界单位对应的 CSS 像素
+    worldW = W / S;               // 可见的世界宽度
+    // 竖屏时可见世界宽度很窄，需要压低天空占比并放大主体，避免画面中部大片空草地
+    HORIZON_Y = clamp(30 + worldW * 0.34, 40, 58);
+    GROUND_Y = 92;
+  }
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+  window.addEventListener('orientationchange', function () { setTimeout(resize, 120); }, { passive: true });
+
+  /* ----------------------------- 工具 ----------------------------- */
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  function mod(a, b) { return ((a % b) + b) % b; }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function smooth(t) { return t * t * (3 - 2 * t); }
+  function hash(n) { var s = Math.sin(n * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s); }
+  function mixRGB(c1, c2, t) {
+    return [Math.round(lerp(c1[0], c2[0], t)), Math.round(lerp(c1[1], c2[1], t)), Math.round(lerp(c1[2], c2[2], t))];
+  }
+  function rgba(c, a) { return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')'; }
+  function roundRect(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
+  /* ---------------------------- 天气参数 --------------------------- *
+   * 顺序：晴天 → 阴天 → 雨天 → 晴天，每 5 秒推进一次，
+   * 每次切换的前 1.5 秒做平滑过渡，避免生硬跳变。
+   * ------------------------------------------------------------------ */
+  var WEATHER = {
+    sunny: {
+      name: '晴天', tip: '阳光正好，适合出发',
+      skyTop: [58, 148, 220], skyBot: [206, 234, 248],
+      sun: 1, cloud: 0.30, rain: 0, wet: 0, dust: 1, bird: 1, dim: 0,
+      hillFar: [138, 176, 168], hillNear: [104, 156, 118],
+      field: [124, 186, 106], fieldDark: [98, 162, 92],
+      road: [86, 90, 96], roadFar: [104, 109, 116],
+      asphaltLine: [240, 236, 220], skyLight: [255, 250, 226]
+    },
+    cloudy: {
+      name: '阴天', tip: '云层压低，风里有点凉',
+      skyTop: [122, 140, 158], skyBot: [206, 213, 220],
+      sun: 0.14, cloud: 1, rain: 0, wet: 0.18, dust: 0.35, bird: 0.45, dim: 0.10,
+      hillFar: [130, 146, 156], hillNear: [100, 120, 118],
+      field: [108, 138, 100], fieldDark: [86, 114, 84],
+      road: [78, 82, 88], roadFar: [92, 97, 103],
+      asphaltLine: [222, 220, 210], skyLight: [214, 218, 224]
+    },
+    rainy: {
+      name: '雨天', tip: '雨点敲着车铃，路面泛起水光',
+      skyTop: [74, 88, 104], skyBot: [146, 158, 170],
+      sun: 0, cloud: 1, rain: 1, wet: 1, dust: 0, bird: 0, dim: 0.22,
+      hillFar: [104, 116, 126], hillNear: [76, 92, 90],
+      field: [82, 106, 82], fieldDark: [62, 84, 66],
+      road: [58, 62, 70], roadFar: [70, 76, 86],
+      asphaltLine: [206, 210, 214], skyLight: [166, 176, 188]
+    }
+  };
+  var ORDER = ['sunny', 'cloudy', 'rainy'];
+  var STEP_MS = 5000, FADE_MS = 1500;
+
+  function paramSet(key) {
+    var w = WEATHER[key], out = { key: key, name: w.name, tip: w.tip };
+    for (var k in w) {
+      if (k === 'name' || k === 'tip') continue;
+      var v = w[k];
+      out[k] = (v instanceof Array) ? v.slice() : v;
+    }
+    return out;
+  }
+
+  var idx = 0;
+  var fromP = paramSet(ORDER[0]);       // 过渡起点（上一时刻的实际画面）
+  var toP = paramSet(ORDER[0]);         // 过渡终点（当前目标天气）
+  var L = paramSet(ORDER[0]);           // 插值后的实时参数
+  var started = -1, elapsed = 0, last = 0;
+  var sinceStep = 0;
+
+  var badge = document.getElementById('badge') || document.querySelector('.badge');
+  var wname = document.getElementById('wname');
+  var wtip = document.getElementById('wtip');
+  var prog = document.getElementById('prog');
+  var CIRC = 65.97;
+
+  function snapshot(src) {
+    var out = { key: src.key, name: src.name, tip: src.tip };
+    for (var k in src) {
+      if (k === 'key' || k === 'name' || k === 'tip') continue;
+      var v = src[k];
+      out[k] = (v instanceof Array) ? v.slice() : v;
+    }
+    return out;
+  }
+
+  // 切换天气：以当前实际显示的参数作为过渡起点，保证画面连续
+  function advance() {
+    fromP = snapshot(L);
+    idx = (idx + 1) % ORDER.length;
+    toP = paramSet(ORDER[idx]);
+    if (wname) { wname.textContent = toP.name; wtip.textContent = toP.tip; }
+  }
+
+  /* ----------------------------- 粒子 ----------------------------- */
+  var drops = [];
+  for (var i = 0; i < 170; i++) {
+    drops.push({ x: Math.random(), y: Math.random(), v: 0.55 + Math.random() * 0.75, l: 0.9 + Math.random() * 1.7, a: 0.25 + Math.random() * 0.5 });
+  }
+  var splashes = [];
+  var motes = [];
+  for (var j = 0; j < 26; j++) motes.push({ x: Math.random(), y: 0.2 + Math.random() * 0.7, vx: 0.1 + Math.random() * 0.3, vy: 0.05 + Math.random() * 0.16, r: 0.08 + Math.random() * 0.12, p: Math.random() * 6.28 });
+  var birds = [
+    { x: 0.15, y: 0.22, s: 1.0 }, { x: 0.26, y: 0.17, s: 0.78 }, { x: 0.35, y: 0.26, s: 0.62 }
+  ];
+
+  /* --------------------------- 场景绘制 --------------------------- */
+  var scroll = 0, t = 0;
+
+  function drawSky(w) {
+    var g = ctx.createLinearGradient(0, 0, 0, HORIZON_Y + 8);
+    g.addColorStop(0, rgba(w.skyTop, 1));
+    g.addColorStop(0.72, rgba(mixRGB(w.skyTop, w.skyBot, 0.75), 1));
+    g.addColorStop(1, rgba(w.skyBot, 1));
+    ctx.fillStyle = g;
+    ctx.fillRect(-4, -4, worldW + 8, HORIZON_Y + 12);
+  }
+
+  function drawSun(w) {
+    if (w.sun <= 0.02) return;
+    var cx = worldW * 0.78, cy = HORIZON_Y * 0.26, R = 6.4;
+    ctx.save();
+    // 光晕
+    var gl = ctx.createRadialGradient(cx, cy, R * 0.4, cx, cy, R * 6.2);
+    gl.addColorStop(0, rgba(w.skyLight, 0.55 * w.sun));
+    gl.addColorStop(0.35, rgba(w.skyLight, 0.16 * w.sun));
+    gl.addColorStop(1, rgba(w.skyLight, 0));
+    ctx.fillStyle = gl;
+    ctx.beginPath(); ctx.arc(cx, cy, R * 6.2, 0, 6.2832); ctx.fill();
+    // 旋转光芒
+    ctx.globalAlpha = 0.5 * w.sun;
+    ctx.fillStyle = rgba(w.skyLight, 0.55);
+    ctx.translate(cx, cy); ctx.rotate(t * 0.22);
+    for (var i = 0; i < 12; i++) {
+      ctx.rotate(0.5236);
+      ctx.beginPath();
+      ctx.moveTo(-0.42, -R * 1.5); ctx.lineTo(0, -R * 2.55); ctx.lineTo(0.42, -R * 1.5);
+      ctx.closePath(); ctx.fill();
+    }
+    ctx.rotate(-t * 0.22); ctx.translate(-cx, -cy);
+    ctx.globalAlpha = 1;
+    // 日面
+    var core = ctx.createRadialGradient(cx - R * 0.3, cy - R * 0.3, R * 0.2, cx, cy, R);
+    core.addColorStop(0, rgba([255, 254, 236], 1));
+    core.addColorStop(1, rgba([255, 226, 150], 0.95 * w.sun + 0.05));
+    ctx.fillStyle = core;
+    ctx.globalAlpha = clamp(w.sun, 0, 1);
+    ctx.beginPath(); ctx.arc(cx, cy, R, 0, 6.2832); ctx.fill();
+    ctx.restore();
+  }
+
+  function cloudShape(x, y, s, alpha, col) {
+    ctx.save();
+    ctx.fillStyle = rgba(col, alpha);
+    ctx.beginPath();
+    var puffs = [
+      [-1.5, 0.28, 0.85], [-0.72, -0.16, 1.02], [0.06, -0.34, 1.22],
+      [0.86, -0.05, 0.92], [1.55, 0.26, 0.72], [0.5, 0.36, 1.05]
+    ];
+    for (var i = 0; i < puffs.length; i++) {
+      ctx.moveTo(x + puffs[i][0] * s + puffs[i][2] * s, y + puffs[i][1] * s);
+      ctx.arc(x + puffs[i][0] * s, y + puffs[i][1] * s, puffs[i][2] * s, 0, 6.2832);
+    }
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawClouds(w) {
+    if (w.cloud <= 0.02) return;
+    var tile = 46, speed = 2.1 + w.wet * 1.4;
+    var drift = t * speed;
+    var col = mixRGB(w.skyTop, [252, 253, 255], 0.72);
+    var dark = mixRGB(w.skyTop, [252, 253, 255], 0.55);
+    var k0 = Math.floor((drift - worldW) / tile) - 1, k1 = Math.ceil((drift + 4) / tile) + 1;
+    for (var k = k0; k <= k1; k++) {
+      var seed = hash(k * 3.77);
+      if (seed > 0.25 + w.cloud * 0.78) continue;
+      var x = k * tile + drift - worldW * 0 + (hash(k * 5.13) - 0.5) * 8 - (worldW - tile) * 0.1;
+      var y = HORIZON_Y * (0.16 + hash(k * 7.31) * 0.52);
+      var s = (1.5 + hash(k * 2.19) * 1.9) * clamp(0.6 + worldW * 0.016, 0.62, 1.45);
+      var a = clamp(w.cloud * (0.42 + hash(k * 9.11) * 0.5), 0, 0.92);
+      cloudShape(x, y, s, a, col);
+      cloudShape(x + s * 0.35, y + s * 0.42, s * 0.72, a * 0.5, dark);
+    }
+  }
+
+  function hillY(u, base, amp) {
+    return base - (Math.sin(u * 12.566 + 0.7) * 0.62 + Math.sin(u * 18.85 + 2.1) * 0.26 + Math.sin(u * 31.42 + 4.3) * 0.12) * amp;
+  }
+
+  function drawHills(w) {
+    var layers = [
+      { par: 0.06, tile: 78, base: HORIZON_Y - 0.5, amp: 3.4, col: w.hillFar, a: 0.85 },
+      { par: 0.13, tile: 56, base: HORIZON_Y + 0.6, amp: 2.5, col: w.hillNear, a: 0.95 }
+    ];
+    for (var li = 0; li < layers.length; li++) {
+      var L2 = layers[li], off = mod(scroll * L2.par, L2.tile);
+      ctx.beginPath();
+      var startX = -L2.tile + off - L2.tile;
+      ctx.moveTo(startX, HORIZON_Y + 12);
+      for (var x = startX; x <= worldW + L2.tile; x += 1.4) {
+        var u = mod(x - off, L2.tile) / L2.tile;
+        ctx.lineTo(x, hillY(u, L2.base, L2.amp));
+      }
+      ctx.lineTo(worldW + L2.tile, HORIZON_Y + 14);
+      ctx.closePath();
+      ctx.fillStyle = rgba(L2.col, L2.a);
+      ctx.fill();
+    }
+  }
+
+  function drawTrees(w) {
+    var tile = 30, par = 0.22, off = mod(scroll * par, tile);
+    var trunk = mixRGB(w.fieldDark, [92, 68, 48], 0.6);
+    var k0 = Math.floor((off - worldW) / tile) - 1, k1 = Math.ceil((off + 6) / tile) + 1;
+    for (var k = k0; k <= k1; k++) {
+      var x = k * tile + off;
+      var r = hash(k * 11.7);
+      if (r > 0.55) continue;
+      var y = HORIZON_Y + 2.2 + hash(k * 4.3) * 1.2;
+      var hgt = 1.6 + hash(k * 6.9) * 2.2;
+      var wdt = 1.1 + hash(k * 8.2) * 0.8;
+      ctx.fillStyle = rgba(trunk, 0.9);
+      ctx.fillRect(x - wdt * 0.13, y - hgt * 0.45, wdt * 0.26, hgt * 0.5);
+      ctx.fillStyle = rgba(mixRGB(w.fieldDark, w.hillNear, 0.45), 0.95);
+      ctx.beginPath();
+      ctx.ellipse(x, y - hgt * 0.72, wdt * 0.95, hgt * 0.58, 0, 0, 6.2832);
+      ctx.fill();
+    }
+  }
+
+  function drawField(w) {
+    var top = HORIZON_Y + 1.2, bottom = GROUND_Y + 0.4;
+    var g = ctx.createLinearGradient(0, top, 0, bottom);
+    g.addColorStop(0, rgba(mixRGB(w.field, [255, 255, 255], 0.14), 1));
+    g.addColorStop(1, rgba(w.fieldDark, 1));
+    ctx.fillStyle = g;
+    ctx.fillRect(-4, top, worldW + 8, bottom - top + 1);
+
+    // 近处草丛（视差较快）
+    var tile = 18, off = mod(scroll * 0.55, tile);
+    var k0 = Math.floor((off - worldW) / tile) - 1, k1 = Math.ceil((off + 6) / tile) + 1;
+    ctx.strokeStyle = rgba(mixRGB(w.fieldDark, [30, 60, 40], 0.35), 0.55);
+    ctx.lineWidth = 0.16; ctx.lineCap = 'round';
+    for (var k = k0; k <= k1; k++) {
+      var x = k * tile + off;
+      var n = 1 + Math.floor(hash(k * 13.7) * 3);
+      var y = GROUND_Y - 0.2 - hash(k * 3.13) * 2.4;
+      for (var n2 = 0; n2 < n; n2++) {
+        var hx = x + (hash(k * 2.7 + n2 * 5.1) - 0.5) * 3.4;
+        var hh = 0.5 + hash(k * 9.7 + n2) * 0.9;
+        var bend = (hash(k * 4.4 + n2 * 1.7) - 0.5) * 0.5;
+        ctx.beginPath();
+        ctx.moveTo(hx, y + 0.3);
+        ctx.quadraticCurveTo(hx + bend * 0.5, y - hh * 0.55, hx + bend, y - hh);
+        ctx.stroke();
+      }
+    }
+
+    // 护栏
+    var railTile = 24, railOff = mod(scroll * 0.62, railTile);
+    var railY = GROUND_Y - 3.2;
+    ctx.strokeStyle = rgba([236, 240, 244], 0.8);
+    ctx.lineWidth = 0.22;
+    ctx.beginPath(); ctx.moveTo(-4, railY); ctx.lineTo(worldW + 4, railY); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-4, railY + 1.1); ctx.lineTo(worldW + 4, railY + 1.1); ctx.stroke();
+    var kr0 = Math.floor((railOff - worldW) / railTile) - 1, kr1 = Math.ceil((railOff + 6) / railTile) + 1;
+    ctx.strokeStyle = rgba([222, 228, 234], 0.85);
+    ctx.lineWidth = 0.26;
+    for (var kr = kr0; kr <= kr1; kr++) {
+      var rx = kr * railTile + railOff;
+      ctx.beginPath(); ctx.moveTo(rx, railY - 0.2); ctx.lineTo(rx, GROUND_Y); ctx.stroke();
+    }
+  }
+
+  function drawRoad(w) {
+    var top = GROUND_Y + 0.2;
+    var g = ctx.createLinearGradient(0, top, 0, 100);
+    g.addColorStop(0, rgba(w.roadFar, 1));
+    g.addColorStop(0.22, rgba(w.road, 1));
+    g.addColorStop(1, rgba(mixRGB(w.road, [20, 24, 30], 0.4), 1));
+    ctx.fillStyle = g;
+    ctx.fillRect(-4, top, worldW + 8, 100 - top + 4);
+
+    // 路缘
+    ctx.fillStyle = rgba(mixRGB(w.fieldDark, [255, 255, 255], 0.25), 0.9);
+    ctx.fillRect(-4, top - 0.35, worldW + 8, 0.4);
+
+    // 中线虚线
+    var dashY = GROUND_Y + 4.6;
+    var tile = 9, off = mod(scroll, tile);
+    ctx.fillStyle = rgba(w.asphaltLine, 0.9);
+    var k0 = Math.floor((off - worldW) / tile) - 1, k1 = Math.ceil((off + 6) / tile) + 1;
+    for (var k = k0; k <= k1; k++) {
+      var x = k * tile + off;
+      var hgt = 0.55 + hash(k * 5.5) * 0.5;
+      ctx.fillRect(x, dashY, 4.2, hgt);
+    }
+
+    // 路面颗粒与补丁
+    var pTile = 7, pOff = mod(scroll, pTile);
+    var p0 = Math.floor((pOff - worldW) / pTile) - 1, p1 = Math.ceil((pOff + 6) / pTile) + 1;
+    for (var p = p0; p <= p1; p++) {
+      var px = p * pTile + pOff, r = hash(p * 17.3);
+      var py = GROUND_Y + 1.1 + hash(p * 21.9) * 6.4;
+      ctx.fillStyle = rgba(mixRGB(w.road, [255, 255, 255], 0.16), 0.16 + r * 0.14);
+      ctx.beginPath();
+      ctx.ellipse(px, py, 0.5 + r * 1.1, 0.16 + r * 0.2, 0, 0, 6.2832);
+      ctx.fill();
+    }
+
+    // 湿路反光
+    if (w.wet > 0.02) {
+      ctx.save();
+      ctx.globalAlpha = w.wet * 0.5;
+      var rg = ctx.createLinearGradient(0, top, 0, 100);
+      rg.addColorStop(0, rgba(w.skyLight, 0.55));
+      rg.addColorStop(0.4, rgba(w.skyLight, 0.12));
+      rg.addColorStop(1, rgba(w.skyLight, 0.03));
+      ctx.fillStyle = rg;
+      ctx.fillRect(-4, top, worldW + 8, 100 - top + 4);
+      // 竖向水痕
+      var sTile = 5.5, sOff = mod(scroll, sTile);
+      var s0 = Math.floor((sOff - worldW) / sTile) - 1, s1 = Math.ceil((sOff + 6) / sTile) + 1;
+      for (var s = s0; s <= s1; s++) {
+        var sx = s * sTile + sOff;
+        var sy = GROUND_Y + 0.8 + hash(s * 29.1) * 5.5;
+        ctx.fillStyle = rgba([255, 255, 255], 0.10 + hash(s * 31.7) * 0.14);
+        ctx.fillRect(sx, sy, 0.22, 2.4 + hash(s * 33.3) * 3);
+      }
+      ctx.restore();
+    }
+  }
+
+  /* ------------------------- 鹈鹕与自行车 ------------------------- */
+  function legIK(hx, hy, fx, fy, l1, l2, bend) {
+    var dx = fx - hx, dy = fy - hy;
+    var d = Math.sqrt(dx * dx + dy * dy);
+    var maxD = (l1 + l2) * 0.995;
+    if (d > maxD) { var k = maxD / d; dx *= k; dy *= k; d = maxD; }
+    if (d < 0.01) { dx = 0.01; dy = 0.01; d = 0.014; }
+    var base = Math.atan2(dy, dx);
+    var ca = clamp((d * d + l1 * l1 - l2 * l2) / (2 * d * l1), -1, 1);
+    var ang = base + bend * Math.acos(ca);
+    return [hx + Math.cos(ang) * l1, hy + Math.sin(ang) * l1];
+  }
+
+  function drawWheel(cx, cy, r, ang, spokes, alpha) {
+    ctx.save();
+    ctx.strokeStyle = rgba([42, 46, 52], 0.95);
+    ctx.lineWidth = 0.3;
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, 6.2832); ctx.stroke();
+    ctx.lineWidth = 0.13;
+    ctx.strokeStyle = rgba([70, 76, 84], 0.7);
+    ctx.beginPath(); ctx.arc(cx, cy, r - 0.34, 0, 6.2832); ctx.stroke();
+    ctx.save();
+    ctx.translate(cx, cy); ctx.rotate(ang);
+    ctx.strokeStyle = rgba([216, 222, 228], 0.85);
+    ctx.lineWidth = 0.075;
+    for (var i = 0; i < spokes; i++) {
+      var a = (i / spokes) * 6.2832;
+      ctx.beginPath();
+      ctx.moveTo(Math.cos(a) * 0.42, Math.sin(a) * 0.42);
+      ctx.lineTo(Math.cos(a) * (r - 0.4), Math.sin(a) * (r - 0.4));
+      ctx.stroke();
+    }
+    ctx.restore();
+    ctx.fillStyle = rgba([70, 76, 84], 1);
+    ctx.beginPath(); ctx.arc(cx, cy, 0.3, 0, 6.2832); ctx.fill();
+    ctx.restore();
+  }
+
+  function drawRig(w) {
+    var bx = worldW * 0.46;
+    var scale = clamp(worldW / 46, 0.92, 1.32);
+    var cadence = 3.4 * (1 + w.rain * 0.15);
+    var crankA = t * cadence;
+    var wheelAng = scroll / 6.2;
+
+    // 地面投影
+    ctx.save();
+    ctx.fillStyle = rgba([44, 58, 68], 0.16 + (1 - w.wet) * 0.1);
+    ctx.beginPath();
+    ctx.ellipse(bx, GROUND_Y + 0.5, 13.5 * scale, 1.7 * scale, 0, 0, 6.2832);
+    ctx.fill();
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(bx, GROUND_Y + 0.4);
+    ctx.scale(scale, scale);
+    var bob = Math.sin(crankA * 2) * 0.16;
+    ctx.translate(0, bob);
+
+    var R = 6.2, RW = -8.4, FW = 8.4;
+    var frame = [46, 106, 126], frameDark = [32, 76, 92];
+    var body = [253, 248, 238], bodyShade = [226, 214, 194];
+    var beak = [243, 152, 62], beakDark = [214, 116, 40], pouch = [249, 198, 138];
+    var neckTuck = w.rain * 1.5 + w.wet * 0.6;
+
+    /* ---- 远侧腿 ---- */
+    drawLeg(w, -1, crankA + Math.PI, [212, 132, 58], [190, 112, 44]);
+    /* ---- 车轮 ---- */
+    drawWheel(RW, -R, R, -wheelAng, 10, 1);
+    drawWheel(FW, -R, R, -wheelAng, 10, 1);
+    /* ---- 车架 ---- */
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.strokeStyle = rgba(frame, 1); ctx.lineWidth = 0.34;
+    ctx.beginPath();
+    ctx.moveTo(RW, -R); ctx.lineTo(-1.1, -4.5); ctx.lineTo(4.6, -12.4); ctx.lineTo(FW, -R); ctx.moveTo(-1.1, -4.5); ctx.lineTo(-3.4, -12.6); ctx.lineTo(4.6, -12.4);
+    ctx.stroke();
+    ctx.strokeStyle = rgba(frameDark, 1); ctx.lineWidth = 0.2;
+    ctx.beginPath();
+    ctx.moveTo(RW, -R); ctx.lineTo(-3.4, -12.6);
+    ctx.moveTo(-1.1, -4.5); ctx.lineTo(4.6, -12.4);
+    ctx.stroke();
+    // 车座
+    ctx.fillStyle = rgba([58, 62, 70], 1);
+    roundRect(-4.5, -14.1, 2.9, 0.85, 0.42); ctx.fill();
+    // 车把
+    ctx.strokeStyle = rgba(frameDark, 1); ctx.lineWidth = 0.26;
+    ctx.beginPath();
+    ctx.moveTo(4.6, -12.4); ctx.lineTo(5.9, -15.3); ctx.lineTo(7.6, -15.5);
+    ctx.stroke();
+
+    /* ---- 身体 ---- */
+    ctx.save();
+    ctx.fillStyle = rgba(body, 1);
+    ctx.beginPath();
+    ctx.moveTo(-7.4, -15.4);
+    ctx.bezierCurveTo(-9.6, -17.4, -7.4, -20.6, -3.0, -21.4);
+    ctx.bezierCurveTo(1.6, -22.2, 4.4, -20.2, 4.6, -17.6);
+    ctx.bezierCurveTo(4.8, -15.2, 2.4, -13.4, -1.2, -13.4);
+    ctx.bezierCurveTo(-4.4, -13.4, -6.4, -14.0, -7.4, -15.4);
+    ctx.closePath();
+    ctx.fill();
+    // 腹部阴影
+    ctx.fillStyle = rgba(bodyShade, 0.55);
+    ctx.beginPath();
+    ctx.ellipse(-1.4, -14.6, 4.2, 1.5, -0.06, 0, 6.2832);
+    ctx.fill();
+    // 尾羽
+    ctx.fillStyle = rgba(mixRGB(body, [180, 172, 158], 0.4), 1);
+    ctx.beginPath();
+    ctx.moveTo(-6.4, -17.4); ctx.lineTo(-11.0, -15.0); ctx.lineTo(-6.6, -14.2); ctx.closePath(); ctx.fill();
+    // 翅膀中段
+    ctx.fillStyle = rgba(mixRGB(body, [206, 198, 184], 0.55), 1);
+    ctx.beginPath();
+    ctx.moveTo(-4.4, -19.8);
+    ctx.bezierCurveTo(-0.6, -20.8, 3.0, -19.2, 3.6, -16.8);
+    ctx.bezierCurveTo(1.6, -16.0, -2.0, -17.4, -4.4, -19.8);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+
+    /* ---- 颈与头（雨天缩脖子） ---- */
+    ctx.save();
+    ctx.strokeStyle = rgba(body, 1);
+    ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+    var headX = 5.4, headY = -25.4 + neckTuck;
+    ctx.beginPath();
+    ctx.moveTo(1.4, -20.0);
+    ctx.bezierCurveTo(3.0, -22.4, 4.2 + neckTuck * 0.4, -24.0, headX - 1.5, headY + 2.0);
+    ctx.stroke();
+    ctx.lineWidth = 1.1;
+    ctx.beginPath();
+    ctx.moveTo(1.1, -20.4);
+    ctx.bezierCurveTo(2.6, -22.8, 3.9 + neckTuck * 0.4, -24.4, headX - 2.0, headY + 2.4);
+    ctx.stroke();
+
+    // 头
+    ctx.fillStyle = rgba(body, 1);
+    ctx.beginPath();
+    ctx.ellipse(headX, headY, 2.75, 2.45, 0.12, 0, 6.2832);
+    ctx.fill();
+    // 头冠羽毛
+    ctx.fillStyle = rgba(mixRGB(body, [176, 168, 154], 0.5), 1);
+    ctx.beginPath();
+    ctx.moveTo(headX - 2.3, headY - 1.2);
+    ctx.quadraticCurveTo(headX - 0.6, headY - 3.4, headX + 1.4, headY - 1.9);
+    ctx.quadraticCurveTo(headX - 0.4, headY - 2.2, headX - 1.6, headY + 0.2);
+    ctx.closePath(); ctx.fill();
+
+    // 长喙 + 喉囊
+    var bTipX = headX + 8.6, bTipY = headY + 1.5;
+    ctx.fillStyle = rgba(beak, 1);
+    ctx.beginPath();
+    ctx.moveTo(headX + 1.9, headY - 0.7);
+    ctx.quadraticCurveTo(headX + 5.6, headY - 1.5, bTipX, bTipY);
+    ctx.quadraticCurveTo(headX + 5.4, headY + 1.3, headX + 2.1, headY + 1.0);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = rgba(pouch, 1);
+    ctx.beginPath();
+    ctx.moveTo(headX + 2.0, headY + 0.9);
+    ctx.quadraticCurveTo(headX + 6.2, headY + 4.6, bTipX - 0.3, bTipY + 0.2);
+    ctx.quadraticCurveTo(headX + 5.0, headY + 2.2, headX + 2.2, headY + 2.1);
+    ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = rgba(beakDark, 0.55); ctx.lineWidth = 0.1;
+    ctx.beginPath();
+    ctx.moveTo(headX + 2.4, headY + 1.5); ctx.quadraticCurveTo(headX + 4.4, headY + 1.5, bTipX - 0.6, bTipY);
+    ctx.stroke();
+    // 喙尖
+    ctx.fillStyle = rgba(beakDark, 1);
+    ctx.beginPath();
+    ctx.moveTo(bTipX, bTipY); ctx.lineTo(bTipX - 1.1, bTipY - 0.2); ctx.lineTo(bTipX - 1.0, bTipY + 0.45);
+    ctx.closePath(); ctx.fill();
+    // 眼
+    ctx.fillStyle = rgba([46, 42, 40], 1);
+    ctx.beginPath(); ctx.arc(headX + 1.25, headY - 0.35, 0.42, 0, 6.2832); ctx.fill();
+    ctx.fillStyle = rgba([255, 255, 255], 0.9);
+    ctx.beginPath(); ctx.arc(headX + 1.38, headY - 0.5, 0.14, 0, 6.2832); ctx.fill();
+    ctx.restore();
+
+    /* ---- 扶车把的手臂（翅膀） ---- */
+    ctx.save();
+    ctx.fillStyle = rgba(mixRGB(body, [198, 190, 176], 0.35), 1);
+    ctx.beginPath();
+    ctx.moveTo(1.0, -20.2);
+    ctx.quadraticCurveTo(4.6, -20.4, 6.6, -16.6);
+    ctx.quadraticCurveTo(7.6, -15.2, 6.4, -14.6);
+    ctx.quadraticCurveTo(4.2, -15.4, 3.4, -18.0);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = rgba(beakDark, 0.95);
+    ctx.beginPath(); ctx.ellipse(7.0, -15.3, 0.85, 0.5, 0.2, 0, 6.2832); ctx.fill();
+    ctx.restore();
+
+    /* ---- 曲柄与踏板 ---- */
+    ctx.strokeStyle = rgba([62, 68, 76], 1); ctx.lineWidth = 0.22; ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(-1.1 + Math.cos(crankA) * 1.9, -4.5 + Math.sin(crankA) * 1.9);
+    ctx.lineTo(-1.1 + Math.cos(crankA + Math.PI) * 1.9, -4.5 + Math.sin(crankA + Math.PI) * 1.9);
+    ctx.stroke();
+
+    /* ---- 近侧腿 ---- */
+    drawLeg(w, 1, crankA, [236, 156, 66], [214, 130, 52]);
+
+    /* ---- 雨天车把伞 ---- */
+    if (w.rain > 0.06) {
+      ctx.save();
+      ctx.globalAlpha = clamp(w.rain, 0, 1);
+      ctx.strokeStyle = rgba([92, 98, 108], 1); ctx.lineWidth = 0.16;
+      ctx.beginPath(); ctx.moveTo(7.3, -15.4); ctx.lineTo(6.0, -28.6); ctx.stroke();
+      var cxU = 6.0, topU = -29.6, rr = 5.2;
+      var cg = ctx.createLinearGradient(cxU - rr, topU, cxU + rr, topU + rr);
+      cg.addColorStop(0, rgba([232, 96, 84], 1));
+      cg.addColorStop(1, rgba([190, 66, 60], 1));
+      ctx.fillStyle = cg;
+      ctx.beginPath();
+      ctx.moveTo(cxU - rr, topU + 1.0);
+      ctx.quadraticCurveTo(cxU, topU - rr * 0.95, cxU + rr, topU + 1.0);
+      ctx.quadraticCurveTo(cxU + rr * 0.66, topU + 0.2, cxU + rr / 3, topU + 1.0);
+      ctx.quadraticCurveTo(cxU, topU + 0.15, cxU - rr / 3, topU + 1.0);
+      ctx.quadraticCurveTo(cxU - rr * 0.66, topU + 0.2, cxU - rr, topU + 1.0);
+      ctx.closePath(); ctx.fill();
+      ctx.restore();
+    }
+
+    ctx.restore();
+  }
+
+  function drawLeg(w, side, ang, col, footCol) {
+    var hipX = -3.1, hipY = -14.0;
+    var ccx = -1.1, ccy = -4.5, cr = 1.9;
+    var fx = ccx + Math.cos(ang) * cr, fy = ccy + Math.sin(ang) * cr;
+    var knee = legIK(hipX, hipY, fx, fy, 6.4, 6.9, -1);
+    ctx.save();
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.strokeStyle = rgba(col, 1);
+    ctx.lineWidth = 1.05;
+    ctx.beginPath();
+    ctx.moveTo(hipX, hipY);
+    ctx.lineTo(knee[0], knee[1]);
+    ctx.lineTo(fx, fy);
+    ctx.stroke();
+    ctx.strokeStyle = rgba(mixRGB(col, [180, 170, 155], 0.45), 0.8);
+    ctx.lineWidth = 0.42;
+    ctx.beginPath();
+    ctx.moveTo(hipX, hipY); ctx.lineTo(knee[0], knee[1]); ctx.lineTo(fx, fy);
+    ctx.stroke();
+    // 脚掌
+    ctx.fillStyle = rgba(footCol, 1);
+    ctx.save();
+    ctx.translate(fx, fy); ctx.rotate(ang + Math.PI / 2);
+    roundRect(-0.95, -0.32, 1.9, 0.64, 0.3); ctx.fill();
+    ctx.restore();
+    ctx.restore();
+  }
+
+  /* --------------------------- 天气粒子 --------------------------- */
+  function drawBirds(w) {
+    if (w.bird < 0.05) return;
+    ctx.save();
+    ctx.strokeStyle = rgba([64, 74, 86], 0.5 * w.bird);
+    ctx.lineWidth = 0.14; ctx.lineCap = 'round';
+    for (var i = 0; i < birds.length; i++) {
+      var b = birds[i];
+      var bx = mod(b.x + t * 0.035, 1.3) * worldW - worldW * 0.15;
+      var by = HORIZON_Y * b.y + Math.sin(t * 1.1 + i) * 0.7;
+      var f = Math.sin(t * 5 + i * 1.7) * 0.32 * b.s;
+      var s = b.s * 0.9;
+      ctx.beginPath();
+      ctx.moveTo(bx - s, by + f);
+      ctx.quadraticCurveTo(bx - s * 0.4, by - f * 0.9, bx, by);
+      ctx.quadraticCurveTo(bx + s * 0.4, by - f * 0.9, bx + s, by + f);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawMotes(w) {
+    if (w.dust < 0.05) return;
+    ctx.save();
+    for (var i = 0; i < motes.length; i++) {
+      var m = motes[i];
+      var x = mod(m.x + t * m.vx * 0.06, 1) * worldW;
+      var y = HORIZON_Y * 0.9 - mod(t * m.vy * 0.5 + m.p, HORIZON_Y * 0.9) * 0.4 + Math.sin(t * 1.4 + m.p) * 0.8;
+      ctx.fillStyle = rgba([255, 250, 226], 0.5 * w.dust);
+      ctx.beginPath(); ctx.arc(x, y, m.r, 0, 6.2832); ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function updateDrops(dt, amount) {
+    if (amount < 0.02) { splashes.length = 0; return; }
+    var active = Math.floor(drops.length * amount);
+    for (var i = 0; i < active; i++) {
+      var d = drops[i];
+      d.y += d.v * dt * 1.5;
+      d.x -= d.v * dt * 0.28;
+      if (d.y > 1.05) {
+        d.y = -0.08; d.x = Math.random() * 1.1;
+        if (splashes.length < 40 && Math.random() < 0.5) {
+          splashes.push({ x: d.x * worldW, y: GROUND_Y + 0.6 + Math.random() * 5, life: 0, max: 0.32 + Math.random() * 0.2 });
+        }
+      }
+    }
+    for (var s = splashes.length - 1; s >= 0; s--) {
+      splashes[s].life += dt;
+      if (splashes[s].life > splashes[s].max) splashes.splice(s, 1);
+    }
+  }
+
+  function drawRain(w, dt) {
+    updateDrops(dt, w.rain);
+    if (w.rain < 0.02) return;
+    var active = Math.floor(drops.length * w.rain);
+    ctx.save();
+    ctx.strokeStyle = rgba([216, 230, 242], 0.55 * w.rain);
+    ctx.lineWidth = 0.09; ctx.lineCap = 'round';
+    for (var i = 0; i < active; i++) {
+      var d = drops[i];
+      var x = d.x * worldW, y = d.y * 100;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x - d.l * 0.3, y + d.l);
+      ctx.stroke();
+    }
+    // 水花
+    for (var s = 0; s < splashes.length; s++) {
+      var sp = splashes[s], k = sp.life / sp.max;
+      ctx.strokeStyle = rgba([226, 238, 248], 0.5 * (1 - k));
+      ctx.lineWidth = 0.08;
+      ctx.beginPath();
+      ctx.ellipse(sp.x, sp.y, 0.2 + k * 0.8, 0.08 + k * 0.28, 0, 0, 6.2832);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawAmbient(w) {
+    if (w.dim > 0.01) {
+      ctx.fillStyle = rgba([40, 54, 70], w.dim);
+      ctx.fillRect(-4, -4, worldW + 8, 104);
+    }
+  }
+
+  /* ----------------------------- 主循环 ---------------------------- */
+  var prevLabel = '';
+  function frame(now) {
+    if (started < 0) { started = now; last = now; }
+    var dt = Math.min((now - last) / 1000, 0.05);
+    last = now;
+    elapsed = now - started;
+    t = elapsed / 1000;
+    scroll += dt * 13.5;
+
+    if (elapsed - (advance._at || 0) >= STEP_MS) { advance._at = elapsed; sinceStep = 0; advance(); }
+    sinceStep += dt * 1000;
+
+    var k = smooth(clamp(sinceStep / FADE_MS, 0, 1));
+    L.key = toP.key; L.name = toP.name; L.tip = toP.tip;
+    for (var key in toP) {
+      if (key === 'key' || key === 'name' || key === 'tip') continue;
+      var fv = fromP[key], tv = toP[key];
+      if (fv instanceof Array) L[key] = mixRGB(fv, tv, k);
+      else L[key] = lerp(fv, tv, k);
+    }
+
+    ctx.setTransform(DPR * S, 0, 0, DPR * S, 0, 0);
+    ctx.clearRect(-6, -6, worldW + 12, 112);
+    drawSky(L);
+    drawSun(L);
+    drawBirds(L);
+    drawClouds(L);
+    drawHills(L);
+    drawTrees(L);
+    drawField(L);
+    drawRoad(L);
+    drawRig(L);
+    drawMotes(L);
+    drawRain(L, dt);
+    drawAmbient(L);
+
+    if (prog) prog.setAttribute('stroke-dashoffset', String(CIRC * (1 - clamp(sinceStep / STEP_MS, 0, 1))));
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>鹈鹕白天骑车 · 极简天气循环</title>
+<style>
+  :root{
+    --sun-opacity:1;
+    --cloud-color:#ffffff;
+    --sky-top:#4cb9f5;
+    --sky-bottom:#cfeeff;
+    --grass:#7fd07f;
+    --road:#4e5966;
+    --rain-opacity:0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    overflow:hidden;
+    background:#4cb9f5;
+    font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  /* ============ 场景容器 ============ */
+  .scene{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+  }
+  .scene[data-weather="cloudy"]{
+    --sky-top:#8ab8d8;
+    --sky-bottom:#d9e7f2;
+    --grass:#79b979;
+    --road:#56606c;
+    --cloud-color:#f3f7fb;
+    --sun-opacity:.3;
+    --rain-opacity:0;
+  }
+  .scene[data-weather="rainy"]{
+    --sky-top:#587b98;
+    --sky-bottom:#9fb8c9;
+    --grass:#4f8f6a;
+    --road:#3f4954;
+    --cloud-color:#8d9eaf;
+    --sun-opacity:0;
+    --rain-opacity:1;
+  }
+
+  /* ============ 天空 / 地面 ============ */
+  .sky{
+    position:absolute;
+    inset:0;
+    background:linear-gradient(#4cb9f5,#cfeeff);
+  }
+  .sky::before,.sky::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    opacity:0;
+    transition:opacity 1s;
+  }
+  .sky::before{background:linear-gradient(#8ab8d8,#d9e7f2)}
+  .sky::after{background:linear-gradient(#587b98,#9fb8c9)}
+  .scene[data-weather="cloudy"] .sky::before{opacity:1}
+  .scene[data-weather="rainy"] .sky::after{opacity:1}
+  .grass{
+    position:absolute;
+    left:0;right:0;bottom:0;
+    height:19vh;
+    background:var(--grass);
+    transition:background 1s;
+    border-radius:40% 0 0 0 / 18% 0 0 0;
+  }
+  .road{
+    position:absolute;
+    left:0;right:0;bottom:0;
+    height:8.5vh;
+    background:var(--road);
+    transition:background 1s;
+    box-shadow:0 -4px 10px rgba(0,0,0,.08);
+  }
+  .road::before{
+    content:"";
+    position:absolute;
+    left:0;right:0;top:50%;
+    height:4px;
+    transform:translateY(-50%);
+    background:repeating-linear-gradient(90deg, rgba(255,255,255,.75) 0 6vmin, transparent 6vmin 12vmin);
+    opacity:.45;
+  }
+  .road::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:repeating-linear-gradient(105deg, transparent 0 14px, rgba(180,220,255,.16) 14px 17px);
+    opacity:var(--rain-opacity);
+    transition:opacity 1s;
+  }
+
+  /* ============ 太阳 ============ */
+  .sun-wrap{
+    position:absolute;
+    top:6vmin;
+    right:7vmin;
+    width:15vmin;
+    height:15vmin;
+    min-width:70px;
+    min-height:70px;
+    opacity:var(--sun-opacity);
+    transition:opacity 1s;
+  }
+  .sun-rays{
+    position:absolute;
+    inset:-26%;
+    border-radius:50%;
+    background:repeating-conic-gradient(rgba(255,238,150,.95) 0deg 9deg, rgba(255,238,150,0) 9deg 22deg);
+    animation:spin 22s linear infinite;
+  }
+  .sun{
+    position:absolute;
+    inset:8%;
+    border-radius:50%;
+    background:radial-gradient(circle at 36% 34%, #fff7c4 0 22%, #ffd85e 55%, #ffb52e 100%);
+    box-shadow:0 0 4vmin 2vmin rgba(255,220,110,.65);
+    animation:breathe 3.2s ease-in-out infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes breathe{
+    0%,100%{transform:scale(1);box-shadow:0 0 3.4vmin 1.8vmin rgba(255,220,110,.55)}
+    50%{transform:scale(1.06);box-shadow:0 0 5vmin 2.6vmin rgba(255,220,110,.8)}
+  }
+
+  /* ============ 云 ============ */
+  .cloud{
+    position:absolute;
+    left:0;
+    width:27vmin;
+    height:8vmin;
+    border-radius:999px;
+    background:var(--cloud-color);
+    opacity:.85;
+    transition:background 1s, opacity 1s;
+    animation:drift linear infinite;
+    will-change:transform;
+  }
+  .cloud::before,.cloud::after{
+    content:"";
+    position:absolute;
+    border-radius:50%;
+    background:var(--cloud-color);
+    transition:background 1s;
+  }
+  .cloud::before{
+    width:10vmin;height:10vmin;
+    left:5vmin;top:-5vmin;
+  }
+  .cloud::after{
+    width:14vmin;height:14vmin;
+    right:4vmin;top:-8vmin;
+  }
+  .c1{top:7%; animation-duration:48s; animation-delay:-8s}
+  .c2{top:16%; animation-duration:65s; animation-delay:-38s}
+  .c3{top:3%; animation-duration:56s; animation-delay:-24s}
+  .c4{top:22%; animation-duration:76s; animation-delay:-54s}
+  @keyframes drift{
+    from{transform:translateX(-45vw)}
+    to{transform:translateX(115vw)}
+  }
+  .scene[data-weather="sunny"] .c3,
+  .scene[data-weather="sunny"] .c4{opacity:0}
+  .scene[data-weather="sunny"] .c2{opacity:.5}
+  .scene[data-weather="cloudy"] .cloud{opacity:.95}
+  .scene[data-weather="rainy"] .cloud{opacity:.92}
+
+  /* ============ 雨 ============ */
+  .rain{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    opacity:var(--rain-opacity);
+    transition:opacity 1s;
+    pointer-events:none;
+  }
+  .rain span{
+    position:absolute;
+    top:-12vh;
+    width:2px;
+    border-radius:2px;
+    background:linear-gradient(to bottom, rgba(255,255,255,0), rgba(235,248,255,.95));
+    animation:fall linear infinite;
+  }
+  @keyframes fall{
+    from{transform:translate3d(0,0,0)}
+    to{transform:translate3d(-6vw,118vh,0)}
+  }
+
+  /* ============ 鹈鹕与自行车 ============ */
+  .rider{
+    position:absolute;
+    left:50%;
+    bottom:8.2vh;
+    height:clamp(168px,32vmin,430px);
+    width:auto;
+    aspect-ratio:540 / 320;
+    transform:translateX(-50%);
+    filter:drop-shadow(0 6px 8px rgba(20,40,60,.22));
+  }
+  .tire{fill:none;stroke:#262d35;stroke-width:11}
+  .rim{fill:none;stroke:#a9b4c0;stroke-width:3.5}
+  .spoke{stroke:#9aa6b4;stroke-width:2.2;stroke-linecap:round}
+  .hub{fill:#2c3642;stroke:#1c232c;stroke-width:2}
+  .frame{fill:none;stroke:#33475b;stroke-width:9;stroke-linecap:round;stroke-linejoin:round}
+  .frame-thin{fill:none;stroke:#48617a;stroke-width:5;stroke-linecap:round}
+  .pedal{fill:#2d3642;stroke:#1b222b;stroke-width:2}
+  .saddle{fill:#303b47;stroke:#1f2831;stroke-width:2}
+  .beak{fill:#f6a623;stroke:#d98914;stroke-width:2;stroke-linejoin:round}
+  .pouch{fill:#f9b941;stroke:#e59b1b;stroke-width:2;stroke-linejoin:round}
+  .feather{fill:#ffffff;stroke:#dbe5ed;stroke-width:2;stroke-linejoin:round}
+  .leg{fill:none;stroke:#f2a51d;stroke-width:11;stroke-linecap:round;stroke-linejoin:round}
+  .foot{fill:#f7b63c;stroke:#d99216;stroke-width:2}
+
+  @media (max-width:520px){
+    .rider{bottom:7.8vh}
+    .road{height:8vh}
+    .grass{height:22vh}
+  }
+  @media (orientation:landscape) and (max-height:520px){
+    .rider{height:clamp(150px,42vh,360px);bottom:8.6vh}
+    .grass{height:16vh}
+    .road{height:9vh}
+  }
+</style>
+</head>
+<body>
+<div class="scene" id="scene" data-weather="sunny">
+  <div class="sky"></div>
+  <div class="sun-wrap"><div class="sun-rays"></div><div class="sun"></div></div>
+
+  <div class="cloud c1"></div>
+  <div class="cloud c2"></div>
+  <div class="cloud c3"></div>
+  <div class="cloud c4"></div>
+
+  <div class="grass"></div>
+  <div class="road"></div>
+
+  <!-- 鹈鹕骑自行车（纯SVG动画） -->
+  <svg class="rider" viewBox="0 0 540 320" aria-label="白天骑自行车的鹈鹕" role="img">
+    <!-- 车轮 -->
+    <g id="wheelBack">
+      <circle class="tire" cx="408" cy="242" r="78"/>
+      <circle class="rim" cx="408" cy="242" r="68"/>
+      <g class="spokes">
+        <line class="spoke" x1="408" y1="176" x2="408" y2="308"/>
+        <line class="spoke" x1="342" y1="242" x2="474" y2="242"/>
+        <line class="spoke" x1="361" y1="195" x2="455" y2="289"/>
+        <line class="spoke" x1="455" y1="195" x2="361" y2="289"/>
+      </g>
+      <circle class="hub" cx="408" cy="242" r="10"/>
+    </g>
+    <g id="wheelFront">
+      <circle class="tire" cx="112" cy="242" r="78"/>
+      <circle class="rim" cx="112" cy="242" r="68"/>
+      <g class="spokes">
+        <line class="spoke" x1="112" y1="176" x2="112" y2="308"/>
+        <line class="spoke" x1="46" y1="242" x2="178" y2="242"/>
+        <line class="spoke" x1="65" y1="195" x2="159" y2="289"/>
+        <line class="spoke" x1="159" y1="195" x2="65" y2="289"/>
+      </g>
+      <circle class="hub" cx="112" cy="242" r="10"/>
+    </g>
+
+    <!-- 车架 -->
+    <g>
+      <path class="frame" d="M408 242 L270 212 L238 102"/>
+      <path class="frame" d="M270 212 L168 132"/>
+      <path class="frame" d="M238 102 L168 132"/>
+      <path class="frame" d="M168 132 L112 242"/>
+      <path class="frame-thin" d="M408 242 L270 212"/>
+      <path class="frame-thin" d="M238 102 L408 242"/>
+      <path class="frame-thin" d="M168 132 Q160 86 152 80"/>
+      <path class="saddle" d="M216 100 Q228 88 250 96 Q252 104 238 106 Q222 107 216 100Z"/>
+    </g>
+
+    <!-- 曲柄与脚踏 -->
+    <g id="crank">
+      <line class="frame" x1="270" y1="212" x2="270" y2="238"/>
+      <rect class="pedal" x="253" y="233" width="34" height="10" rx="5" ry="5"/>
+      <line class="frame" x1="270" y1="212" x2="270" y2="186"/>
+      <rect class="pedal" x="253" y="181" width="34" height="10" rx="5" ry="5"/>
+      <circle class="hub" cx="270" cy="212" r="8"/>
+    </g>
+
+    <!-- 腿（动画实时更新路径） -->
+    <g id="legs">
+      <path class="leg" id="leg0" d="M230 104 Q190 150 270 238"/>
+      <circle class="foot" id="foot0" cx="270" cy="238" r="7"/>
+      <path class="leg" id="leg1" d="M258 104 Q220 150 270 186"/>
+      <circle class="foot" id="foot1" cx="270" cy="186" r="7"/>
+    </g>
+
+    <!-- 鹈鹕身体（随骑行轻轻起伏） -->
+    <g id="pelican">
+      <g id="wing">
+        <path class="feather" d="M242 82 Q268 44 306 58 Q308 84 254 98 Z"/>
+        <path class="feather" d="M252 70 Q282 50 304 60" style="fill:none"/>
+      </g>
+      <path class="feather" d="M252 80 Q288 54 320 68 Q330 78 318 88 Q300 100 252 100 Z"/>
+      <ellipse class="feather" cx="253" cy="80" rx="55" ry="31"/>
+      <path class="feather" d="M304 72 Q334 64 342 74 Q340 88 312 94 Q296 94 296 82 Z"/>
+      <circle class="feather" cx="190" cy="44" r="17"/>
+      <circle cx="176" cy="40" r="2.8" fill="#1e2a36"/>
+      <path class="beak" d="M181 44 L74 41 Q68 42 70 46 L182 56 Q187 48 181 44Z"/>
+      <path class="pouch" d="M181 55 L72 47 Q66 48 70 53 Q106 82 182 67 Q188 60 181 55Z"/>
+    </g>
+  </svg>
+
+  <div class="rain" id="rain"></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- 每 5 秒循环：晴天 -> 阴天 -> 雨天 -> 晴天 ---------- */
+  var scene = document.getElementById("scene");
+  var weatherOrder = ["sunny","cloudy","rainy"];
+  var weatherIndex = 0;
+  function applyWeather(w){
+    scene.setAttribute("data-weather", w);
+  }
+  setInterval(function(){
+    weatherIndex = (weatherIndex + 1) % weatherOrder.length;
+    applyWeather(weatherOrder[weatherIndex]);
+  }, 5000);
+
+  /* ---------- 生成雨滴 ---------- */
+  var rain = document.getElementById("rain");
+  for(var i = 0; i < 90; i++){
+    var drop = document.createElement("span");
+    drop.style.left = (Math.random() * 100) + "%";
+    drop.style.height = (2.2 + Math.random() * 4.2) + "vmin";
+    drop.style.animationDuration = (0.55 + Math.random() * 0.75) + "s";
+    drop.style.animationDelay = (-Math.random() * 1.4) + "s";
+    drop.style.opacity = (0.25 + Math.random() * 0.7).toFixed(2);
+    rain.appendChild(drop);
+  }
+
+  /* ---------- 骑行循环动画：轮子、脚踏、双腿、翅膀 ---------- */
+  var rearWheel = document.getElementById("wheelBack");
+  var frontWheel = document.getElementById("wheelFront");
+  var crank = document.getElementById("crank");
+  var pelican = document.getElementById("pelican");
+  var wing = document.getElementById("wing");
+  var leg0 = document.getElementById("leg0");
+  var leg1 = document.getElementById("leg1");
+  var foot0 = document.getElementById("foot0");
+  var foot1 = document.getElementById("foot1");
+
+  var crankX = 270, crankY = 212, crankR = 26;
+  var hips = [[230,104],[258,104]];
+  var legs = [leg0, leg1];
+  var feet = [foot0, foot1];
+  var phases = [Math.PI / 2, -Math.PI / 2];
+
+  function render(t){
+    var angle = t / 1000 * 4.4;          /* 骑行起伏用角度 */
+    var spin = -angle;                   /* 车轮逆时针：车头朝左向前骑 */
+    var deg = spin * 180 / Math.PI;
+
+    rearWheel.setAttribute("transform", "rotate(" + deg + " 408 242)");
+    frontWheel.setAttribute("transform", "rotate(" + deg + " 112 242)");
+    crank.setAttribute("transform", "rotate(" + deg + " " + crankX + " " + crankY + ")");
+
+    var bob = Math.sin(angle * 2) * 2.4;
+    pelican.setAttribute("transform", "translate(0 " + bob.toFixed(2) + ")");
+    wing.setAttribute("transform", "rotate(" + (Math.sin(angle * 2 - 0.6) * 13 - 7).toFixed(2) + " 248 82)");
+
+    for(var i = 0; i < 2; i++){
+      var p = spin + phases[i];
+      var fx = crankX + Math.cos(p) * crankR;
+      var fy = crankY + Math.sin(p) * crankR;
+      var hx = hips[i][0], hy = hips[i][1];
+      /* 用二次贝塞尔曲线做一条自然弯曲的蹬踏腿 */
+      var kx = (hx + fx) / 2 - 36 - i * 8;
+      var ky = (hy + fy) / 2 - 26 + i * 3;
+      legs[i].setAttribute("d", "M" + hx.toFixed(1) + " " + hy.toFixed(1) +
+        " Q" + kx.toFixed(1) + " " + ky.toFixed(1) +
+        " " + fx.toFixed(1) + " " + fy.toFixed(1));
+      feet[i].setAttribute("cx", fx.toFixed(1));
+      feet[i].setAttribute("cy", fy.toFixed(1));
+    }
+
+    requestAnimationFrame(render);
+  }
+  requestAnimationFrame(render);
+})();
+</script>
+</body>
+</html>

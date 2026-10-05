@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>骑自行车的鹈鹕 - 天气循环动画</title>
+    <style>
+        /* 基础重置与全屏自适应布局 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* 场景主容器，附带平滑的背景颜色过渡 */
+        #scene {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: background-color 2s ease;
+        }
+
+        /* ------------------ 天气状态背景色 ------------------ */
+        #scene.sunny { background-color: #87CEEB; } /* 晴空蓝 */
+        #scene.cloudy { background-color: #90A4AE; } /* 阴天灰蓝 */
+        #scene.rainy { background-color: #546E7A; } /* 雨天深灰 */
+
+        /* ------------------ 太阳 ------------------ */
+        .sun-container {
+            position: absolute;
+            top: 10%;
+            left: 10%;
+            width: 120px;
+            height: 120px;
+            transition: opacity 2s ease, transform 2s ease;
+            opacity: 0;
+            transform: translateY(-50px);
+            z-index: 5;
+        }
+        .sun-rays {
+            transform-origin: center;
+            animation: sunSpin 10s linear infinite;
+        }
+        @keyframes sunSpin {
+            to { transform: rotate(360deg); }
+        }
+        #scene.sunny .sun-container {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ------------------ 云朵 ------------------ */
+        .clouds-container {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 6;
+        }
+        .cloud {
+            position: absolute;
+            opacity: 0.9;
+            animation: drift linear infinite;
+        }
+        .cloud path {
+            transition: fill 2s ease;
+        }
+        #scene.sunny .cloud path { fill: #FFFFFF; }
+        #scene.cloudy .cloud path { fill: #CFD8DC; }
+        #scene.rainy .cloud path { fill: #78909C; }
+
+        .cloud-1 { top: 15%; width: 140px; animation-duration: 35s; animation-delay: -10s; }
+        .cloud-2 { top: 25%; width: 90px; animation-duration: 25s; animation-delay: -5s; }
+        .cloud-3 { top: 10%; width: 180px; animation-duration: 45s; animation-delay: -25s; }
+
+        @keyframes drift {
+            from { transform: translateX(-200px); left: 0; }
+            to { transform: translateX(100vw); left: 100%; }
+        }
+
+        /* ------------------ 雨滴效果 ------------------ */
+        .rain-container {
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background-image:
+                linear-gradient(transparent, transparent 60%, rgba(255,255,255,0.6) 100%),
+                linear-gradient(transparent, transparent 70%, rgba(255,255,255,0.4) 100%);
+            background-size: 30px 100px, 50px 140px;
+            background-position: 0 0, 15px 30px;
+            transform: rotate(15deg);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 2s ease;
+            z-index: 30;
+            animation: pour 0.5s linear infinite;
+        }
+        #scene.rainy .rain-container {
+            opacity: 1;
+        }
+        @keyframes pour {
+            0% { background-position: 0 0, 15px 30px; }
+            100% { background-position: 0 300px, 15px 450px; }
+        }
+
+        /* ------------------ 地面与视差草丛 ------------------ */
+        .ground-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 20vh; /* 动态高度适配屏幕 */
+            z-index: 10;
+        }
+        .ground-surface {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%; /* 加倍宽度用于循环动画 */
+            height: 100%;
+            background: repeating-linear-gradient( 
+                90deg, 
+                #689F38, 
+                #689F38 40px, 
+                #558B2F 40px, 
+                #558B2F 80px 
+            );
+            border-top: 6px solid #33691E;
+            animation: moveGround 1s linear infinite;
+        }
+        /* 前景灌木（造成视差效果，移动更快） */
+        .foreground-bushes {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 12vh;
+            background-image: 
+                radial-gradient(circle at 40px 100%, #1B5E20 40px, transparent 41px),
+                radial-gradient(circle at 90px 100%, #2E7D32 30px, transparent 31px);
+            background-size: 150px 100%;
+            background-repeat: repeat-x;
+            animation: moveBushes 1.2s linear infinite;
+            z-index: 20;
+        }
+
+        @keyframes moveGround {
+            from { transform: translateX(0); }
+            to { transform: translateX(-80px); }
+        }
+        @keyframes moveBushes {
+            from { transform: translateX(0); }
+            to { transform: translateX(-150px); }
+        }
+
+        /* ------------------ 自行车与鹈鹕 ------------------ */
+        .bike-wrapper {
+            position: absolute;
+            bottom: 20vh; /* 刚好停在地面上方 */
+            left: 50%;
+            width: 90vw;
+            max-width: 400px;
+            transform: translateX(-50%);
+            z-index: 15;
+            animation: bikeBounce 0.4s infinite alternate ease-in-out;
+        }
+        .bike-wrapper svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        @keyframes bikeBounce {
+            from { transform: translateX(-50%) translateY(0); }
+            to { transform: translateX(-50%) translateY(-3px); }
+        }
+
+        /* 轮子自转 */
+        .wheel {
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* 鹈鹕翅膀微动 */
+        .wing {
+            transform-origin: 75px 85px;
+            animation: flap 0.6s infinite alternate ease-in-out;
+        }
+        @keyframes flap {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(8deg); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- 主场景，默认初始为晴天 -->
+    <div id="scene" class="sunny">
+        
+        <!-- 雨滴特效层 -->
+        <div class="rain-container"></div>
+
+        <!-- 太阳 -->
+        <div class="sun-container">
+            <svg viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="22" fill="#FFD54F" />
+                <g class="sun-rays" stroke="#FFCA28" stroke-width="4" stroke-linecap="round">
+                    <line x1="50" y1="5" x2="50" y2="15" />
+                    <line x1="50" y1="85" x2="50" y2="95" />
+                    <line x1="5" y1="50" x2="15" y2="50" />
+                    <line x1="85" y1="50" x2="95" y2="50" />
+                    <line x1="18" y1="18" x2="25" y2="25" />
+                    <line x1="75" y1="75" x2="82" y2="82" />
+                    <line x1="18" y1="82" x2="25" y2="75" />
+                    <line x1="75" y1="25" x2="82" y2="18" />
+                </g>
+            </svg>
+        </div>
+
+        <!-- 漂浮的云朵 -->
+        <div class="clouds-container">
+            <div class="cloud cloud-1">
+                <svg viewBox="0 0 120 70">
+                    <path d="M 30 60 A 20 20 0 0 1 30 20 A 30 30 0 0 1 85 15 A 20 20 0 0 1 100 50 A 15 15 0 0 1 90 60 Z" />
+                </svg>
+            </div>
+            <div class="cloud cloud-2">
+                <svg viewBox="0 0 120 70">
+                    <path d="M 30 60 A 20 20 0 0 1 30 20 A 30 30 0 0 1 85 15 A 20 20 0 0 1 100 50 A 15 15 0 0 1 90 60 Z" />
+                </svg>
+            </div>
+            <div class="cloud cloud-3">
+                <svg viewBox="0 0 120 70">
+                    <path d="M 30 60 A 20 20 0 0 1 30 20 A 30 30 0 0 1 85 15 A 20 20 0 0 1 100 50 A 15 15 0 0 1 90 60 Z" />
+                </svg>
+            </div>
+        </div>
+
+        <!-- 鹈鹕与自行车 SVG -->
+        <div class="bike-wrapper">
+            <!-- 宽高比 200:180 -->
+            <svg viewBox="0 0 200 180">
+                <!-- 底部阴影 -->
+                <ellipse cx="100" cy="178" rx="80" ry="4" fill="rgba(0,0,0,0.15)" />
+
+                <!-- 车架后部连杆 -->
+                <path d="M 40 155 L 80 115" stroke="#E53935" stroke-width="5" stroke-linecap="round" />
+                <path d="M 40 155 L 110 155" stroke="#E53935" stroke-width="5" stroke-linecap="round" />
+                
+                <!-- 左轮 (后轮) -->
+                <g class="wheel" style="transform-origin: 40px 155px;">
+                    <circle cx="40" cy="155" r="25" fill="none" stroke="#2D3436" stroke-width="6" />
+                    <circle cx="40" cy="155" r="22" fill="none" stroke="#F5F6FA" stroke-width="2" />
+                    <!-- 辐条 -->
+                    <line x1="40" y1="130" x2="40" y2="180" stroke="#B2BEC3" stroke-width="1.5" />
+                    <line x1="15" y1="155" x2="65" y2="155" stroke="#B2BEC3" stroke-width="1.5" />
+                    <line x1="22.3" y1="137.3" x2="57.7" y2="172.7" stroke="#B2BEC3" stroke-width="1.5" />
+                    <line x1="57.7" y1="137.3" x2="22.3" y2="172.7" stroke="#B2BEC3" stroke-width="1.5" />
+                    <circle cx="40" cy="155" r="4" fill="#2D3436" />
+                </g>
+
+                <!-- 车架主体 -->
+                <path d="M 80 115 L 140 115 L 160 155" fill="none" stroke="#E53935" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" />
+                <path d="M 140 115 L 110 155 L 80 115" fill="none" stroke="#E53935" stroke-width="5" stroke-linejoin="round" />
+
+                <!-- 齿轮与踏板 -->
+                <circle cx="110" cy="155" r="10" fill="#2D3436" />
+                <line x1="110" y1="155" x2="110" y2="170" stroke="#2D3436" stroke-width="4" stroke-linecap="round" />
+                <line x1="102" y1="170" x2="118" y2="170" stroke="#2D3436" stroke-width="4" stroke-linecap="round" />
+
+                <!-- 座位 -->
+                <line x1="80" y1="115" x2="75" y2="90" stroke="#B2BEC3" stroke-width="5" stroke-linecap="round" />
+                <path d="M 60 90 L 95 90" stroke="#2D3436" stroke-width="8" stroke-linecap="round" />
+
+                <!-- 车把手 -->
+                <line x1="140" y1="115" x2="130" y2="80" stroke="#B2BEC3" stroke-width="5" stroke-linecap="round" />
+                <path d="M 115 80 Q 130 65 145 85" fill="none" stroke="#2D3436" stroke-width="6" stroke-linecap="round" />
+
+                <!-- ================= 鹈鹕角色 ================= -->
+                <!-- 尾巴 -->
+                <path d="M 45 70 L 20 65 L 40 85 Z" fill="#FFFFFF" />
+                
+                <!-- 身体 -->
+                <ellipse cx="75" cy="80" rx="35" ry="22" transform="rotate(-20 75 80)" fill="#FFFFFF" />
+                
+                <!-- 脖子 -->
+                <path d="M 90 65 Q 125 50 115 15 Q 95 15 75 60 Z" fill="#FFFFFF" />
+                
+                <!-- 头部 -->
+                <circle cx="110" cy="12" r="14" fill="#FFFFFF" />
+                
+                <!-- 眼睛 -->
+                <circle cx="115" cy="8" r="2.5" fill="#2D3436" />
+                
+                <!-- 上喙 (亮橙色) -->
+                <path d="M 115 5 Q 175 10 165 18 L 115 15 Z" fill="#FF9F43" />
+                
+                <!-- 下喙囊 (亮黄色) -->
+                <path d="M 115 15 L 165 18 Q 135 45 105 25 Z" fill="#FECA57" />
+                
+                <!-- 翅膀 (动画组) -->
+                <g class="wing">
+                    <path d="M 75 75 Q 105 70 110 95 Q 75 105 55 90 Z" fill="#F1F2F6" stroke="#DFE4EA" stroke-width="2" />
+                </g>
+
+                <!-- 骑车伸缩的腿 -->
+                <path d="M 75 95 L 98 135 L 110 155" fill="none" stroke="#FF9F43" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+
+                <!-- 右轮 (前轮) -->
+                <g class="wheel" style="transform-origin: 160px 155px;">
+                    <circle cx="160" cy="155" r="25" fill="none" stroke="#2D3436" stroke-width="6" />
+                    <circle cx="160" cy="155" r="22" fill="none" stroke="#F5F6FA" stroke-width="2" />
+                    <line x1="160" y1="130" x2="160" y2="180" stroke="#B2BEC3" stroke-width="1.5" />
+                    <line x1="135" y1="155" x2="185" y2="155" stroke="#B2BEC3" stroke-width="1.5" />
+                    <line x1="142.3" y1="137.3" x2="177.7" y2="172.7" stroke="#B2BEC3" stroke-width="1.5" />
+                    <line x1="177.7" y1="137.3" x2="142.3" y2="172.7" stroke="#B2BEC3" stroke-width="1.5" />
+                    <circle cx="160" cy="155" r="4" fill="#2D3436" />
+                </g>
+            </svg>
+        </div>
+
+        <!-- 滚动的地面层 -->
+        <div class="ground-container">
+            <div class="ground-surface"></div>
+        </div>
+
+        <!-- 视差层：前景移动的灌木 -->
+        <div class="foreground-bushes"></div>
+
+    </div>
+
+    <!-- 天气自动切换脚本 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const scene = document.getElementById('scene');
+            // 按照题目要求: 晴天 -> 阴天 -> 雨天，循环交替
+            const weatherCycle = ['sunny', 'cloudy', 'rainy'];
+            let currentIndex = 0;
+
+            setInterval(() => {
+                // 移除当前天气样式
+                scene.classList.remove(weatherCycle[currentIndex]);
+                
+                // 计算下一个天气的索引
+                currentIndex = (currentIndex + 1) % weatherCycle.length;
+                
+                // 添加新的天气样式
+                scene.classList.add(weatherCycle[currentIndex]);
+            }, 5000); // 5000毫秒 = 5秒
+        });
+    </script>
+</body>
+</html>

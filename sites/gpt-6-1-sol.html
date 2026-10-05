@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f4f1e7">
+<title>海风骑行 · 鹈鹕的白日漫游</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}body{font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#294942;background:#f4f1e7}button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}main{position:relative;width:100%;height:100%;height:100svh;min-height:0;isolation:isolate}canvas{position:absolute;inset:0;width:100%;height:100%;z-index:-1}header{position:absolute;top:max(28px,env(safe-area-inset-top));left:5.3%;right:5.3%;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;gap:10px;align-items:center;font-size:13px;font-weight:650;letter-spacing:3px}.brand svg{width:29px;height:29px}.edition{font-size:10px;letter-spacing:2.8px;opacity:.66}.intro{position:absolute;left:8%;top:18.5%;pointer-events:none}.eyebrow{font-size:11px;letter-spacing:3.6px;margin:0 0 19px;font-weight:600;opacity:.65}h1{font-size:clamp(32px,3.8vw,58px);font-weight:500;letter-spacing:3px;line-height:1.55;margin:0}.subtitle{font-size:13px;letter-spacing:2px;margin-top:18px;opacity:.72}.weather-panel{position:absolute;bottom:max(30px,env(safe-area-inset-bottom));left:5.3%;right:5.3%;display:flex;align-items:flex-end;justify-content:space-between;gap:20px}.weather-card{width:240px}.current{display:flex;align-items:center;gap:11px}.weather-symbol{display:grid;place-items:center;width:37px;height:37px;border:1px solid #29494225;border-radius:50%;background:#fff4}.weather-symbol svg{width:22px;height:22px}.weather-label{font-size:14px;letter-spacing:2px}.weather-description{font-size:10px;letter-spacing:1.6px;margin-top:5px;opacity:.68}.timeline{margin-top:15px;display:flex;gap:8px}.step{flex:1;border:0;background:transparent;padding:8px 0 0;text-align:left;cursor:pointer;font-size:10px;letter-spacing:1px;opacity:.45;position:relative;outline-offset:5px}.step::before{content:"";position:absolute;top:0;left:0;width:100%;height:2px;background:currentColor;opacity:.3}.step.active{opacity:1}.step .fill{position:absolute;top:0;left:0;width:100%;height:2px;background:currentColor;transform:scaleX(0);transform-origin:left}.right-controls{display:flex;align-items:center;gap:18px}.caption{font-size:10px;letter-spacing:2px;opacity:.64}.pause{display:grid;place-items:center;width:44px;height:44px;border:1px solid #29494230;border-radius:50%;background:#f4f1e760;cursor:pointer;transition:background .2s}.pause:hover{background:#fff9}.pause svg{width:16px;height:16px}.pause:focus-visible,.step:focus-visible{outline:2px solid #326b60}.location{position:absolute;right:5.3%;top:43%;font-size:10px;letter-spacing:2px;writing-mode:vertical-rl;opacity:.6}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:600px){header{top:max(23px,env(safe-area-inset-top));left:7%;right:7%}.brand{font-size:11px;letter-spacing:2px}.edition{font-size:8px;letter-spacing:1.5px}.intro{top:14%;left:9%}.eyebrow{font-size:9px;margin-bottom:14px;letter-spacing:2.5px}h1{font-size:34px;letter-spacing:2px;line-height:1.5}.subtitle{font-size:11px;letter-spacing:1.5px;margin-top:12px}.weather-panel{left:8%;right:8%;bottom:max(25px,env(safe-area-inset-bottom));gap:14px}.weather-card{width:min(220px,67vw)}.caption,.location{display:none}.right-controls{gap:0}.pause{width:40px;height:40px}.weather-description{letter-spacing:1px}}
+@media(max-height:540px) and (min-width:601px){header{top:18px}.intro{top:22%;left:7%}h1{font-size:30px}.eyebrow{margin-bottom:8px}.subtitle{margin-top:8px}.weather-panel{bottom:16px}.weather-card{width:205px}.current{gap:8px}.weather-symbol{width:30px;height:30px}.timeline{margin-top:9px}.location{display:none}}
+@media(max-width:600px) and (max-height:700px){.intro{top:12%}.eyebrow{font-size:8px;margin-bottom:10px}h1{font-size:28px;line-height:1.4}.subtitle{font-size:10px;margin-top:10px}}
+</style>
+</head>
+<body>
+<main aria-label="鹈鹕在海岸骑自行车的白天动画">
+<canvas id="scene" aria-hidden="true"></canvas>
+<header><div class="brand"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M5 22c2-7 6-9 11-8V7c0-3 5-4 7-1l-1 4 7 3-9 1c-1 9-7 12-15 8Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 20c3 1 6 0 8-3M13 24l-1 4m5-5 1 5" stroke="currentColor" stroke-width="1.5"/></svg>海风骑行</div><span class="edition">A LITTLE DAYTIME ESCAPE</span></header>
+<section class="intro"><p class="eyebrow">THE PELICAN'S COASTAL JOURNEY</p><h1>沿着海风，<br>慢慢骑。</h1><p class="subtitle">一段小小旅途，一整天的好心情。</p></section>
+<div class="location">COASTLINE · 彼岸海岸</div>
+<footer class="weather-panel"><div class="weather-card"><div class="current"><span class="weather-symbol" id="weatherIcon" aria-hidden="true"></span><div><div class="weather-label" id="weatherLabel" aria-live="polite">晴天</div><div class="weather-description" id="weatherDescription">阳光正好，海风轻轻。</div></div></div><div class="timeline" role="group" aria-label="选择天气"><button class="step active" data-weather="0" aria-pressed="true"><span class="fill"></span>晴天</button><button class="step" data-weather="1" aria-pressed="false"><span class="fill"></span>阴天</button><button class="step" data-weather="2" aria-pressed="false"><span class="fill"></span>雨天</button></div></div><div class="right-controls"><span class="caption">跟着风，去看看。</span><button class="pause" id="pause" aria-label="暂停动画" aria-pressed="false"></button></div></footer>
+<noscript><p style="position:absolute;bottom:150px;left:8%">请启用 JavaScript，开始海岸骑行。</p></noscript>
+</main>
+<script>
+(()=>{
+'use strict';
+const canvas=document.getElementById('scene'),ctx=canvas.getContext('2d');
+const buttons=[...document.querySelectorAll('[data-weather]')],pauseButton=document.getElementById('pause');
+const icons=[
+'<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/>',
+'<path d="M6 18a4 4 0 0 1-.8-7.9A6 6 0 0 1 17 9a4.5 4.5 0 0 1 1 9Z"/>',
+'<path d="M6 14a3 3 0 0 1-.4-6A5 5 0 0 1 15 6a4 4 0 0 1 3 8ZM7 18l-1 3m6-3-1 3m6-3-1 3"/>'
+];
+const weather=[{name:'晴天',description:'阳光正好，海风轻轻。',sky:[235,241,219],sea:[140,188,177],hill:[176,201,165],road:[227,216,181],cloud:[255,252,239]},
+{name:'阴天',description:'云朵漫游，骑行依旧。',sky:[211,224,224],sea:[133,169,172],hill:[163,183,170],road:[211,207,187],cloud:[235,239,233]},
+{name:'雨天',description:'细雨落下，继续向前。',sky:[179,201,209],sea:[114,153,165],hill:[139,166,158],road:[186,196,183],cloud:[158,182,194]}];
+let W=0,H=0,dpr=1,time=0,last=null,paused=false,weatherIndex=-1,previous=0,transitionStart=0,cycleStart=0;
+const clamp=(n,a,b)=>Math.max(a,Math.min(b,n)),mix=(a,b,t)=>a+(b-a)*t;
+const color=(a,b,t)=>'rgb('+a.map((v,i)=>Math.round(mix(v,b[i],t))).join(',')+')';
+function resize(){W=canvas.clientWidth;H=canvas.clientHeight;dpr=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr)}
+new ResizeObserver(resize).observe(canvas);resize();
+function setWeather(index){previous=weatherIndex<0?index:weatherIndex;weatherIndex=index;transitionStart=time;cycleStart=time;document.getElementById('weatherLabel').textContent=weather[index].name;document.getElementById('weatherDescription').textContent=weather[index].description;document.getElementById('weatherIcon').innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">'+icons[index]+'</svg>';buttons.forEach((b,i)=>{b.classList.toggle('active',i===index);b.setAttribute('aria-pressed',String(i===index));b.querySelector('.fill').style.transform='scaleX(0)'})}
+buttons.forEach(b=>b.addEventListener('click',()=>setWeather(Number(b.dataset.weather))));
+function showPause(){pauseButton.innerHTML=paused?'<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="m5 3 8 5-8 5Z"/></svg>':'<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="4" y="3" width="2.5" height="10" rx="1"/><rect x="9.5" y="3" width="2.5" height="10" rx="1"/></svg>';pauseButton.setAttribute('aria-label',paused?'继续动画':'暂停动画');pauseButton.setAttribute('aria-pressed',String(paused))}
+pauseButton.addEventListener('click',()=>{paused=!paused;showPause()});showPause();setWeather(0);
+document.addEventListener('visibilitychange',()=>{last=null});
+function ellipse(x,y,rx,ry,fill,rotation=0){ctx.beginPath();ctx.ellipse(x,y,rx,ry,rotation,0,Math.PI*2);ctx.fillStyle=fill;ctx.fill()}
+function line(points,stroke,width=2){ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke()}
+function shape(fill,fn,stroke,width=1){ctx.beginPath();fn();ctx.fillStyle=fill;ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.stroke()}}
+function cloud(x,y,s,fill){ctx.save();ctx.translate(x,y);ctx.scale(s,s);shape(fill,()=>{ctx.moveTo(-75,18);ctx.bezierCurveTo(-94,9,-82,-12,-61,-9);ctx.bezierCurveTo(-62,-42,-23,-51,-7,-25);ctx.bezierCurveTo(9,-56,54,-43,53,-12);ctx.bezierCurveTo(86,-20,101,15,77,20);ctx.closePath()});ctx.restore()}
+function terrain(base,amplitude,fill,speed,frequency){shape(fill,()=>{ctx.moveTo(0,H);ctx.lineTo(0,base);for(let x=0;x<=W+12;x+=12){let y=base+Math.sin(x/frequency+time*speed)*amplitude+Math.sin(x/(frequency*.41)+1.4+time*speed)*amplitude*.24;ctx.lineTo(x,y)}ctx.lineTo(W,H);ctx.closePath()})}
+function wheel(x,y,r,t){ellipse(x,y,r+4,r+4,'#344b45');ellipse(x,y,r-3,r-3,'#f2eee0');ellipse(x,y,r-8,r-8,'#a9b7a329');ctx.save();ctx.translate(x,y);ctx.rotate(t);for(let i=0;i<12;i++){let a=i*Math.PI/6;line([[0,0],[Math.cos(a)*(r-8),Math.sin(a)*(r-8)]],'#74877b',1.3)}ctx.restore();ellipse(x,y,5,5,'#eee9d6');ellipse(x,y,2.5,2.5,'#344b45')}
+function leg(angle,far){let px=Math.cos(angle)*25,py=70+Math.sin(angle)*25;let hip={x:-36,y:-80};let dx=px-hip.x,dy=py-hip.y,d=Math.hypot(dx,dy),a=(84*84-85*85+d*d)/(2*d),h=Math.sqrt(Math.max(0,84*84-a*a));let kx=hip.x+dx*a/d+dy*h/d,ky=hip.y+dy*a/d-dx*h/d;line([[hip.x,hip.y],[kx,ky],[px,py]],far?'#bd8b49':'#e1ab59',far?8:10);ellipse(kx,ky,6,6,far?'#bd8b49':'#e1ab59');shape(far?'#cb9653':'#f0bc6d',()=>{ctx.moveTo(px-5,py-3);ctx.lineTo(px+19,py-1);ctx.quadraticCurveTo(px+24,py+6,px+13,py+7);ctx.lineTo(px-10,py+5);ctx.closePath()});line([[px-10,py+9],[px+17,py+9]],'#374e48',4)}
+function bicycle(t){wheel(-115,70,61,t*3.9);wheel(125,70,61,t*3.9);line([[-115,70],[-40,-22],[0,70],[-115,70]],'#b66347',10);line([[-115,70],[-40,-22],[0,70],[-115,70]],'#dd8864',6);line([[0,70],[78,-35],[-40,-22]],'#dd8864',8);line([[78,-35],[125,70]],'#dc8763',9);line([[-40,-22],[-46,-69]],'#4a6358',6);line([[-67,-69],[-25,-69]],'#334d44',10);line([[78,-35],[69,-63],[91,-72],[109,-68]],'#52695e',5);line([[104,-68],[112,-66]],'#2f4840',8);line([[97,-60],[107,-32],[118,30]],'#667d6b',1.3);ellipse(0,70,17,17,'#af674c');ellipse(0,70,11,11,'#e4aa80');let px=Math.cos(t)*25,py=Math.sin(t)*25;line([[-px,70-py],[px,70+py]],'#455e51',5);ellipse(0,70,4,4,'#f4ebd5');line([[-114,73],[0,74]],'#6f8065',2);line([[-114,66],[0,64]],'#6f8065',2);ctx.beginPath();ctx.arc(-115,70,70,Math.PI*1.14,Math.PI*1.85);ctx.strokeStyle='#dd8864';ctx.lineWidth=5;ctx.stroke();ellipse(119,8,5,3,'#f6c369');ellipse(-93,-8,4,5,'#cf7456');line([[-85,29],[-100,-3]],'#61715a',2)}
+function pelican(t,rain){const bob=Math.sin(t*2)*2;ctx.save();ctx.translate(0,bob);
+shape('#d7d7bb',()=>{ctx.moveTo(-80,-142);ctx.lineTo(-140,-134);ctx.lineTo(-124,-115);ctx.lineTo(-137,-112);ctx.quadraticCurveTo(-91,-91,-65,-117);ctx.closePath()});
+shape('#f5f0dc',()=>{ctx.moveTo(-82,-172);ctx.bezierCurveTo(-116,-148,-112,-94,-64,-77);ctx.bezierCurveTo(-28,-61,18,-96,12,-139);ctx.bezierCurveTo(7,-173,-36,-191,-82,-172);ctx.closePath()},'#77846b',1.2);
+shape('#faf5e4',()=>{ctx.moveTo(-48,-164);ctx.bezierCurveTo(-16,-174,-26,-207,-12,-245);ctx.bezierCurveTo(-5,-266,25,-274,42,-257);ctx.bezierCurveTo(52,-245,46,-232,32,-220);ctx.bezierCurveTo(12,-200,27,-157,8,-133);ctx.quadraticCurveTo(-24,-126,-48,-164);ctx.closePath()},'#77846b',1.2);
+shape('#e4dfc6',()=>{ctx.moveTo(24,-224);ctx.bezierCurveTo(5,-204,16,-164,1,-145);ctx.quadraticCurveTo(-2,-162,0,-186);ctx.quadraticCurveTo(-2,-215,17,-229);ctx.closePath()});
+shape('#e8b570',()=>{ctx.moveTo(45,-248);ctx.lineTo(142,-231);ctx.bezierCurveTo(115,-205,72,-193,43,-224);ctx.closePath()},'#ba8344',1.2);
+shape('#edb65f',()=>{ctx.moveTo(44,-252);ctx.quadraticCurveTo(96,-248,145,-231);ctx.quadraticCurveTo(89,-231,44,-239);ctx.closePath()},'#ba8344',1.2);line([[52,-240],[131,-232]],'#c48a4f',1);line([[59,-231],[69,-214]],'#cfa067',1);ellipse(33,-253,7,7,'#f6f1db');ellipse(34,-253,3.3,3.3,'#314740');ellipse(35,-254,1,1,'#fff');line([[27,-265],[34,-267]],'#737b60',1.5);
+shape('#ece8d2',()=>{ctx.moveTo(-70,-156);ctx.bezierCurveTo(-35,-179,-10,-132,25,-91);ctx.quadraticCurveTo(54,-65,84,-63);ctx.lineTo(84,-52);ctx.bezierCurveTo(35,-53,12,-78,-12,-93);ctx.bezierCurveTo(-58,-95,-85,-120,-70,-156);ctx.closePath()},'#90977d',1.3);line([[-62,-143],[-40,-121],[-18,-113]],'#c5c8aa',1.5);line([[-67,-134],[-49,-116],[-30,-110]],'#c5c8aa',1.5);line([[81,-62],[94,-66]],'#ede7cd',7);
+shape('#7a9f82',()=>{ctx.moveTo(-12,-211);ctx.quadraticCurveTo(6,-203,20,-210);ctx.lineTo(22,-199);ctx.quadraticCurveTo(5,-193,-13,-201);ctx.closePath()});shape('#7a9f82',()=>{ctx.moveTo(-9,-202);ctx.bezierCurveTo(-37,-208,-55,-187,-78,-200);ctx.lineTo(-76,-189);ctx.bezierCurveTo(-45,-173,-36,-201,-6,-194);ctx.closePath()});line([[-67,-194],[-42,-191]],'#9ebb92',2);
+ctx.restore();leg(t,false);
+if(rain>.01){ctx.save();ctx.globalAlpha=rain*.7;line([[25,-277],[22,-273]],'#7c9dac',1);ctx.restore()}}
+function grass(x,y,s){ctx.save();ctx.translate(x,y);ctx.scale(s,s);line([[0,0],[-9,-21],[-12,-23]],'#66856a',2);line([[1,0],[8,-29],[12,-34]],'#66856a',2);line([[0,0],[16,-14]],'#7f976e',2);ctx.restore()}
+function draw(){
+ctx.setTransform(dpr,0,0,dpr,0,0);const mobile=W<=600;let blend=clamp((time-transitionStart)/1.25,0,1);blend=blend*blend*(3-2*blend);let old=weather[previous],now=weather[weatherIndex];let rain=mix(previous===2?1:0,weatherIndex===2?1:0,blend),sun=mix(previous===0?1:0,weatherIndex===0?1:0,blend);
+const roadY=H*(mobile?.76:.79),horizon=H*(mobile?.48:.49);ctx.fillStyle=color(old.sky,now.sky,blend);ctx.fillRect(0,0,W,H);
+ctx.save();ctx.globalAlpha=.19;let grad=ctx.createLinearGradient(0,0,0,horizon);grad.addColorStop(0,'#fff');grad.addColorStop(1,'#ffffff00');ctx.fillStyle=grad;ctx.fillRect(0,0,W,horizon);ctx.restore();
+const sx=W*(mobile?.79:.77),sy=H*(mobile?.24:.22),sr=mobile?32:43;ctx.save();ctx.globalAlpha=.18+sun*.82;ellipse(sx,sy,sr+14,sr+14,'#eedbaa55');ellipse(sx,sy,sr,sr,'#efc76c');ctx.restore();
+for(let i=0;i<6;i++){const speed=8+i*1.2,xx=((i*W/4-time*speed)%(W+300)+W+300)%(W+300)-150;cloud(xx,H*(.19+(i%3)*.105),mobile?.57+(i%2)*.14:.75+(i%2)*.24,color(old.cloud,now.cloud,blend))}
+terrain(horizon,H*.037,color(old.hill,now.hill,blend),.022,W*.2);shape(color(old.sea,now.sea,blend),()=>{ctx.moveTo(0,horizon+H*.055);ctx.bezierCurveTo(W*.3,horizon+H*.04,W*.53,horizon+H*.13,W,horizon+H*.075);ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath()});
+ctx.save();ctx.globalAlpha=.32;for(let i=0;i<24;i++){let x=((i*97-time*(12+i%3*2))%(W+160)+W+160)%(W+160)-80,y=horizon+H*.10+(i%6)*H*.019;line([[x,y],[x+22+i%4*11,y]],'#f3f1db',1.3)}ctx.restore();
+terrain(roadY-H*.055,H*.018,color([199,209,159],[160,185,155],rain),.08,W*.1);shape(color(old.road,now.road,blend),()=>{ctx.moveTo(0,roadY-3);ctx.bezierCurveTo(W*.27,roadY-8,W*.72,roadY+5,W,roadY-3);ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath()});
+line([[0,roadY+H*.066],[W,roadY+H*.066]],'#faf4df65',2);
+for(let i=0;i<15;i++){let x=((i*151-time*80)%(W+160)+W+160)%(W+160)-80;line([[x,roadY+H*.065],[x+19,roadY+H*.065]],'#b7ae8950',2);ellipse(x+42,roadY+H*.025,1.5,1,'#afa78066')}
+ctx.save();ctx.globalAlpha=rain*.5;for(let i=0;i<5;i++){let x=((i*277-time*80)%(W+250)+W+250)%(W+250)-125;ellipse(x,roadY+12+i%2*20,34,4,'#769da1');ellipse(x+8,roadY+10+i%2*20,17,1,'#dde6db')}ctx.restore();
+const s=Math.min(mobile?W/420:W/1050,H/(mobile?1000:680),1.5),cx=W*(mobile?.49:.61),cy=roadY-135*s;ctx.save();ctx.translate(cx,cy);ctx.scale(s,s);ellipse(0,140,175,10,'#5d6f5426');leg(time*3.3+Math.PI,true);bicycle(time*3.3);pelican(time*3.3,rain);ctx.restore();
+for(let i=0;i<6;i++){let x=((i*241-time*103)%(W+150)+W+150)%(W+150)-75;grass(x,roadY+H*(.055+(i%2)*.016),mobile?.75:1);if(i%2===0){ellipse(x+23,roadY+H*.055-14,3,3,'#e8bd6a');line([[x+23,roadY+H*.055-11],[x+23,roadY+H*.067]],'#879369',1)}}
+ctx.save();ctx.globalAlpha=(1-rain)*.5;for(let i=0;i<3;i++){let x=((W*.1+i*97-time*9)%(W+100)+W+100)%(W+100)-50,y=horizon-22+i*10;line([[x-6,y+2],[x,y],[x+6,y+2]],'#668879',1.3)}ctx.restore();
+if(rain>.001){ctx.save();ctx.globalAlpha=rain*.6;ctx.strokeStyle='#5e8291';ctx.lineWidth=1.1;ctx.beginPath();const count=Math.round(W*H/5700);for(let i=0;i<count;i++){let x=((i*113.7-time*170)%(W+80)+W+80)%(W+80)-40,y=(i*89.3+time*(410+i%7*13))%(H+50)-25;ctx.moveTo(x,y);ctx.lineTo(x-5,y+14)}ctx.stroke();ctx.globalAlpha=rain*.4;for(let i=0;i<7;i++){let phase=(time*1.8+i*.29)%1;ctx.beginPath();ctx.ellipse((i*157+37)%W,roadY+8+i%3*17,phase*13,phase*2.8,0,0,Math.PI*2);ctx.stroke()}ctx.restore()}
+// Deterministic paper grain is cached to keep the animation economical.
+if(!draw.grain){const g=document.createElement('canvas');g.width=g.height=160;let gc=g.getContext('2d'),data=gc.createImageData(160,160),seed=1729;for(let i=0;i<data.data.length;i+=4){seed=(seed*1664525+1013904223)>>>0;data.data[i]=data.data[i+1]=data.data[i+2]=60;data.data[i+3]=seed%13}gc.putImageData(data,0,0);draw.grain=ctx.createPattern(g,'repeat')}
+ctx.fillStyle=draw.grain;ctx.fillRect(0,0,W,H);
+buttons[weatherIndex].querySelector('.fill').style.transform='scaleX('+clamp((time-cycleStart)/5,0,1)+')';
+canvas.dataset.weather=weather[weatherIndex].name;canvas.dataset.elapsed=time.toFixed(2);
+}
+function frame(stamp){if(last!==null&&!paused&&!document.hidden)time+=(stamp-last)/1000;last=stamp;while(time-cycleStart>=5){const nextStart=cycleStart+5;setWeather((weatherIndex+1)%3);cycleStart=nextStart;transitionStart=nextStart}draw();requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
