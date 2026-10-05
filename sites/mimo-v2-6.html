@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>骑自行车的鹈鹕</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; font-family: system-ui, sans-serif; }
+
+#scene {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ===== SKY ===== */
+#sky {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 72%;
+  transition: background 2.5s ease;
+  background: linear-gradient(180deg, #1565C0, #42A5F5, #90CAF9);
+}
+#scene.cloudy #sky { background: linear-gradient(180deg, #546E7A, #78909C, #90A4AE); }
+#scene.rainy #sky { background: linear-gradient(180deg, #263238, #455A64, #607D8B); }
+
+/* ===== SUN ===== */
+#sun {
+  position: absolute;
+  top: 4%; right: 8%;
+  width: clamp(70px, 10vw, 130px);
+  height: clamp(70px, 10vw, 130px);
+  background: radial-gradient(circle at 40% 35%, #FFF9C4, #FFD54F 40%, #FF8F00);
+  border-radius: 50%;
+  box-shadow: 0 0 50px 15px rgba(255,213,79,0.3), 0 0 120px 40px rgba(255,160,0,0.1);
+  transition: opacity 2s ease, transform 2s ease;
+  z-index: 2;
+}
+#scene.cloudy #sun, #scene.rainy #sun {
+  opacity: 0;
+  transform: translateY(-50px) scale(0.4);
+}
+
+/* ===== CLOUDS ===== */
+.cloud {
+  position: absolute;
+  z-index: 3;
+}
+.cloud-b {
+  background: white;
+  border-radius: 100px;
+  position: relative;
+  transition: background 2s;
+}
+.cloud-b::before, .cloud-b::after {
+  content: '';
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  transition: background 2s;
+}
+#scene.cloudy .cloud-b, #scene.cloudy .cloud-b::before, #scene.cloudy .cloud-b::after { background: #B0BEC5; }
+#scene.rainy .cloud-b, #scene.rainy .cloud-b::before, #scene.rainy .cloud-b::after { background: #78909C; }
+
+.cloud1 { top: 7%; left: 8%; animation: cf1 8s ease-in-out infinite alternate; }
+.cloud1 .cloud-b { width: clamp(100px, 14vw, 180px); height: clamp(38px, 5vw, 60px); }
+.cloud1 .cloud-b::before { width: 55%; height: 130%; top: -70%; left: 20%; }
+.cloud1 .cloud-b::after { width: 45%; height: 100%; top: -45%; right: 15%; }
+
+.cloud2 { top: 16%; left: 38%; animation: cf2 10s ease-in-out infinite alternate; }
+.cloud2 .cloud-b { width: clamp(70px, 10vw, 130px); height: clamp(30px, 4vw, 50px); }
+.cloud2 .cloud-b::before { width: 50%; height: 120%; top: -65%; left: 15%; }
+.cloud2 .cloud-b::after { width: 55%; height: 95%; top: -40%; right: 10%; }
+
+.cloud3 { top: 5%; left: 62%; animation: cf3 9s ease-in-out infinite alternate; }
+.cloud3 .cloud-b { width: clamp(85px, 12vw, 160px); height: clamp(35px, 4.5vw, 55px); }
+.cloud3 .cloud-b::before { width: 60%; height: 140%; top: -75%; left: 18%; }
+.cloud3 .cloud-b::after { width: 40%; height: 90%; top: -35%; right: 20%; }
+
+.cloud4 { top: 18%; left: 80%; animation: cf4 11s ease-in-out infinite alternate; }
+.cloud4 .cloud-b { width: clamp(60px, 8vw, 110px); height: clamp(25px, 3.5vw, 45px); }
+.cloud4 .cloud-b::before { width: 50%; height: 110%; top: -60%; left: 25%; }
+.cloud4 .cloud-b::after { width: 50%; height: 95%; top: -35%; right: 15%; }
+
+@keyframes cf1 { from { transform: translate(0,0); } to { transform: translate(25px,-8px); } }
+@keyframes cf2 { from { transform: translate(0,0); } to { transform: translate(-20px,-6px); } }
+@keyframes cf3 { from { transform: translate(0,0); } to { transform: translate(18px,6px); } }
+@keyframes cf4 { from { transform: translate(0,0); } to { transform: translate(-25px,-10px); } }
+
+/* ===== HILLS ===== */
+#hills {
+  position: absolute;
+  bottom: 30%; left: 0;
+  width: 100%; height: 18%;
+  z-index: 2;
+}
+#hills svg { width: 100%; height: 100%; display: block; }
+
+/* ===== TREES ===== */
+#scenery {
+  position: absolute;
+  bottom: calc(clamp(45px, 8vh, 85px) + 20%);
+  left: 0; width: 100%; height: 20%;
+  z-index: 3;
+  overflow: hidden;
+}
+.tree-strip {
+  display: flex;
+  animation: tree-scroll 15s linear infinite;
+}
+.tree-half {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: flex-end;
+  flex-shrink: 0;
+  width: 100vw;
+  padding: 0 2vw;
+}
+@keyframes tree-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100vw); }
+}
+.tree {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+.tree .crown {
+  flex-shrink: 0;
+}
+.tree .trunk {
+  background: #5D4037;
+  border-radius: 1px;
+}
+
+/* Round tree */
+.tree-a .crown {
+  width: clamp(32px, 4.5vw, 55px);
+  height: clamp(38px, 5vw, 60px);
+  background: #2E7D32;
+  border-radius: 50% 50% 45% 45%;
+  box-shadow: inset -6px -4px 12px rgba(0,0,0,0.2);
+}
+.tree-a .trunk { width: clamp(5px, 0.7vw, 9px); height: clamp(18px, 2.5vw, 32px); }
+
+/* Pine tree */
+.tree-b .crown {
+  width: clamp(35px, 5vw, 58px);
+  height: clamp(48px, 6.5vw, 78px);
+  background: #1B5E20;
+  clip-path: polygon(50% 0%, 8% 100%, 92% 100%);
+}
+.tree-b .trunk { width: clamp(4px, 0.6vw, 7px); height: clamp(12px, 1.8vw, 24px); }
+
+/* Oval tree */
+.tree-c .crown {
+  width: clamp(28px, 3.8vw, 45px);
+  height: clamp(50px, 7vw, 80px);
+  background: #388E3C;
+  border-radius: 50% 50% 40% 40%;
+  box-shadow: inset -5px -6px 12px rgba(0,0,0,0.15);
+}
+.tree-c .trunk { width: clamp(6px, 0.8vw, 10px); height: clamp(15px, 2vw, 28px); }
+
+/* ===== GROUND ===== */
+#ground {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%; height: 30%;
+  background: linear-gradient(180deg, #43A047 0%, #2E7D32 50%, #1B5E20 100%);
+  z-index: 4;
+  transition: filter 2s;
+}
+#scene.cloudy #ground { filter: brightness(0.85); }
+#scene.rainy #ground { filter: brightness(0.6) saturate(0.7); }
+
+/* Grass texture overlay */
+#ground::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 50%;
+  background: repeating-linear-gradient(
+    80deg,
+    transparent 0 10px,
+    rgba(76,175,80,0.2) 10px 12px
+  );
+}
+
+/* ===== ROAD ===== */
+#road {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%;
+  height: clamp(45px, 8vh, 85px);
+  background: #424242;
+  border-top: 4px solid #616161;
+  z-index: 5;
+}
+#road-dashes {
+  position: absolute;
+  top: 50%; left: 0;
+  width: 200%; height: 4px;
+  background: repeating-linear-gradient(
+    90deg,
+    #FFD600 0 55px,
+    transparent 55px 110px
+  );
+  animation: road-move 1.2s linear infinite;
+  transform: translateY(-50%);
+}
+@keyframes road-move {
+  from { transform: translateY(-50%) translateX(0); }
+  to { transform: translateY(-50%) translateX(-110px); }
+}
+#road::after {
+  content: '';
+  position: absolute;
+  bottom: 5px; left: 0;
+  width: 100%; height: 3px;
+  background: rgba(255,255,255,0.15);
+}
+
+/* ===== RAIN ===== */
+#rain-container {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 12;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 2s;
+}
+#scene.rainy #rain-container { opacity: 1; }
+
+.drop {
+  position: absolute;
+  width: 2px;
+  background: linear-gradient(to bottom, rgba(174,194,224,0), rgba(174,194,224,0.7));
+  border-radius: 0 0 3px 3px;
+  animation: drop-fall linear infinite;
+}
+@keyframes drop-fall {
+  0% { top: -5%; opacity: 0; }
+  5% { opacity: 1; }
+  95% { opacity: 1; }
+  100% { top: 105%; opacity: 0; }
+}
+
+/* ===== LIGHTNING ===== */
+#flash {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: #fff;
+  opacity: 0;
+  z-index: 13;
+  pointer-events: none;
+}
+#scene.rainy #flash { animation: bolt 5s ease-in-out infinite; }
+@keyframes bolt {
+  0%, 85%, 100% { opacity: 0; }
+  87% { opacity: 0.7; }
+  88% { opacity: 0; }
+  90% { opacity: 0.4; }
+  91% { opacity: 0; }
+}
+
+/* ===== RIDER ===== */
+#rider {
+  position: absolute;
+  bottom: clamp(30px, 6vh, 70px);
+  left: 50%;
+  z-index: 6;
+  width: clamp(200px, 38vw, 500px);
+  animation: bob 0.45s ease-in-out infinite alternate;
+}
+@keyframes bob {
+  from { transform: translateX(-50%) translateY(0); }
+  to { transform: translateX(-50%) translateY(-5px); }
+}
+#rider svg { width: 100%; height: auto; display: block; }
+
+/* Wheel spin */
+.wheel-spin {
+  animation: wheel-rot 1.5s linear infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@keyframes wheel-rot {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Wing flap */
+.wing {
+  animation: wing-flap 2.5s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: 10% 50%;
+}
+@keyframes wing-flap {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-6deg); }
+}
+
+/* ===== WEATHER BADGE ===== */
+#badge {
+  position: absolute;
+  top: 2.5%; left: 3%;
+  z-index: 20;
+  background: rgba(0,0,0,0.3);
+  color: #fff;
+  padding: clamp(5px, 0.8vw, 10px) clamp(10px, 1.5vw, 18px);
+  border-radius: 30px;
+  font-size: clamp(13px, 1.6vw, 18px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.12);
+  white-space: nowrap;
+  transition: all 0.5s;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (orientation: portrait) {
+  #rider { width: clamp(220px, 70vw, 450px); bottom: clamp(30px, 5vh, 60px); }
+  .cloud3, .cloud4 { display: none; }
+  #hills { height: 14%; }
+}
+@media (max-width: 400px) {
+  #rider { width: clamp(200px, 78vw, 380px); }
+  #badge { font-size: 12px; }
+  .cloud2 { display: none; }
+}
+@media (orientation: landscape) and (min-width: 1024px) {
+  #rider { width: clamp(250px, 32vw, 460px); }
+}
+</style>
+</head>
+<body>
+<div id="scene" class="sunny">
+  <div id="sky"></div>
+  <div id="sun"></div>
+  <div class="cloud cloud1"><div class="cloud-b"></div></div>
+  <div class="cloud cloud2"><div class="cloud-b"></div></div>
+  <div class="cloud cloud3"><div class="cloud-b"></div></div>
+  <div class="cloud cloud4"><div class="cloud-b"></div></div>
+
+  <div id="hills">
+    <svg viewBox="0 0 1200 200" preserveAspectRatio="none">
+      <path d="M0,200 Q100,60 250,110 Q400,170 550,50 Q650,10 750,70 Q900,150 1050,90 Q1150,50 1200,110 L1200,200Z" fill="#1a472a" opacity="0.55"/>
+      <path d="M0,200 Q150,90 350,140 Q500,180 700,70 Q850,20 1000,100 Q1100,150 1200,70 L1200,200Z" fill="#143d24" opacity="0.65"/>
+      <path d="M0,200 Q200,120 400,160 Q600,200 800,90 Q950,40 1200,120 L1200,200Z" fill="#0e2e1a" opacity="0.5"/>
+    </svg>
+  </div>
+
+  <div id="scenery"><div class="tree-strip" id="treeStrip"></div></div>
+
+  <div id="ground"></div>
+  <div id="road"><div id="road-dashes"></div></div>
+  <div id="rain-container"></div>
+  <div id="flash"></div>
+
+  <div id="rider">
+    <svg viewBox="0 0 550 420" xmlns="http://www.w3.org/2000/svg">
+      <!-- Shadow -->
+      <ellipse cx="275" cy="410" rx="150" ry="8" fill="rgba(0,0,0,0.1)"/>
+
+      <!-- Rear wheel -->
+      <g class="wheel-spin">
+        <circle cx="140" cy="340" r="58" fill="none" stroke="#2c2c2c" stroke-width="6"/>
+        <circle cx="140" cy="340" r="46" fill="none" stroke="#999" stroke-width="1.5"/>
+        <line x1="140" y1="282" x2="140" y2="398" stroke="#bbb" stroke-width="1.5"/>
+        <line x1="82" y1="340" x2="198" y2="340" stroke="#bbb" stroke-width="1.5"/>
+        <line x1="99" y1="299" x2="181" y2="381" stroke="#bbb" stroke-width="1.5"/>
+        <line x1="99" y1="381" x2="181" y2="299" stroke="#bbb" stroke-width="1.5"/>
+        <line x1="110" y1="290" x2="170" y2="390" stroke="#bbb" stroke-width="1.5"/>
+        <line x1="170" y1="290" x2="110" y2="390" stroke="#bbb" stroke-width="1.5"/>
+        <circle cx="140" cy="340" r="6" fill="#555"/>
+      </g>
+
+      <!-- Front wheel -->
+      <g class="wheel-spin">
+        <circle cx="410" cy="340" r="58" fill="none" stroke="#2c2c2c" stroke-width="6"/>
+        <circle cx="410" cy="340" r="46" fill="none" stroke="#999" stroke-width="1.5"/>
+        <line x1="410" y1="282" x2="410" y2="398" stroke="#bbb" stroke-width="1.5"/>
+        <line x1="352" y1="340" x2="468" y2="340" stroke="#bbb" stroke-width="1.5"/>
+        <line x1="369" y1="299" x2="451" y2="381" stroke="#bbb" stroke-width="1.5"/>
+        <line x1="369" y1="381" x2="451" y2="299" stroke="#bbb" stroke-width="1.5"/>
+        <line x1="380" y1="290" x2="440" y2="390" stroke="#bbb" stroke-width="1.5"/>
+        <line x1="440" y1="290" x2="380" y2="390" stroke="#bbb" stroke-width="1.5"/>
+        <circle cx="410" cy="340" r="6" fill="#555"/>
+      </g>
+
+      <!-- Frame -->
+      <g stroke="#E63946" stroke-width="5" stroke-linecap="round" fill="none">
+        <line x1="140" y1="340" x2="275" y2="340"/>
+        <line x1="275" y1="340" x2="242" y2="218"/>
+        <line x1="140" y1="340" x2="242" y2="218"/>
+        <line x1="242" y1="218" x2="398" y2="230"/>
+        <line x1="275" y1="340" x2="403" y2="250"/>
+        <line x1="398" y1="230" x2="403" y2="250"/>
+        <line x1="403" y1="250" x2="410" y2="340"/>
+      </g>
+
+      <!-- Handlebar -->
+      <path d="M398 230 L395 198 Q394 186 406 186 L425 186" stroke="#444" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+
+      <!-- Seat -->
+      <rect x="232" y="210" width="38" height="9" rx="4.5" fill="#333"/>
+
+      <!-- Crank & pedals -->
+      <circle cx="275" cy="340" r="7" fill="#666"/>
+      <line x1="275" y1="340" x2="268" y2="364" stroke="#666" stroke-width="4" stroke-linecap="round"/>
+      <line x1="275" y1="340" x2="282" y2="316" stroke="#666" stroke-width="4" stroke-linecap="round"/>
+      <line x1="259" y1="364" x2="277" y2="364" stroke="#333" stroke-width="5" stroke-linecap="round"/>
+      <line x1="273" y1="316" x2="291" y2="316" stroke="#333" stroke-width="5" stroke-linecap="round"/>
+
+      <!-- Chain -->
+      <path d="M148 340 Q211 347 268 340" stroke="#999" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
+
+      <!-- Back leg -->
+      <path d="M250 216 L248 278 L268 364" stroke="#F57C00" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- Body -->
+      <ellipse cx="255" cy="185" rx="44" ry="34" fill="white" stroke="#e0e0e0" stroke-width="1.5"/>
+      <ellipse cx="258" cy="194" rx="30" ry="18" fill="#fafafa"/>
+
+      <!-- Wing -->
+      <g class="wing">
+        <path d="M228 172 Q250 157 280 176 Q268 187 252 189" fill="#f5f5f5" stroke="#ddd" stroke-width="1.5"/>
+        <path d="M238 171 Q256 165 272 178" fill="none" stroke="#e8e8e8" stroke-width="1"/>
+        <path d="M244 177 Q258 173 268 181" fill="none" stroke="#e8e8e8" stroke-width="1"/>
+      </g>
+
+      <!-- Neck -->
+      <path d="M290 168 Q315 138 322 100 Q327 80 330 62" stroke="white" stroke-width="20" fill="none" stroke-linecap="round"/>
+      <path d="M294 167 Q316 137 323 103" stroke="#eee" stroke-width="1" fill="none" stroke-linecap="round"/>
+
+      <!-- Head -->
+      <circle cx="333" cy="56" r="17" fill="white" stroke="#e0e0e0" stroke-width="1"/>
+
+      <!-- Tuft -->
+      <path d="M326 40 Q323 31 329 35 Q327 27 334 33" stroke="#ddd" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+      <!-- Beak upper -->
+      <line x1="347" y1="52" x2="412" y2="64" stroke="#FF8C00" stroke-width="7" stroke-linecap="round"/>
+
+      <!-- Beak pouch -->
+      <path d="M349 61 C370 64,395 67,412 65 C408 75,398 85,380 90 C365 94,352 94,348 88 C345 80,347 70,349 61Z" fill="#FFB347" stroke="#FF8C00" stroke-width="1.5"/>
+
+      <!-- Eye -->
+      <circle cx="336" cy="51" r="4.5" fill="#333"/>
+      <circle cx="337.5" cy="49.5" r="1.8" fill="white"/>
+
+      <!-- Front leg -->
+      <path d="M270 216 L285 272 L282 316" stroke="#F57C00" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- Feet -->
+      <ellipse cx="268" cy="367" rx="9" ry="4.5" fill="#F57C00"/>
+      <ellipse cx="282" cy="313" rx="9" ry="4.5" fill="#F57C00"/>
+    </svg>
+  </div>
+
+  <div id="badge">☀️ 晴天</div>
+</div>
+
+<script>
+// Weather cycle
+const weathers = ['sunny', 'cloudy', 'rainy'];
+const names = { sunny: '☀️ 晴天', cloudy: '☁️ 阴天', rainy: '🌧️ 雨天' };
+let wi = 0;
+const scene = document.getElementById('scene');
+const badge = document.getElementById('badge');
+
+setInterval(() => {
+  wi = (wi + 1) % 3;
+  scene.className = weathers[wi];
+  badge.textContent = names[weathers[wi]];
+}, 5000);
+
+// Rain drops
+(function() {
+  const c = document.getElementById('rain-container');
+  for (let i = 0; i < 100; i++) {
+    const d = document.createElement('div');
+    d.className = 'drop';
+    d.style.left = Math.random() * 100 + '%';
+    d.style.height = (12 + Math.random() * 18) + 'px';
+    d.style.animationDuration = (0.4 + Math.random() * 0.5) + 's';
+    d.style.animationDelay = (Math.random() * 2) + 's';
+    d.style.opacity = 0.3 + Math.random() * 0.5;
+    c.appendChild(d);
+  }
+})();
+
+// Trees
+(function() {
+  const strip = document.getElementById('treeStrip');
+  const types = ['tree-a','tree-b','tree-c','tree-a','tree-c','tree-b','tree-a','tree-b','tree-c','tree-a'];
+  const html = types.map(t => `<div class="tree ${t}" style="transform:scale(${(0.7+Math.random()*0.5).toFixed(2)})"><div class="crown"></div><div class="trunk"></div></div>`).join('');
+  const half = `<div class="tree-half">${html}</div>`;
+  strip.innerHTML = half + half;
+})();
+</script>
+</body>
+</html>

@@ -15,6 +15,7 @@ cp "$ROOT/index.html" "$ROOT/sites-data.js" "$ROOT/favicon.webp" "$DIST/"
 cp "$ROOT/assets/app.js" "$ROOT/assets/style.css" "$DIST/assets/"
 cp "$ROOT/sites/"*.html "$DIST/sites/"
 cp "$ROOT/thumbs/"*.png "$DIST/thumbs/"
+cp "$ROOT/thumbs/"*.webp "$DIST/thumbs/"
 
 echo "==> 部署到 peilika.pages.dev"
 export PATH="/c/Users/mypra/AppData/Roaming/npm:$PATH"

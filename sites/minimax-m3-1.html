@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#7fc6f5">
+<title>鹈鹕骑行 · 天气循环</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:100%;height:100%;overflow:hidden;background:#0d1520}
+  body{
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;-webkit-user-select:none;
+    touch-action:manipulation;
+  }
+  #stage{position:fixed;inset:0}
+  canvas{display:block;width:100%;height:100%}
+
+  /* ---------- HUD ---------- */
+  #hud{
+    position:fixed;left:0;right:0;top:0;
+    padding:calc(14px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) 0 calc(16px + env(safe-area-inset-left));
+    display:flex;justify-content:space-between;align-items:flex-start;gap:12px;
+    pointer-events:none;z-index:5;
+  }
+  .card{
+    background:rgba(12,22,38,.34);
+    -webkit-backdrop-filter:blur(12px) saturate(140%);
+    backdrop-filter:blur(12px) saturate(140%);
+    border:1px solid rgba(255,255,255,.22);
+    border-radius:16px;
+    padding:9px 14px;
+    color:#fff;
+    box-shadow:0 8px 26px rgba(0,0,0,.22);
+  }
+  #wx{display:flex;align-items:center;gap:10px}
+  #wxIcon{font-size:24px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.35))}
+  #wxText{font-size:15px;font-weight:600;letter-spacing:.5px;white-space:nowrap}
+  #speedBox{text-align:right;line-height:1.35}
+  #speedBox b{font-size:16px;font-variant-numeric:tabular-nums}
+  #speedBox span{display:block;font-size:10px;opacity:.72;letter-spacing:1.6px}
+
+  /* progress bar */
+  #barWrap{
+    position:fixed;left:0;right:0;bottom:0;height:4px;z-index:5;
+    background:rgba(255,255,255,.16);pointer-events:none;
+  }
+  #bar{height:100%;width:0%;background:linear-gradient(90deg,#ffe9a8,#ffd166);transition:background .6s linear}
+  #hint{
+    position:fixed;left:50%;transform:translateX(-50%);
+    bottom:calc(18px + env(safe-area-inset-bottom));
+    font-size:12px;color:rgba(255,255,255,.82);
+    background:rgba(12,22,38,.3);border:1px solid rgba(255,255,255,.16);
+    padding:6px 14px;border-radius:999px;white-space:nowrap;
+    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+    pointer-events:none;z-index:5;transition:opacity .8s ease;
+  }
+  #title{
+    position:fixed;left:50%;transform:translateX(-50%);
+    top:26%;
+    font-size:clamp(13px,3.6vw,18px);font-weight:700;letter-spacing:3px;
+    color:#fff;padding:8px 20px;border-radius:999px;
+    background:rgba(12,22,38,.3);
+    border:1px solid rgba(255,255,255,.2);
+    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+    box-shadow:0 8px 26px rgba(0,0,0,.22);
+    pointer-events:none;z-index:6;opacity:0;white-space:nowrap;
+  }
+  @media (max-width:480px){
+    #wxText{font-size:13px}
+    #speedBox b{font-size:14px}
+  }
+</style>
+</head>
+<body>
+<div id="stage"><canvas id="cv"></canvas></div>
+
+<div id="hud">
+  <div class="card" id="wx">
+    <div id="wxIcon">☀️</div>
+    <div>
+      <div id="wxText">晴天</div>
+      <div style="font-size:10px;opacity:.7;letter-spacing:1.4px;margin-top:2px">WEATHER</div>
+    </div>
+  </div>
+  <div class="card" id="speedBox">
+    <b><span id="kmh" style="display:inline;font-size:inherit;opacity:1;letter-spacing:0">0.0</span> km/h</b>
+    <span>PELICAN RIDE</span>
+  </div>
+</div>
+
+<div id="title"></div>
+<div id="barWrap"><div id="bar"></div></div>
+<div id="hint">👆 点一下 → 切天气 ｜ 长按 → 暂停</div>
+
+<script>
+(() => {
+'use strict';
+
+/* =========================================================
+   1. 基础工具
+   ========================================================= */
+const TAU = Math.PI * 2;
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const lerp  = (a, b, t) => a + (b - a) * t;
+const smoothstep = t => (t = clamp(t, 0, 1), t * t * (3 - 2 * t));
+
+// 多段插值：arr = [[位置, 值], ...]
+// 值可以是数字（用于云量/灰度等系数），也可以是 [r,g,b] 颜色（走 RGB 分通道插值）
+function ramp(arr, t) {
+  const first = arr[0][1], last = arr[arr.length - 1][1];
+  const isColor = typeof first !== 'number';
+  const pick = v => isColor ? v.slice() : v;
+  if (t <= arr[0][0]) return pick(first);
+  for (let i = 1; i < arr.length; i++) {
+    if (t <= arr[i][0]) {
+      const [p0, v0] = arr[i - 1], [p1, v1] = arr[i];
+      const k = smoothstep(p1 === p0 ? 0 : (t - p0) / (p1 - p0));
+      return isColor ? mixColor(v0, v1, k) : lerp(v0, v1, k);
+    }
+  }
+  return pick(last);
+}
+
+const mixColor = (c1, c2, t) => [
+  Math.round(lerp(c1[0], c2[0], t)),
+  Math.round(lerp(c1[1], c2[1], t)),
+  Math.round(lerp(c1[2], c2[2], t)),
+];
+// 颜色转 CSS：顺手做一次有限性校验，避免脏数据把整段动画搞崩
+const css = (c, a) => {
+  const v = i => {
+    const n = Math.round(Number(c[i]));
+    return Number.isFinite(n) ? clamp(n, 0, 255) : 0;
+  };
+  return a === undefined
+    ? `rgb(${v(0)},${v(1)},${v(2)})`
+    : `rgba(${v(0)},${v(1)},${v(2)},${Number.isFinite(+a) ? clamp(+a, 0, 1) : 1})`;
+};
+
+let seed = 20261005;
+function rnd() { seed = (seed * 1664525 + 1013904223) & 0x7fffffff; return seed / 0x7fffffff; }
+const rr = (a, b) => a + rnd() * (b - a);
+
+/* =========================================================
+   2. 天气状态机（晴天 → 阴天 → 雨天 → 晴天，每档 5 秒）
+   ========================================================= */
+const STAGE_TIME = 5000;   // 每档停留 5s
+const FADE = 0.30;         // 相邻两档之间的过渡比例
+const ORDER = ['sunny', 'cloudy', 'rainy'];
+
+const WEATHER = {
+  sunny:  { name: '晴天', icon: '☀️', speed: 1.00, wind: 0.55 },
+  cloudy: { name: '阴天', icon: '☁️', speed: 0.86, wind: 0.85 },
+  rainy:  { name: '雨天', icon: '🌧️', speed: 0.70, wind: 1.35 },
+};
+
+let stageIdx = 0;
+let stageStart = performance.now();
+let frozen = false;
+let pauseAt = 0;              // 暂停时冻结在本档的第几毫秒
+let curName = '', curIcon = '';
+
+/* 暂停时返回冻结的时刻，这样进度条与天气混合值都停在原地 */
+function stageTime(now) { return frozen ? pauseAt : now - stageStart; }
+
+/* 世界滚动系数：道具 / 路面虚线 / 草丛共用，保证同一地面的速度一致 */
+const SCROLL = 0.62;
+
+/* 档位推进：每满 STAGE_TIME 进入下一档（晴天 → 阴天 → 雨天 → 晴天） */
+function advanceStage(now) {
+  if (frozen) return;
+  if (stageTime(now) >= STAGE_TIME) {
+    stageIdx = (stageIdx + 1) % ORDER.length;
+    stageStart = now - (stageTime(now) - STAGE_TIME);
+  }
+}
+
+/* 连续混合量（0=晴天, 1=阴天, 2=雨天 程度） */
+function weatherBlend(now) {
+  const key = ORDER[stageIdx];
+  const el = Math.min(stageTime(now), STAGE_TIME);
+  const target = ORDER.indexOf(key);
+  let b = target;
+  if (el > STAGE_TIME * (1 - FADE)) {
+    const k = (el - STAGE_TIME * (1 - FADE)) / (STAGE_TIME * FADE);
+    const nxt = (target + 1) % ORDER.length;
+    if (nxt === 0) b = 2 - 1 * smoothstep(k);       // 雨天 → 晴天：2 → 0
+    else b = lerp(target, nxt, smoothstep(k));
+  }
+  return clamp(b, 0, 2);
+}
+
+/* =========================================================
+   3. 画布 / 视口
+   ========================================================= */
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+let W = 0, H = 0, DPR = 1;
+
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2.5);
+  W = Math.floor(window.innerWidth);
+  H = Math.floor(window.innerHeight);
+  cv.width = Math.floor(W * DPR);
+  cv.height = Math.floor(H * DPR);
+  cv.style.width = W + 'px';
+  cv.style.height = H + 'px';
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  layout();
+}
+window.addEventListener('resize', resize);
+window.addEventListener('orientationchange', () => setTimeout(resize, 120));
+
+/* 场景比例：横屏给天空多一点，竖屏把地平线抬高让主角占更大比例 */
+let S = 1, groundY = 0, bikeX = 0, horizonY = 0;
+
+function layout() {
+  const portrait = H > W;
+  // 横屏按宽度/矮边取比例，矮屏（手机横放）也能保证主角够大
+  S = portrait ? clamp(Math.min(W / 430, H / 860), 0.5, 1.75)
+               : clamp(Math.min(W / 1050, H / 420), 0.5, 1.6);
+  horizonY = portrait ? H * 0.50 : H * 0.46;
+  groundY   = portrait ? H * 0.73 : H * 0.75;
+  bikeX     = W * 0.5;
+  PX_STEP   = W > 1000 ? 8 : (W > 700 ? 10 : 14);
+}
+
+/* =========================================================
+   4. 道路剖面（无限滚动 + 起伏）
+   ========================================================= */
+/* 路径采样步长：窄屏取样粗一点，手机上省 CPU */
+let PX_STEP = 8;
+
+function roadY(x, world) {
+  return groundY
+    + Math.sin((x + world) * 0.0016) * 9 * S
+    + Math.sin((x + world) * 0.0049 + 1.2) * 4 * S;
+}
+
+/* 注意：这里只存归一化坐标（u/v ∈ [0,1]）。
+   模块加载时 W/H 还没初始化，若用绝对像素会全部塌到 (0,0)。 */
+const PROPS = [];
+for (let i = 0; i < 90; i++) {
+  PROPS.push({
+    u: rnd(),
+    type: rnd() < 0.30 ? 'tree' : (rnd() < 0.5 ? 'bush' : 'post'),
+    s: rr(0.75, 1.35),
+    f: rr(0, 1),
+  });
+}
+
+const CLOUDS = [];
+for (let i = 0; i < 16; i++) {
+  CLOUDS.push({
+    u: rnd(), v: rr(0.07, 0.55),
+    s: rr(0.42, 1.15), sp: rr(0.10, 0.42), a: rr(0.5, 1),
+  });
+}
+
+/* 雨滴对象池（雨滴落在屏幕内，px 存即可） */
+const RAIN = [];
+const RAIN_N = 190;
+for (let i = 0; i < RAIN_N; i++) {
+  RAIN.push({ x: Math.random(), y: Math.random(), l: rr(12, 34), v: rr(0.85, 1.25) });
+}
+
+/* =========================================================
+   5. 绘制：天空
+   ========================================================= */
+const SKY = {
+  top:  [[0,[74,158,232]], [1,[124,138,156]], [2,[74,86,104]]],
+  bot:  [[0,[186,230,252]], [1,[198,204,212]], [2,[120,130,146]]],
+};
+
+function drawSky(b) {
+  const top = mixColor(ramp(SKY.top, b), [255, 250, 230], clamp(1 - b, 0, 1) * 0.14);
+  const bot = mixColor(ramp(SKY.bot, b), [255, 244, 214], clamp(1 - b, 0, 1) * 0.22);
+  const g = ctx.createLinearGradient(0, 0, 0, groundY + 40 * S);
+  g.addColorStop(0, css(top));
+  g.addColorStop(1, css(bot));
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+
+  // 阳光光晕
+  const sunny = clamp(1 - b, 0, 1);
+  if (sunny > 0.02) {
+    const sx = W * 0.80, sy = horizonY * 0.52;
+    const rg = ctx.createRadialGradient(sx, sy, 0, sx, sy, Math.max(W, H) * 0.62);
+    rg.addColorStop(0, `rgba(255,244,200,${0.55 * sunny})`);
+    rg.addColorStop(0.35, `rgba(255,236,170,${0.16 * sunny})`);
+    rg.addColorStop(1, 'rgba(255,236,170,0)');
+    ctx.fillStyle = rg;
+    ctx.fillRect(0, 0, W, groundY + 60 * S);
+  }
+}
+
+/* =========================================================
+   6. 绘制：太阳 / 云
+   ========================================================= */
+function drawSun(b) {
+  const a = clamp(1 - b * 1.35, 0, 1);
+  if (a <= 0.01) return;
+  const sx = W * 0.80, sy = horizonY * 0.52, r = 26 * S;
+  ctx.save();
+  ctx.globalAlpha = a;
+  // 光线
+  ctx.save();
+  ctx.translate(sx, sy); ctx.rotate(tSec * 0.09);
+  ctx.strokeStyle = 'rgba(255,232,150,.55)';
+  ctx.lineWidth = 3.2 * S; ctx.lineCap = 'round';
+  for (let i = 0; i < 12; i++) {
+    const ang = i * TAU / 12;
+    const r0 = r * 1.45, r1 = r * (1.9 + Math.sin(tSec * 1.6 + i) * 0.09);
+    ctx.beginPath();
+    ctx.moveTo(Math.cos(ang) * r0, Math.sin(ang) * r0);
+    ctx.lineTo(Math.cos(ang) * r1, Math.sin(ang) * r1);
+    ctx.stroke();
+  }
+  ctx.restore();
+  const g = ctx.createRadialGradient(sx, sy, 0, sx, sy, r);
+  g.addColorStop(0, '#fffdf0'); g.addColorStop(0.55, '#ffe380'); g.addColorStop(1, '#ffc94d');
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(sx, sy, r, 0, TAU); ctx.fill();
+  ctx.restore();
+}
+
+function drawClouds(b) {
+  const cover = ramp([[0, 0.4], [1, 0.92], [2, 1.0]], b); // 云量
+  const dark = ramp([[0, 0], [1, 0.55], [2, 0.85]], b);
+  const span = 1.5 * W;
+  const n = Math.round(CLOUDS.length * clamp(cover, 0.3, 1));
+  for (let i = 0; i < n; i++) {
+    const c = CLOUDS[i];
+    const drift = tSec * (11 + c.sp * 15) * (1 + dark * 0.8);
+    const x = (((c.u * span - drift) % span) + span) % span - 0.25 * W;
+    const y = c.v * H;
+    const s = c.s * S * (1 + dark * 0.22);
+    const base = mixColor([255, 255, 255], [126, 134, 148], dark);
+    const top  = mixColor([255, 255, 255], [176, 182, 194], dark);
+    const a = c.a * (0.55 + 0.45 * cover);
+    ctx.save();
+    ctx.translate(x, y);            // 云的实际落点，别忘了平移
+    ctx.globalAlpha = a;
+    // 云影
+    ctx.fillStyle = css(base);
+    ctx.beginPath();
+    const puffs = [[-60, 8, 34], [-24, -10, 46], [16, -20, 40], [54, 2, 32], [-6, 12, 36], [34, 14, 28]];
+    for (const [px, py, pr] of puffs) {
+      ctx.moveTo(px * s + pr * s, py * s);
+      ctx.arc(px * s, py * s, pr * s, 0, TAU);
+    }
+    ctx.fill();
+    // 高光
+    ctx.globalAlpha = a * (1 - dark * 0.75);
+    ctx.fillStyle = css(top);
+    ctx.beginPath();
+    for (const [px, py, pr] of puffs) {
+      ctx.moveTo(px * s + pr * s * 0.85, py * s - pr * s * 0.2);
+      ctx.arc(px * s, py * s - pr * s * 0.08, pr * s * 0.82, 0, TAU);
+    }
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+/* 远景山丘 */
+function drawHills(b) {
+  const layers = [
+    { c0: [126, 178, 152], c1: [150, 196, 168], amp: 62 * S, k: 0.0011, off: 0,    y: 0.0 },
+    { c0: [104, 162, 138], c1: [130, 180, 152], amp: 46 * S, k: 0.0019, off: 340,  y: 0.42 },
+    { c0: [82, 142, 120],  c1: [110, 164, 136], amp: 32 * S, k: 0.0031, off: 900,  y: 0.8 },
+  ];
+  layers.forEach((L, li) => {
+    const gray = ramp([[0, 0], [1, 0.42], [2, 0.6]], b);
+    const c0 = mixColor(L.c0, [110, 120, 134], gray);
+    const c1 = mixColor(L.c1, [136, 146, 158], gray);
+    const baseY = horizonY + L.y * 46 * S;
+    const g = ctx.createLinearGradient(0, baseY - L.amp, 0, groundY + 20 * S);
+    g.addColorStop(0, css(c1)); g.addColorStop(1, css(c0));
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(0, groundY + 30 * S);
+    const spd = 0.00016 * (li + 1);
+    for (let x = 0; x <= W + PX_STEP; x += PX_STEP) {
+      const wx = Math.min(x, W) + tWorld * spd * 300;
+      const y = baseY
+        - (Math.sin(wx * L.k + L.off) * 0.5 + 0.5) * L.amp
+        - Math.sin(wx * L.k * 2.7 + L.off) * L.amp * 0.22;
+      ctx.lineTo(x, y);
+    }
+    ctx.lineTo(W, groundY + 30 * S);
+    ctx.closePath();
+    ctx.fill();
+  });
+}
+
+/* =========================================================
+   7. 绘制：地面
+   ========================================================= */
+function drawGround(b) {
+  const g1 = mixColor([124, 190, 108], [96, 138, 96], ramp([[0, 0], [1, 0.45], [2, 0.62]], b));
+  const g2 = mixColor([92, 162, 84],  [78, 116, 82], ramp([[0, 0], [1, 0.45], [2, 0.62]], b));
+  const g = ctx.createLinearGradient(0, groundY - 12 * S, 0, H);
+  g.addColorStop(0, css(g1));
+  g.addColorStop(1, css(g2));
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.moveTo(0, H);
+  for (let x = 0; x <= W + PX_STEP; x += PX_STEP) ctx.lineTo(Math.min(x, W), roadY(Math.min(x, W), tWorld));
+  ctx.lineTo(W, H); ctx.closePath(); ctx.fill();
+
+  // 草丛纹理：画在近处路肩（马路下方），跟着世界一起滚动
+  const dark = ramp([[0, 0], [1, 0.5], [2, 0.68]], b);
+  ctx.strokeStyle = `rgba(48,96,52,${0.22 + dark * 0.1})`;
+  ctx.lineWidth = Math.max(1, 1.6 * S);
+  const step = Math.max(26, 46 * S);
+  const off = (((tWorld * SCROLL) % step) + step) % step;
+  for (let x = -off; x < W + step; x += step) {
+    const idx = Math.floor(x / step);
+    const jitter = ((idx * 9301 + 49297) % 233280) / 233280;
+    const gx = x + jitter * step;
+    const gy = roadY(gx, tWorld) + 68 * S + jitter * 26 * S;
+    const hh = (7 + jitter * 9) * S;
+    ctx.beginPath();
+    ctx.moveTo(gx, gy);
+    ctx.lineTo(gx + (jitter - 0.5) * 5 * S, gy - hh);
+    ctx.stroke();
+  }
+
+  // 路面
+  const wet = clamp((b - 1) * 1.6, 0, 1);
+  const rc1 = mixColor([178, 172, 162], [78, 84, 92], Math.max(dark, wet * 0.8));
+  const rc2 = mixColor([148, 142, 134], [56, 62, 70], Math.max(dark, wet * 0.8));
+  const bandTop = 20 * S, bandBot = 62 * S;
+  ctx.beginPath();
+  ctx.moveTo(0, roadY(0, tWorld));
+  for (let x = 0; x <= W + PX_STEP; x += PX_STEP) { const px = Math.min(x, W); ctx.lineTo(px, roadY(px, tWorld)); }
+  for (let x = W; x >= -PX_STEP; x -= PX_STEP) { const px = Math.max(x, 0); ctx.lineTo(px, roadY(px, tWorld) + bandBot); }
+  ctx.closePath();
+  const rg = ctx.createLinearGradient(0, groundY, 0, groundY + bandBot);
+  rg.addColorStop(0, css(rc1)); rg.addColorStop(1, css(rc2));
+  ctx.fillStyle = rg; ctx.fill();
+
+  // 路缘
+  ctx.strokeStyle = `rgba(255,255,255,${0.5 - dark * 0.25})`;
+  ctx.lineWidth = Math.max(1.5, 3 * S);
+  ctx.beginPath();
+  for (let x = 0; x <= W + PX_STEP; x += PX_STEP) {
+    const px = Math.min(x, W);
+    const y = roadY(px, tWorld) + 0.5;
+    x === 0 ? ctx.moveTo(px, y) : ctx.lineTo(px, y);
+  }
+  ctx.stroke();
+
+  // 车道虚线
+  ctx.strokeStyle = `rgba(255,244,206,${0.85 - dark * 0.35 - wet * 0.15})`;
+  ctx.lineWidth = Math.max(2, 4.5 * S);
+  ctx.setLineDash([26 * S, 30 * S]);
+  ctx.lineDashOffset = -(((tWorld * SCROLL) % (56 * S)) + 56 * S) % (56 * S);
+  ctx.beginPath();
+  const dy = bandTop + bandBot * 0.42;
+  for (let x = 0; x <= W + PX_STEP; x += PX_STEP) {
+    const px = Math.min(x, W);
+    const y = roadY(px, tWorld) + dy;
+    x === 0 ? ctx.moveTo(px, y) : ctx.lineTo(px, y);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // 雨天：路面反光
+  if (wet > 0.02) {
+    ctx.save();
+    ctx.globalAlpha = wet * 0.22;
+    ctx.fillStyle = 'rgba(255,255,255,.9)';
+    for (let i = 0; i < 5; i++) {
+      const px = ((i * 0.23 * W - tWorld * 0.7) % (W + 200) + W + 200) % (W + 200) - 100;
+      const py = roadY(px, tWorld) + dy + 6 * S;
+      ctx.beginPath();
+      ctx.ellipse(px, py, 34 * S, 3.4 * S, 0, 0, TAU);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+}
+
+/* 道具：树 / 灌木 / 路桩 */
+function drawProps(b) {
+  const span = 1.6 * W;
+  const off = ((((tWorld * SCROLL) % span) + span) % span);
+  for (const p of PROPS) {
+    let x = ((((p.u * span - off) % span) + span) % span) - 0.2 * W;
+    if (x < -150 * S || x > W + 150 * S) continue;
+    // 立在马路对侧的路肩上（略高于路面），视觉上在自行车身后
+    const y = roadY(x, tWorld) - 5 * S;
+    const dark = ramp([[0, 0], [1, 0.42], [2, 0.6]], b);
+    if (p.type === 'post') {
+      const h = 34 * S * p.s;
+      ctx.fillStyle = mixColor([226, 226, 230], [120, 126, 134], dark);
+      ctx.fillRect(x - 3.2 * S * p.s, y - h, 6.4 * S * p.s, h);
+      ctx.fillStyle = mixColor([255, 118, 96], [140, 78, 70], dark);
+      ctx.fillRect(x - 3.2 * S * p.s, y - h, 6.4 * S * p.s, 6 * S * p.s);
+    } else if (p.type === 'bush') {
+      const r = 15 * S * p.s;
+      const c = mixColor([78, 158, 84], [66, 110, 74], dark);
+      ctx.fillStyle = css(c);
+      ctx.beginPath();
+      [[-r * 0.7, 0, r * 0.8], [0, -r * 0.35, r], [r * 0.72, 0, r * 0.75]].forEach(([bx, by, br]) => {
+        ctx.moveTo(x + bx + br, y + by); ctx.arc(x + bx, y + by, br, 0, TAU);
+      });
+      ctx.fill();
+    } else {
+      const h = 132 * S * p.s;
+      const trunk = mixColor([138, 96, 62], [92, 76, 62], dark);
+      ctx.fillStyle = css(trunk);
+      ctx.fillRect(x - 5.5 * S * p.s, y - h * 0.46, 11 * S * p.s, h * 0.46);
+      const leaf = mixColor([72, 152, 82], [62, 96, 70], dark);
+      const leaf2 = mixColor([96, 176, 96], [78, 112, 82], dark);
+      const sway = Math.sin(tSec * (0.8 + p.f) + p.f * 6) * 3.5 * S;
+      ctx.fillStyle = css(leaf);
+      [[-21, -0.4], [21, -0.4], [0, -0.7]].forEach(([dx, dy], i) => {
+        const cx = x + dx * S * p.s + sway * (dy + 0.3);
+        const cy = y - h * (0.46 + Math.abs(dy)) - h * 0.08;
+        ctx.beginPath();
+        ctx.arc(cx, cy, (26 - i * 4) * S * p.s, 0, TAU);
+        ctx.fill();
+      });
+      ctx.fillStyle = css(leaf2);
+      ctx.beginPath();
+      ctx.arc(x + sway * 1.1 - 7 * S * p.s, y - h * 0.88, 17 * S * p.s, 0, TAU);
+      ctx.fill();
+    }
+  }
+}
+
+/* =========================================================
+   8. 绘制：鹈鹕 + 自行车
+   ========================================================= */
+function drawPelican(b, bikeAng, groundHere) {
+  const s = S;
+  const R = 40 * s;                 // 车轮半径
+  const rearX = bikeX - 62 * s, frontX = bikeX + 62 * s;
+  const axY = groundHere - R;       // 轮心高度
+  const bbX = bikeX - 6 * s, bbY = axY - 14 * s;  // 中轴
+  const wet = clamp((b - 1) * 1.6, 0, 1);
+
+  const dark = ramp([[0, 0], [1, 0.34], [2, 0.5]], b);
+
+  /* ---- 投影 ---- */
+  ctx.save();
+  ctx.globalAlpha = 0.22 - wet * 0.08;
+  ctx.fillStyle = '#123018';
+  ctx.beginPath();
+  ctx.ellipse(bikeX, groundHere + 4 * s, 96 * s, 11 * s, 0, 0, TAU);
+  ctx.fill();
+  ctx.restore();
+
+  /* ---- 车轮 ---- */
+  const wheel = (wx, wy) => {
+    ctx.save();
+    ctx.translate(wx, wy);
+    // 轮胎
+    ctx.strokeStyle = '#2b2f38'; ctx.lineWidth = 5.4 * s; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.arc(0, 0, R, 0, TAU); ctx.stroke();
+    // 轮圈
+    ctx.strokeStyle = '#c9d2dc'; ctx.lineWidth = 2.1 * s;
+    ctx.beginPath(); ctx.arc(0, 0, R - 3.4 * s, 0, TAU); ctx.stroke();
+    // 辐条
+    ctx.strokeStyle = 'rgba(214,222,232,.85)'; ctx.lineWidth = 1.25 * s;
+    const spokes = 12;
+    ctx.rotate(bikeAng);
+    ctx.beginPath();
+    for (let i = 0; i < spokes; i++) {
+      const a = i * TAU / spokes;
+      ctx.moveTo(Math.cos(a) * 6 * s, Math.sin(a) * 6 * s);
+      ctx.lineTo(Math.cos(a) * (R - 5 * s), Math.sin(a) * (R - 5 * s));
+    }
+    ctx.stroke();
+    ctx.rotate(-bikeAng);
+    // 轮毂
+    ctx.fillStyle = '#5b6472';
+    ctx.beginPath(); ctx.arc(0, 0, 4.6 * s, 0, TAU); ctx.fill();
+    ctx.restore();
+  };
+  wheel(rearX, axY);
+  wheel(frontX, axY);
+
+  /* ---- 车架 ---- */
+  const frame = mixColor([244, 84, 62], [188, 74, 62], dark);
+  ctx.strokeStyle = css(frame);
+  ctx.lineWidth = 6 * s; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.moveTo(rearX, axY); ctx.lineTo(bbX - 6 * s, bbY);            // 座管-下管
+  ctx.moveTo(bbX - 6 * s, bbY); ctx.lineTo(bikeX + 6 * s, axY - 34 * s); // 座管
+  ctx.moveTo(bikeX + 6 * s, axY - 34 * s); ctx.lineTo(bbX - 6 * s, bbY);
+  ctx.moveTo(bbX - 6 * s, bbY); ctx.lineTo(bikeX + 30 * s, axY - 40 * s); // 下管
+  ctx.moveTo(bikeX + 30 * s, axY - 40 * s); ctx.lineTo(bikeX + 6 * s, axY - 34 * s);
+  ctx.stroke();
+  // 前叉
+  ctx.strokeStyle = '#7b8492'; ctx.lineWidth = 3.6 * s;
+  ctx.beginPath();
+  ctx.moveTo(bikeX + 6 * s, axY - 34 * s);
+  ctx.lineTo(bikeX + 20 * s, axY - 62 * s);
+  ctx.moveTo(bikeX + 20 * s, axY - 62 * s);
+  ctx.lineTo(frontX, axY);
+  ctx.stroke();
+
+  /* ---- 传动 ---- */
+  const crankA = bikeAng * 1.0;
+  const cR = 12 * s;
+  ctx.strokeStyle = 'rgba(90,98,110,.9)'; ctx.lineWidth = 1.8 * s;
+  ctx.beginPath(); ctx.arc(bbX - 6 * s, bbY, cR, 0, TAU); ctx.stroke();
+  ctx.strokeStyle = 'rgba(70,78,90,.95)'; ctx.lineWidth = 2.2 * s;
+  ctx.beginPath();                                   // 链条
+  ctx.moveTo(bbX - 6 * s + Math.cos(crankA) * cR, bbY + Math.sin(crankA) * cR);
+  ctx.lineTo(rearX + Math.cos(crankA + 1.9) * 5.5 * s, axY + Math.sin(crankA + 1.9) * 5.5 * s);
+  ctx.moveTo(bbX - 6 * s + Math.cos(crankA + Math.PI) * cR, bbY + Math.sin(crankA + Math.PI) * cR);
+  ctx.lineTo(rearX + Math.cos(crankA + Math.PI + 1.9) * 5.5 * s, axY + Math.sin(crankA + Math.PI + 1.9) * 5.5 * s);
+  ctx.stroke();
+  // 飞轮
+  ctx.strokeStyle = 'rgba(90,98,110,.8)'; ctx.lineWidth = 1.6 * s;
+  ctx.beginPath(); ctx.arc(rearX, axY, 5.5 * s, 0, TAU); ctx.stroke();
+
+  // 曲柄 + 踏板（左右反相）
+  const pedals = [];
+  [1, -1].forEach((side, i) => {
+    const a = crankA + (i ? Math.PI : 0);
+    const px = bbX - 6 * s + Math.cos(a) * 17 * s;
+    const py = bbY + Math.sin(a) * 17 * s;
+    ctx.strokeStyle = '#5b6472'; ctx.lineWidth = 4.4 * s;
+    ctx.beginPath(); ctx.moveTo(bbX - 6 * s, bbY); ctx.lineTo(px, py); ctx.stroke();
+    ctx.fillStyle = '#3a414d';
+    ctx.save(); ctx.translate(px, py); ctx.rotate(a);
+    ctx.fillRect(-7 * s, -2.4 * s + side * 1.4 * s, 15 * s, 4.4 * s);
+    ctx.restore();
+    pedals.push([px, py]);
+  });
+
+  /* ---- 车把 + 车座 ---- */
+  const stemX = bikeX + 20 * s, stemY = axY - 62 * s;
+  ctx.strokeStyle = '#4d5561'; ctx.lineWidth = 4.4 * s;
+  ctx.beginPath(); ctx.moveTo(bikeX + 6 * s, axY - 34 * s); ctx.lineTo(stemX, stemY); ctx.stroke();
+  ctx.strokeStyle = '#2f3540'; ctx.lineWidth = 5.2 * s;
+  ctx.beginPath(); ctx.moveTo(stemX - 8 * s, stemY + 2 * s); ctx.lineTo(stemX + 8 * s, stemY - 3 * s); ctx.stroke();
+  const seatX = bikeX + 6 * s, seatY = axY - 38 * s;
+  ctx.fillStyle = '#333a45';
+  ctx.beginPath();
+  ctx.ellipse(seatX - 4 * s, seatY, 13 * s, 5 * s, -0.18, 0, TAU);
+  ctx.fill();
+  // 车铃
+  ctx.fillStyle = '#d8b25a';
+  ctx.beginPath(); ctx.arc(stemX + 5 * s, stemY - 7 * s, 3.2 * s, 0, TAU); ctx.fill();
+
+  /* =======================================================
+     鹈鹕
+     ======================================================= */
+  const bodyW = 42 * s, bodyH = 31 * s;
+  const bodyX = bikeX + 2 * s;
+  const bodyY = bbY - 36 * s;
+  const bob = Math.sin(bikeAng * 2) * 1.8 * s;
+  const by = bodyY + bob;
+
+  const white  = mixColor([255, 253, 248], [214, 222, 232], dark);
+  const shade  = mixColor([226, 232, 240], [176, 186, 200], dark);
+  const beak   = mixColor([255, 166, 62], [242, 150, 70], dark * 0.5);
+  const pouch = mixColor([255, 198, 96], [226, 176, 110], dark * 0.5);
+
+  // 腿（先画，被身体压住上端）
+  pedals.forEach(([px, py], i) => {
+    const hipX = bodyX - 10 * s + i * 16 * s;
+    const hipY = by + bodyH * 0.5;
+    ctx.strokeStyle = '#f0a24a'; ctx.lineWidth = 5.2 * s; ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(hipX, hipY);
+    const kx = (hipX + px) / 2 + (i ? 7 : -7) * s;
+    const ky = (hipY + py) / 2 - 6 * s;
+    ctx.quadraticCurveTo(kx, ky, px, py);
+    ctx.stroke();
+    // 蹼足
+    ctx.fillStyle = '#e08a3a';
+    ctx.save(); ctx.translate(px, py); ctx.rotate(crankA + (i ? Math.PI : 0));
+    ctx.beginPath(); ctx.moveTo(-3 * s, 0); ctx.lineTo(6 * s, 2.6 * s); ctx.lineTo(-3 * s, 4.4 * s);
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+  });
+
+  // 尾羽
+  ctx.fillStyle = shade;
+  ctx.beginPath();
+  ctx.moveTo(bodyX - bodyW * 0.8, by - 4 * s);
+  ctx.lineTo(bodyX - bodyW * 1.5, by - 12 * s);
+  ctx.lineTo(bodyX - bodyW * 1.42, by + 1 * s);
+  ctx.lineTo(bodyX - bodyW * 1.55, by + 8 * s);
+  ctx.lineTo(bodyX - bodyW * 0.75, by + 12 * s);
+  ctx.closePath(); ctx.fill();
+
+  // 身体
+  const bg = ctx.createLinearGradient(bodyX, by - bodyH, bodyX, by + bodyH);
+  bg.addColorStop(0, css(white)); bg.addColorStop(1, css(shade));
+  ctx.fillStyle = bg;
+  ctx.beginPath();
+  ctx.ellipse(bodyX, by, bodyW, bodyH, -0.08, 0, TAU);
+  ctx.fill();
+
+  // 雨天：黄色雨披（下半身）+ 雨帽（脖子之后、头部之前绘制，避免遮脸）
+  const wet2 = clamp((b - 1) * 1.6, 0, 1);
+  if (wet2 > 0.04) {
+    ctx.save();
+    ctx.globalAlpha = clamp(wet2 * 1.5, 0, 1);
+    ctx.fillStyle = 'rgba(255, 201, 62, .88)';
+    ctx.strokeStyle = 'rgba(186, 138, 22, .6)'; ctx.lineWidth = 1.8 * s;
+    ctx.beginPath();
+    ctx.moveTo(bodyX - bodyW * 0.88, by - bodyH * 0.18);
+    ctx.quadraticCurveTo(bodyX - bodyW * 0.2, by - bodyH * 0.66, bodyX + bodyW * 0.78, by - bodyH * 0.24);
+    ctx.quadraticCurveTo(bodyX + bodyW * 1.0, by + bodyH * 0.9, bodyX, by + bodyH * 1.22);
+    ctx.quadraticCurveTo(bodyX - bodyW * 0.98, by + bodyH * 0.95, bodyX - bodyW * 0.88, by - bodyH * 0.18);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle = 'rgba(186, 138, 22, .4)'; ctx.lineWidth = 1.4 * s;
+    for (let i = -1; i <= 1; i++) {
+      ctx.beginPath();
+      ctx.moveTo(bodyX + i * bodyW * 0.42, by - bodyH * 0.32);
+      ctx.quadraticCurveTo(bodyX + i * bodyW * 0.5, by + bodyH * 0.4, bodyX + i * bodyW * 0.36, by + bodyH * 1.02);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  // 脖子（S 曲线）
+  const neckTopX = bodyX + bodyW * 0.42;
+  const neckTopY = by - bodyH * 1.32;
+  ctx.strokeStyle = css(white);
+  ctx.lineWidth = 15 * s; ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(bodyX + bodyW * 0.28, by - bodyH * 0.42);
+  ctx.bezierCurveTo(
+    bodyX + bodyW * 0.72, by - bodyH * 0.85,
+    bodyX + bodyW * 0.05, by - bodyH * 1.25,
+    neckTopX, neckTopY
+  );
+  ctx.stroke();
+  ctx.strokeStyle = css(shade);
+  ctx.lineWidth = 3 * s;
+  ctx.beginPath();
+  ctx.moveTo(bodyX + bodyW * 0.34, by - bodyH * 0.34);
+  ctx.bezierCurveTo(
+    bodyX + bodyW * 0.76, by - bodyH * 0.78,
+    bodyX + bodyW * 0.12, by - bodyH * 1.16,
+    neckTopX + 2 * s, neckTopY + 3 * s
+  );
+  ctx.stroke();
+
+  // 翅膀（抓把手）
+  const wingTipX = stemX - 2 * s, wingTipY = stemY - 2 * s;
+  const wg = ctx.createLinearGradient(bodyX, by, wingTipX, wingTipY);
+  wg.addColorStop(0, css(shade)); wg.addColorStop(1, css(mixColor(white, [255, 255, 255], 0.2)));
+  ctx.fillStyle = wg;
+  ctx.beginPath();
+  ctx.moveTo(bodyX + bodyW * 0.30, by - bodyH * 0.42);
+  ctx.quadraticCurveTo(bodyX + bodyW * 0.86, by - bodyH * 0.72, wingTipX, wingTipY);
+  ctx.quadraticCurveTo(bodyX + bodyW * 0.55, by - bodyH * 0.02, bodyX + bodyW * 0.12, by + 2 * s);
+  ctx.closePath(); ctx.fill();
+  // 翅尖羽毛
+  ctx.strokeStyle = css(shade); ctx.lineWidth = 2 * s;
+  for (let i = 0; i < 3; i++) {
+    ctx.beginPath();
+    ctx.moveTo(wingTipX - 1 * s, wingTipY + 1.5 * s + i * 1.6 * s);
+    ctx.lineTo(wingTipX + 9 * s, wingTipY + (1.5 + i * 2.2) * s);
+    ctx.stroke();
+  }
+
+  // 头
+  const headX = neckTopX + 3 * s, headY = neckTopY - 6 * s;
+  // 雨天雨帽：画在头之前，扣在脑后
+  if (wet2 > 0.04) {
+    ctx.save();
+    ctx.globalAlpha = clamp(wet2 * 1.5, 0, 1);
+    ctx.fillStyle = 'rgba(243, 184, 44, .95)';
+    ctx.beginPath();
+    ctx.ellipse(headX - 8 * s, headY - 5 * s, 13.5 * s, 11 * s, -0.34, 0, TAU);
+    ctx.fill();
+    ctx.beginPath();                       // 帽檐往前探一点
+    ctx.moveTo(headX - 15 * s, headY - 10 * s);
+    ctx.quadraticCurveTo(headX + 3 * s, headY - 18 * s, headX + 10 * s, headY - 7 * s);
+    ctx.quadraticCurveTo(headX - 3 * s, headY - 11 * s, headX - 15 * s, headY - 10 * s);
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+  ctx.fillStyle = bg;
+  ctx.beginPath(); ctx.ellipse(headX, headY, 15.5 * s, 13.5 * s, -0.06, 0, TAU); ctx.fill();
+
+  // 羽冠
+  ctx.strokeStyle = css(shade); ctx.lineWidth = 2.4 * s;
+  for (let i = 0; i < 3; i++) {
+    ctx.beginPath();
+    ctx.moveTo(headX - 6 * s + i * 4 * s, headY - 11 * s);
+    ctx.quadraticCurveTo(headX - 12 * s + i * 5 * s, headY - 20 * s, headX - 17 * s + i * 6 * s, headY - 19 * s);
+    ctx.stroke();
+  }
+
+  // 喙 + 喉袋
+  const bkX = headX + 10 * s, bkY = headY + 3 * s;
+  ctx.fillStyle = css(pouch);
+  ctx.beginPath();
+  ctx.moveTo(bkX - 2 * s, bkY);
+  ctx.quadraticCurveTo(bkX + 30 * s, bkY + 5 * s, bkX + 37 * s, bkY + 8 * s);
+  ctx.quadraticCurveTo(bkX + 22 * s, bkY + 22 * s, bkX - 3 * s, bkY + 11 * s);
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle = css(beak);
+  ctx.beginPath();
+  ctx.moveTo(bkX - 2 * s, bkY - 1 * s);
+  ctx.quadraticCurveTo(bkX + 32 * s, bkY + 1.5 * s, bkX + 39 * s, bkY + 8 * s);
+  ctx.quadraticCurveTo(bkX + 20 * s, bkY + 8 * s, bkX - 2 * s, bkY + 9.5 * s);
+  ctx.closePath(); ctx.fill();
+  // 鼻孔
+  ctx.fillStyle = 'rgba(120,70,20,.6)';
+  ctx.beginPath(); ctx.ellipse(bkX + 12 * s, bkY + 2.4 * s, 1.6 * s, 1 * s, 0, 0, TAU); ctx.fill();
+
+  // 眼睛
+  const eyeX = headX + 5 * s, eyeY = headY - 4 * s;
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath(); ctx.arc(eyeX, eyeY, 5 * s, 0, TAU); ctx.fill();
+  ctx.fillStyle = '#22262e';
+  const look = 1.2 * s;
+  ctx.beginPath(); ctx.arc(eyeX + look, eyeY, 2.5 * s, 0, TAU); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,.9)';
+  ctx.beginPath(); ctx.arc(eyeX + look - 1 * s, eyeY - 1.2 * s, 0.9 * s, 0, TAU); ctx.fill();
+
+  // 太阳镜（晴天/阴天可见，雨天收进兜帽——这里用可见度表达）
+  const sunny = clamp(1 - b, 0, 1);
+  if (sunny > 0.06) {
+    ctx.save();
+    ctx.globalAlpha = clamp(sunny * 1.6, 0, 1);
+    ctx.strokeStyle = '#2b2f38'; ctx.lineWidth = 1.8 * s;
+    ctx.fillStyle = 'rgba(38,44,58,.86)';
+    ctx.beginPath(); ctx.ellipse(eyeX - 1.4 * s, eyeY + 0.3 * s, 7.6 * s, 5.6 * s, -0.06, 0, TAU); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(eyeX + 9.4 * s, eyeY + 0.3 * s, 6.4 * s, 5.2 * s, -0.06, 0, TAU); ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(eyeX + 1.4 * s, eyeY); ctx.lineTo(eyeX + 4.4 * s, eyeY); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(eyeX - 8.6 * s, eyeY - 1.6 * s); ctx.lineTo(headX - 13 * s, eyeY - 4.5 * s); ctx.stroke();
+    // 镜片反光
+    ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 1.5 * s;
+    ctx.beginPath();
+    ctx.moveTo(eyeX - 5.6 * s, eyeY + 2.4 * s); ctx.lineTo(eyeX - 1.4 * s, eyeY - 3 * s);
+    ctx.moveTo(eyeX + 6.4 * s, eyeY + 2 * s); ctx.lineTo(eyeX + 9.6 * s, eyeY - 1.8 * s);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+}
+
+/* =========================================================
+   9. 雨 / 溅水 / 速度线
+   ========================================================= */
+function drawRain(b, dt) {
+  const w = clamp((b - 1) * 1.8, 0, 1);
+  if (w <= 0.02) return;
+
+  // 雨云压暗
+  ctx.save();
+  ctx.globalAlpha = w * 0.18;
+  const g = ctx.createLinearGradient(0, 0, 0, groundY);
+  g.addColorStop(0, '#0d1420'); g.addColorStop(1, 'rgba(13,20,32,0)');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, groundY);
+  ctx.restore();
+
+  const wind = -0.55 * w;
+  ctx.save();
+  ctx.globalAlpha = 0.42 * w;
+  ctx.strokeStyle = '#dceaf6';
+  ctx.lineWidth = 1.5 * S;
+  ctx.lineCap = 'round';
+  for (const d of RAIN) {
+    d.y = (d.y + (620 * d.v + 160) * dt * S * 0.6) % 1;
+    d.x = (d.x + (wind * 0.16) * dt) % 1;
+    if (d.x < 0) d.x += 1;
+    const sx = d.x * (W + 260) - 130;
+    const sy = d.y * (H + 120) - 60;
+    ctx.beginPath();
+    ctx.moveTo(sx, sy);
+    ctx.lineTo(sx + wind * d.l, sy + d.l * (0.7 + 0.3 * d.v));
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  // 地面溅射
+  ctx.save();
+  ctx.globalAlpha = 0.5 * w;
+  ctx.strokeStyle = '#e6f3fb'; ctx.lineWidth = 1.4 * S;
+  const n = 14;
+  for (let i = 0; i < n; i++) {
+    const slot = W / n;
+    const px = ((((i * slot + tSec * 120 * (0.6 + (i % 3) * 0.25)) % (W + slot)) + (W + slot)) % (W + slot)) - slot * 0.5;
+    const py = roadY(px, tWorld) + ((i * 0.618) % 1) * 3 * S;
+    const r = ((tSec * 2.2 + i * 0.37) % 1) * 13 * S;
+    if (r < 1) continue;
+    ctx.globalAlpha = 0.42 * w * (1 - r / (13 * S));
+    ctx.beginPath();
+    ctx.ellipse(px, py, r, r * 0.35, 0, Math.PI * 0.08, Math.PI * 0.92);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+/* 速度线 */
+function drawSpeedLines(b, spdNorm) {
+  const a = clamp(spdNorm * 0.32, 0, 0.4) * (1 - clamp(b * 0.9, 0, 1) * 0.5);
+  if (a < 0.02) return;
+  ctx.save();
+  ctx.globalAlpha = a;
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 2 * S; ctx.lineCap = 'round';
+  for (let i = 0; i < 7; i++) {
+    const y = groundY + rr(-0.6, 3.4) * S * 6 + i * 8 * S;
+    const len = rr(50, 150) * S;
+    const x = ((tSec * (900 + i * 130) + i * 220) % (W + 320)) - 160;
+    ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + len, y); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+/* =========================================================
+   10. HUD
+   ========================================================= */
+const elIcon = document.getElementById('wxIcon');
+const elText = document.getElementById('wxText');
+const elKmh  = document.getElementById('kmh');
+const elBar  = document.getElementById('bar');
+const elTitle = document.getElementById('title');
+const elHint = document.getElementById('hint');
+
+let titleTimer = 0;
+function showTitle(txt) {
+  elTitle.textContent = txt;
+  elTitle.style.transition = 'none';
+  elTitle.style.opacity = '0';
+  elTitle.style.transform = 'translateX(-50%) translateY(10px)';
+  requestAnimationFrame(() => {
+    elTitle.style.transition = 'opacity .5s ease, transform .6s cubic-bezier(.2,.9,.3,1)';
+    elTitle.style.opacity = '1';
+    elTitle.style.transform = 'translateX(-50%) translateY(0)';
+  });
+  clearTimeout(titleTimer);
+  titleTimer = setTimeout(() => {
+    elTitle.style.opacity = '0';
+    elTitle.style.transform = 'translateX(-50%) translateY(-8px)';
+  }, 1600);
+}
+
+/* =========================================================
+   11. 交互
+   ========================================================= */
+let downT = 0, moved = false, longPressTimer = null;
+const stage = document.getElementById('stage');
+
+function tap() {
+  stageIdx = (stageIdx + 1) % ORDER.length;
+  pauseAt = 0;
+  stageStart = performance.now();
+  flash(WEATHER[ORDER[stageIdx]].icon + '  ' + WEATHER[ORDER[stageIdx]].name);
+}
+function flash(txt) { showTitle(txt); }
+
+function down(e) {
+  moved = false; downT = performance.now();
+  longPressTimer = setTimeout(() => {
+    if (frozen) {                       // 恢复：从冻结处继续，不跳变
+      frozen = false;
+      stageStart = performance.now() - pauseAt;
+    } else {
+      pauseAt = stageTime(performance.now());
+      frozen = true;
+    }
+    flash(frozen ? '⏸ 已暂停' : '▶ 继续骑行');
+    navigator.vibrate && navigator.vibrate(18);
+  }, 420);
+  if (e.cancelable) e.preventDefault();
+}
+function move() { moved = true; }
+function up() {
+  clearTimeout(longPressTimer);
+  if (!moved && performance.now() - downT < 420) tap();
+}
+stage.addEventListener('touchstart', down, { passive: false });
+stage.addEventListener('touchmove', move, { passive: true });
+stage.addEventListener('touchend', up);
+stage.addEventListener('mousedown', down);
+window.addEventListener('mousemove', move);
+window.addEventListener('mouseup', up);
+document.addEventListener('gesturestart', e => e.preventDefault());
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+// 页面不可见时冻结计时（回到前台从离开处继续）
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && !frozen) stageStart = performance.now() - pauseAt;
+});
+
+setTimeout(() => { elHint.style.opacity = '0'; }, 7000);
+
+/* =========================================================
+   12. 主循环
+   ========================================================= */
+let tSec = 0, tWorld = 0, bikeAng = 0;
+let last = performance.now();
+let frameErr = 0;
+
+function loop(now) {
+  // 先预约下一帧：即使这一帧画砸了，动画也不会永久停摆
+  requestAnimationFrame(loop);
+  try { frame(now); }
+  catch (err) {
+    if (frameErr++ < 3) console.warn('[pelican] 绘制异常：', err);
+  }
+}
+
+function frame(now) {
+  let dt = (now - last) / 1000;
+  last = now;
+  if (dt > 0.05) dt = 0.05;
+  if (dt < 0) dt = 0;
+
+  const b = weatherBlend(now);
+  advanceStage(now);
+  const wp = WEATHER[ORDER[stageIdx]];
+  const spdNorm = wp.speed * (1 - clamp((b - 1) * 0.6, 0, 1) * 0.5);
+
+  tSec += dt;
+  tWorld += dt * spdNorm * 210 * S;
+  bikeAng += dt * spdNorm * 3.05 * (1 + clamp(b, 0, 1) * 0.0);
+
+  const groundHere = roadY(bikeX, tWorld);
+
+  drawSky(b);
+  drawSun(b);
+  drawClouds(b);
+  drawHills(b);
+  drawGround(b);
+  drawProps(b);
+  drawSpeedLines(b, spdNorm);
+  drawPelican(b, bikeAng, groundHere);
+  drawRain(b, dt);
+
+  // 天气整体暗角
+  if (b > 0.05) {
+    ctx.save();
+    ctx.globalAlpha = clamp(b * 0.13, 0, 0.3);
+    ctx.fillStyle = '#0b1220';
+    ctx.fillRect(0, 0, W, H);
+    ctx.restore();
+  }
+
+  /* --- HUD 更新 --- */
+  if (wp.name !== curName) {
+    curName = wp.name; curIcon = wp.icon;
+    elText.textContent = wp.name;
+    elIcon.textContent = wp.icon;
+  }
+  elKmh.textContent = (spdNorm * 21.5).toFixed(1);
+  const p = clamp(stageTime(now) / STAGE_TIME, 0, 1);
+  elBar.style.width = (p * 100).toFixed(2) + '%';
+  elBar.style.background = b < 1
+    ? 'linear-gradient(90deg,#ffe9a8,#ffd166)'
+    : 'linear-gradient(90deg,#9fd0f5,#5aa7e8)';
+}
+
+/* 启动 */
+resize();
+showTitle('☀️  晴天');
+requestAnimationFrame(loop);
+
+})();
+</script>
+</body>
+</html>
