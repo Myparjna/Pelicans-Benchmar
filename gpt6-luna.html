@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#8edaff">
+  <title>鹈鹕骑行 · 天气动画</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: "Nunito", "PingFang SC", "Microsoft YaHei", sans-serif;
+      --weather-time: 1.1s;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      min-width: 280px;
+      height: 100%;
+      height: 100svh;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    body {
+      position: relative;
+      background: #9adfff;
+      isolation: isolate;
+    }
+
+    .sky {
+      position: absolute;
+      inset: 0 0 22% 0;
+      z-index: -5;
+      background: linear-gradient(180deg, #74cafa 0%, #b8eaff 70%, #e6f7ff 100%);
+      transition: background var(--weather-time) ease;
+    }
+
+    body.cloudy .sky {
+      background: linear-gradient(180deg, #9aafbf 0%, #c2d0d8 70%, #dce4e6 100%);
+    }
+
+    body.rainy .sky {
+      background: linear-gradient(180deg, #596c7a 0%, #7f9099 70%, #a6b2b6 100%);
+    }
+
+    .sun {
+      position: absolute;
+      z-index: -4;
+      top: clamp(42px, 12vh, 112px);
+      right: clamp(8vw, 16vw, 250px);
+      width: clamp(78px, 10vw, 138px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: radial-gradient(circle at 34% 30%, #fffbd0 0 10%, #ffe684 38%, #ffc83d 75%);
+      box-shadow: 0 0 0 14px rgb(255 230 132 / 18%), 0 0 65px 22px rgb(255 222 99 / 42%);
+      animation: sun-glow 4s ease-in-out infinite;
+      opacity: 1;
+      transform: scale(1);
+      transition: opacity var(--weather-time) ease, transform var(--weather-time) ease;
+    }
+
+    body.cloudy .sun, body.rainy .sun {
+      opacity: 0;
+      transform: translateY(-22px) scale(.72);
+    }
+
+    @keyframes sun-glow {
+      50% { box-shadow: 0 0 0 20px rgb(255 230 132 / 15%), 0 0 82px 30px rgb(255 222 99 / 48%); }
+    }
+
+    .cloud {
+      position: absolute;
+      z-index: -3;
+      top: var(--top);
+      left: -35vw;
+      width: var(--width);
+      height: calc(var(--width) * .34);
+      border-radius: 999px;
+      background: #fff;
+      opacity: .84;
+      filter: drop-shadow(0 9px 12px rgb(57 100 130 / 10%));
+      animation: cloud-drift var(--duration) linear var(--delay) infinite;
+      transition: background var(--weather-time) ease, opacity var(--weather-time) ease;
+    }
+
+    .cloud::before, .cloud::after {
+      position: absolute;
+      content: "";
+      border-radius: 50%;
+      background: inherit;
+    }
+
+    .cloud::before { width: 43%; height: 155%; left: 17%; top: -78%; }
+    .cloud::after { width: 31%; height: 125%; right: 17%; top: -47%; }
+
+    .cloud--small { --width: clamp(96px, 16vw, 210px); }
+    .cloud--medium { --width: clamp(145px, 22vw, 295px); }
+    .cloud--large { --width: clamp(190px, 27vw, 360px); }
+
+    body.cloudy .cloud { background: #e1e7ea; opacity: .78; }
+    body.rainy .cloud { background: #788995; opacity: .9; filter: none; }
+    .cloud--storm { opacity: 0; }
+    body.cloudy .cloud--storm, body.rainy .cloud--storm { opacity: .95; }
+    body.cloudy .cloud--fair, body.rainy .cloud--fair { opacity: 0; }
+
+    @keyframes cloud-drift {
+      from { transform: translateX(-5vw); }
+      to { transform: translateX(145vw); }
+    }
+
+    .distant-hills {
+      position: absolute;
+      z-index: -2;
+      right: 0;
+      bottom: 17vh;
+      left: 0;
+      width: 100%;
+      height: 25vh;
+      min-height: 130px;
+      transition: filter var(--weather-time) ease;
+    }
+
+    body.cloudy .distant-hills { filter: brightness(.83) saturate(.8); }
+    body.rainy .distant-hills { filter: brightness(.64) saturate(.62); }
+
+    .meadow {
+      position: absolute;
+      z-index: -1;
+      right: 0;
+      bottom: 12vh;
+      left: 0;
+      height: 18vh;
+      min-height: 98px;
+      background: linear-gradient(180deg, #8cd45f, #5caf47);
+      transition: filter var(--weather-time) ease;
+    }
+
+    body.cloudy .meadow { filter: brightness(.83) saturate(.82); }
+    body.rainy .meadow { filter: brightness(.65) saturate(.63); }
+
+    .meadow::before {
+      position: absolute;
+      inset: 0;
+      content: "";
+      opacity: .5;
+      background-image: radial-gradient(ellipse at 8% 20%, #d5f29d 0 2px, transparent 3px),
+        radial-gradient(ellipse at 62% 54%, #d5f29d 0 2px, transparent 3px),
+        radial-gradient(ellipse at 86% 30%, #d5f29d 0 2px, transparent 3px);
+      background-size: 170px 75px, 220px 86px, 190px 62px;
+    }
+
+    .road {
+      position: absolute;
+      z-index: 1;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 12vh;
+      min-height: 72px;
+      overflow: hidden;
+      border-top: 5px solid #59616a;
+      background: linear-gradient(180deg, #737b83, #555e67);
+      transition: background var(--weather-time) ease;
+    }
+
+    body.rainy .road { background: linear-gradient(180deg, #606a73, #414b54); }
+
+    .road::before {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 200%;
+      height: 5px;
+      content: "";
+      transform: translateY(-50%);
+      background: repeating-linear-gradient(90deg, #f4d96a 0 54px, transparent 54px 112px);
+      animation: road-lines 1.05s linear infinite;
+    }
+
+    @keyframes road-lines {
+      to { transform: translate(-112px, -50%); }
+    }
+
+    .bike-wrap {
+      position: absolute;
+      z-index: 3;
+      bottom: calc(12vh - 3px);
+      left: 50%;
+      width: min(84vw, 790px);
+      transform: translateX(-50%);
+      animation: rider-bounce 1.05s ease-in-out infinite;
+    }
+
+    .bike-wrap svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+    @keyframes rider-bounce {
+      0%, 100% { translate: 0 0; }
+      50% { translate: 0 -5px; }
+    }
+
+    .wheel-spokes, .crank {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: spin 1.05s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .wing {
+      transform-box: fill-box;
+      transform-origin: 22% 26%;
+      animation: wing-flap 2.1s ease-in-out infinite;
+    }
+
+    @keyframes wing-flap {
+      0%, 100% { transform: rotate(0); }
+      50% { transform: rotate(-8deg); }
+    }
+
+    .head {
+      transform-box: fill-box;
+      transform-origin: 50% 85%;
+      animation: head-nod 1.05s ease-in-out infinite;
+    }
+
+    @keyframes head-nod {
+      0%, 100% { transform: rotate(0); }
+      50% { transform: rotate(2deg); }
+    }
+
+    .badge {
+      position: absolute;
+      z-index: 8;
+      top: max(18px, env(safe-area-inset-top));
+      left: 50%;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      min-height: 42px;
+      padding: 8px 19px;
+      border: 1px solid rgb(255 255 255 / 62%);
+      border-radius: 999px;
+      color: #32536a;
+      background: rgb(255 255 255 / 70%);
+      box-shadow: 0 8px 24px rgb(40 86 116 / 13%);
+      backdrop-filter: blur(9px);
+      -webkit-backdrop-filter: blur(9px);
+      font-size: clamp(14px, 1.6vw, 17px);
+      font-weight: 750;
+      letter-spacing: .08em;
+      white-space: nowrap;
+      transform: translateX(-50%);
+      transition: color var(--weather-time) ease, background var(--weather-time) ease;
+    }
+
+    .weather-icon { font-size: 19px; }
+    body.rainy .badge { color: #f3f7fa; background: rgb(43 57 68 / 62%); }
+    body.cloudy .badge { color: #425b6c; background: rgb(250 252 253 / 74%); }
+
+    .rain {
+      position: absolute;
+      z-index: 6;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .6s ease;
+    }
+
+    body.rainy .rain { opacity: 1; }
+
+    .drop {
+      position: absolute;
+      top: -14vh;
+      width: 2px;
+      height: var(--length);
+      border-radius: 2px;
+      background: linear-gradient(180deg, rgb(225 242 255 / 0%), rgb(225 242 255 / .82));
+      opacity: var(--opacity);
+      animation: rain-fall var(--speed) linear var(--delay) infinite;
+    }
+
+    @keyframes rain-fall { to { transform: translate3d(-7vw, 125vh, 0); } }
+
+    body.rainy .scene-flash { animation: soft-flash 7s linear infinite; }
+
+    .scene-flash {
+      position: absolute;
+      z-index: 7;
+      inset: 0;
+      background: #f6fbff;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    @keyframes soft-flash {
+      0%, 90%, 93%, 100% { opacity: 0; }
+      91%, 92% { opacity: .18; }
+    }
+
+    @media (orientation: portrait) {
+      .bike-wrap { width: min(106vw, 660px); }
+      .distant-hills { bottom: 18vh; height: 21vh; }
+      .meadow { height: 16vh; }
+      .sun { top: 13vh; right: 9vw; }
+    }
+
+    @media (orientation: landscape) and (max-height: 520px) {
+      .bike-wrap { width: min(74vw, 680px); }
+      .sun { top: 8vh; width: clamp(64px, 12vh, 90px); }
+      .distant-hills { bottom: 17vh; height: 28vh; min-height: 88px; }
+      .meadow { bottom: 12vh; height: 18vh; min-height: 64px; }
+      .badge { top: max(10px, env(safe-area-inset-top)); min-height: 36px; padding-block: 6px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 2.5s !important; }
+    }
+  </style>
+</head>
+<body class="sunny">
+  <div class="sky" aria-hidden="true"></div>
+  <div class="sun" aria-hidden="true"></div>
+
+  <div class="cloud cloud--small cloud--fair" style="--top:13%;--duration:62s;--delay:-24s" aria-hidden="true"></div>
+  <div class="cloud cloud--medium cloud--fair" style="--top:27%;--duration:81s;--delay:-52s" aria-hidden="true"></div>
+  <div class="cloud cloud--small cloud--fair" style="--top:8%;--duration:72s;--delay:-40s" aria-hidden="true"></div>
+  <div class="cloud cloud--large cloud--storm" style="--top:7%;--duration:75s;--delay:-13s" aria-hidden="true"></div>
+  <div class="cloud cloud--medium cloud--storm" style="--top:17%;--duration:69s;--delay:-47s" aria-hidden="true"></div>
+  <div class="cloud cloud--small cloud--storm" style="--top:10%;--duration:88s;--delay:-72s" aria-hidden="true"></div>
+
+  <svg class="distant-hills" viewBox="0 0 1440 320" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 320V145Q125 45 290 135T590 143Q770 36 950 135T1230 118Q1350 68 1440 130V320Z" fill="#77b887" opacity=".66"/>
+    <path d="M0 320V196Q190 105 390 184T740 192Q940 92 1110 176T1440 174V320Z" fill="#569c70" opacity=".86"/>
+    <path d="M0 320V235Q195 157 395 224T785 229Q1040 150 1220 215T1440 211V320Z" fill="#43865b" opacity=".75"/>
+  </svg>
+
+  <div class="meadow" aria-hidden="true"></div>
+  <div class="road" aria-hidden="true"></div>
+
+  <div class="bike-wrap" aria-hidden="true">
+    <svg viewBox="0 0 760 480" role="img" aria-label="一只鹈鹕正在骑自行车">
+      <defs>
+        <linearGradient id="feathers" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#fff"/>
+          <stop offset="1" stop-color="#e5edf1"/>
+        </linearGradient>
+        <linearGradient id="bill" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#ffb260"/>
+          <stop offset="1" stop-color="#ee753b"/>
+        </linearGradient>
+        <linearGradient id="pouch" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#ffd09a"/>
+          <stop offset="1" stop-color="#f5a66d"/>
+        </linearGradient>
+      </defs>
+
+      <g fill="none" stroke="#29323d" stroke-width="10">
+        <circle cx="176" cy="369" r="96"/>
+        <circle cx="586" cy="369" r="96"/>
+      </g>
+      <g class="wheel-spokes" stroke="#c6d0d5" stroke-width="3">
+        <circle cx="176" cy="369" r="82" fill="none"/>
+        <path d="M176 287V451M94 369H258M118 311L234 427M234 311L118 427"/>
+      </g>
+      <g class="wheel-spokes" stroke="#c6d0d5" stroke-width="3">
+        <circle cx="586" cy="369" r="82" fill="none"/>
+        <path d="M586 287V451M504 369H668M528 311L644 427M644 311L528 427"/>
+      </g>
+      <g fill="#53616d">
+        <circle cx="176" cy="369" r="9"/>
+        <circle cx="586" cy="369" r="9"/>
+      </g>
+
+      <g fill="none" stroke="#e75c5a" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M176 369L342 369L288 244L176 369"/>
+        <path d="M288 244L482 240L586 369L342 369"/>
+      </g>
+      <path d="M288 244L276 220" stroke="#4c5662" stroke-width="9" stroke-linecap="round"/>
+      <path d="M250 214Q282 203 313 215L310 230Q279 225 255 230Z" fill="#333f4a"/>
+      <path d="M482 240L475 213" stroke="#4c5662" stroke-width="9" stroke-linecap="round"/>
+      <path d="M470 213Q495 199 516 212" fill="none" stroke="#333f4a" stroke-width="9" stroke-linecap="round"/>
+      <g class="crank" fill="none" stroke="#3f4b57" stroke-width="7" stroke-linecap="round">
+        <path d="M342 338V400"/>
+        <path d="M326 338H358M326 400H358"/>
+      </g>
+      <circle cx="342" cy="369" r="12" fill="#3f4b57"/>
+
+      <g class="pelican">
+        <path d="M237 172Q180 184 157 229Q197 238 251 206Z" fill="#dce6eb"/>
+        <ellipse cx="325" cy="174" rx="102" ry="71" fill="url(#feathers)" transform="rotate(-10 325 174)"/>
+        <g class="wing">
+          <path d="M324 145Q257 155 237 213Q285 231 345 197Q372 172 324 145Z" fill="#cedbe2"/>
+          <path d="M317 162Q277 172 261 207Q298 215 335 190Q349 173 317 162Z" fill="#b9cbd4"/>
+          <path d="M278 199Q312 196 334 177" fill="none" stroke="#edf3f5" stroke-width="5" stroke-linecap="round"/>
+        </g>
+
+        <path d="M330 213Q350 264 368 323" fill="none" stroke="#e6a83d" stroke-width="15" stroke-linecap="round">
+          <animate attributeName="d" dur="1.05s" repeatCount="indefinite" values="M330 213Q350 264 368 323;M330 213Q376 257 388 304;M330 213Q380 272 378 331;M330 213Q348 269 336 325;M330 213Q350 264 368 323"/>
+        </path>
+        <path d="M368 323Q384 339 398 345Q409 350 399 359Q380 362 358 347Z" fill="#f2b847">
+          <animate attributeName="d" dur="1.05s" repeatCount="indefinite" values="M368 323Q384 339 398 345Q409 350 399 359Q380 362 358 347Z;M388 304Q407 312 419 326Q430 335 419 342Q401 340 382 325Z;M378 331Q397 347 412 352Q421 358 410 366Q391 366 369 351Z;M336 325Q353 335 360 349Q368 360 355 364Q337 358 325 344Z;M368 323Q384 339 398 345Q409 350 399 359Q380 362 358 347Z"/>
+        </path>
+        <path d="M302 211Q325 264 337 323" fill="none" stroke="#d8942e" stroke-width="12" stroke-linecap="round">
+          <animate attributeName="d" begin="-.525s" dur="1.05s" repeatCount="indefinite" values="M302 211Q325 264 337 323;M302 211Q299 259 291 304;M302 211Q323 266 339 331;M302 211Q321 266 304 325;M302 211Q325 264 337 323"/>
+        </path>
+        <path d="M337 323Q320 340 304 345Q293 350 302 359Q322 362 344 347Z" fill="#e6a83d">
+          <animate attributeName="d" begin="-.525s" dur="1.05s" repeatCount="indefinite" values="M337 323Q320 340 304 345Q293 350 302 359Q322 362 344 347Z;M291 304Q274 316 259 326Q249 335 261 342Q279 339 297 325Z;M339 331Q322 345 306 352Q296 358 308 366Q327 365 347 351Z;M304 325Q286 336 278 350Q270 360 283 364Q301 359 315 344Z;M337 323Q320 340 304 345Q293 350 302 359Q322 362 344 347Z"/>
+        </path>
+
+        <path d="M363 137Q393 109 398 75Q401 55 416 43L439 52Q426 69 425 90Q420 134 388 160Z" fill="url(#feathers)"/>
+        <g class="head">
+          <circle cx="425" cy="54" r="31" fill="#fff"/>
+          <path d="M408 27Q397 10 408 3Q415 17 423 20Q432 4 442 8Q439 21 430 30Z" fill="#e7eef1"/>
+          <circle cx="438" cy="49" r="5" fill="#27313a"/>
+          <circle cx="440" cy="47" r="1.7" fill="#fff"/>
+          <path d="M449 42Q526 44 595 67Q539 82 450 75Z" fill="url(#bill)"/>
+          <path d="M453 75Q522 84 588 70Q570 112 514 116Q466 115 453 75Z" fill="url(#pouch)"/>
+          <path d="M472 80Q516 87 557 81" fill="none" stroke="#de8f61" stroke-width="3" stroke-linecap="round"/>
+          <path d="M382 178Q438 194 488 229Q500 238 490 246Q431 227 374 205Z" fill="#dfe8ec"/>
+          <path d="M487 231Q500 230 505 240" fill="none" stroke="#d1dce2" stroke-width="8" stroke-linecap="round"/>
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <div class="rain" aria-hidden="true"></div>
+  <div class="scene-flash" aria-hidden="true"></div>
+  <div class="badge" aria-live="polite"><span class="weather-icon" aria-hidden="true">☀️</span><span id="weather-label">晴天</span></div>
+
+  <script>
+    (() => {
+      const weather = [
+        { name: "晴天", icon: "☀️", className: "sunny" },
+        { name: "阴天", icon: "☁️", className: "cloudy" },
+        { name: "雨天", icon: "🌧️", className: "rainy" }
+      ];
+      const label = document.getElementById("weather-label");
+      const icon = document.querySelector(".weather-icon");
+      const rain = document.querySelector(".rain");
+      let current = 0;
+
+      for (let i = 0; i < 74; i += 1) {
+        const drop = document.createElement("i");
+        drop.className = "drop";
+        drop.style.left = `${Math.random() * 104 - 2}vw`;
+        drop.style.setProperty("--length", `${34 + Math.random() * 42}px`);
+        drop.style.setProperty("--speed", `${0.55 + Math.random() * 0.5}s`);
+        drop.style.setProperty("--delay", `${-Math.random() * 2}s`);
+        drop.style.setProperty("--opacity", `${0.4 + Math.random() * 0.5}`);
+        rain.appendChild(drop);
+      }
+
+      window.setInterval(() => {
+        current = (current + 1) % weather.length;
+        const next = weather[current];
+        document.body.classList.remove("sunny", "cloudy", "rainy");
+        document.body.classList.add(next.className);
+        label.textContent = next.name;
+        icon.textContent = next.icon;
+      }, 5000);
+    })();
+  </script>
+</body>
+</html>
