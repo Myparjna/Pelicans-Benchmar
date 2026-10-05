@@ -1,0 +1,2543 @@
+{
+  "schema_version": 3,
+  "tool_version": "3.2.0",
+  "generated_at": "2026-10-05T16:45:47Z",
+  "project_name": "03-鹈鹕自行车测试",
+  "package_manager": [
+    "unknown"
+  ],
+  "monorepo": {
+    "type": null,
+    "workspace_count": 0,
+    "tools": []
+  },
+  "frameworks": [],
+  "ui_libraries": [],
+  "desktop": [],
+  "docker": {},
+  "cloudflare": {},
+  "ci_cd": {
+    "github_actions": [],
+    "gitlab_ci": [],
+    "jenkins": [],
+    "circleci": []
+  },
+  "kubernetes": {
+    "resources": [],
+    "namespaces": [],
+    "images": []
+  },
+  "deployment_targets": {
+    "vercel": [],
+    "netlify": [],
+    "vps": []
+  },
+  "ai_services": {
+    "sdks": [],
+    "endpoints": [],
+    "model_names": [
+      {
+        "value": "claude-opus-5-5-zcode",
+        "found_in": "sites-data.js"
+      },
+      {
+        "value": "claude-sonnet-5-5",
+        "found_in": "sites-data.js"
+      },
+      {
+        "value": "deepseek-0424-pro-trae",
+        "found_in": "02-TempFiles/live-data.js"
+      },
+      {
+        "value": "deepseek-flash-0424",
+        "found_in": "02-TempFiles/live-data.js"
+      },
+      {
+        "value": "deepseek-v4-1-flash",
+        "found_in": "sites-data.js"
+      },
+      {
+        "value": "deepseek-v4-flash-0424-trae",
+        "found_in": "02-TempFiles/live-data.js"
+      },
+      {
+        "value": "deepseek-v4-flash-0424-wb",
+        "found_in": "sites-data.js"
+      },
+      {
+        "value": "deepseek-v4-flash-0731-dsh-minimal",
+        "found_in": "sites-data.js"
+      },
+      {
+        "value": "deepseek-v4-flash-api-0731",
+        "found_in": "sites-data.js"
+      },
+      {
+        "value": "deepseek-v4-pro-0424",
+        "found_in": "02-TempFiles/live-data.js"
+      },
+      {
+        "value": "deepseek-v4-pro-0424-wb",
+        "found_in": "sites-data.js"
+      },
+      {
+        "value": "deepseek-v4-pro-0813-dsh-minimal",
+        "found_in": "sites-data.js"
+      },
+      {
+        "value": "deepseek-v4-pro-api-0813",
+        "found_in": "sites-data.js"
+      },
+      {
+        "value": "gemini-3-1-pro",
+        "found_in": "sites-data.js"
+      },
+      {
+        "value": "gemini-3-6-flash",
+        "found_in": "sites-data.js"
+      },
+      {
+        "value": "gemini-3-7",
+        "found_in": "sites-data.js"
+      },
+      {
+        "value": "gemini-3-8",
+        "found_in": "sites-data.js"
+      },
+      {
+        "value": "gemini-3.8.html",
+        "found_in": "sites-data.js"
+      },
+      {
+        "value": "glm-5-2-wb",
+        "found_in": "sites-data.js"
+      },
+      {
+        "value": "glm-5-3-flash-zai",
+        "found_in": "sites-data.js"
+      },
+      {
+        "value": "glm-5-3-flash-zhipu",
+        "found_in": "sites-data.js"
+      },
+      {
+        "value": "glm-5-3-wb",
+        "found_in": "sites-data.js"
+      },
+      {
+        "value": "qwen-3-6-27b",
+        "found_in": "sites-data.js"
+      },
+      {
+        "value": "qwen-3-7-plus",
+        "found_in": "sites-data.js"
+      },
+      {
+        "value": "qwen-3-8-27b",
+        "found_in": "sites-data.js"
+      },
+      {
+        "value": "qwen-3-8-flash-api",
+        "found_in": "sites-data.js"
+      },
+      {
+        "value": "qwen-3-8-max",
+        "found_in": "sites-data.js"
+      },
+      {
+        "value": "qwen3.627b官网.html",
+        "found_in": "sites-data.js"
+      },
+      {
+        "value": "qwen3.7plus官网.html",
+        "found_in": "sites-data.js"
+      },
+      {
+        "value": "qwen3.827b.html",
+        "found_in": "sites-data.js"
+      }
+    ]
+  },
+  "external_resources": {
+    "huggingface_models": [],
+    "huggingface_urls": [],
+    "modelscope_models": [],
+    "modelscope_urls": [],
+    "github_dependencies": [],
+    "github_urls": [
+      {
+        "value": "https://github.com/Myparjna/Pelicans-Benchmar",
+        "found_in": "index.html"
+      },
+      {
+        "value": "https://github.com/emscripten-core/emscripten",
+        "found_in": "02-TempFiles/chrome-profile-展厅评分校验-9303/WasmTtsEngine/20260917.1/bindings_main.js"
+      },
+      {
+        "value": "https://github.com/github/fetch",
+        "found_in": "02-TempFiles/chrome-profile-展厅评分校验-9303/WasmTtsEngine/20260917.1/bindings_main.js"
+      },
+      {
+        "value": "https://github.com/google/closure-compiler",
+        "found_in": "02-TempFiles/chrome-profile-展厅评分校验-9303/WasmTtsEngine/20260917.1/bindings_main.js"
+      },
+      {
+        "value": "https://github.com/google/closure-library",
+        "found_in": "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/craw_window.js"
+      },
+      {
+        "value": "https://github.com/kutuluk/loglevel-plugin-prefix",
+        "found_in": "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/util-ff1b650c.js"
+      },
+      {
+        "value": "https://github.com/nodejs/help",
+        "found_in": "02-TempFiles/chrome-profile-展厅评分校验-9303/WasmTtsEngine/20260917.1/bindings_main.js"
+      },
+      {
+        "value": "https://github.com/nodejs/node",
+        "found_in": "02-TempFiles/chrome-profile-展厅评分校验-9303/WasmTtsEngine/20260917.1/bindings_main.js"
+      },
+      {
+        "value": "https://github.com/uuidjs/uuid",
+        "found_in": "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/static/js/content.js"
+      }
+    ],
+    "cdn_links": [
+      {
+        "value": "https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css",
+        "found_in": "index.html"
+      },
+      {
+        "value": "https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js",
+        "found_in": "3D鹈鹕测试/KIMI-K3体素鹈鹕.html"
+      },
+      {
+        "value": "https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js",
+        "found_in": "3D鹈鹕测试/鹈鹕白天骑自行车-体素场景-GLM5.3.html"
+      },
+      {
+        "value": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "found_in": "3D鹈鹕测试/HY40909-1145-体素鹈鹕骑行场景.html"
+      },
+      {
+        "value": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js",
+        "found_in": "3D鹈鹕测试/GLM5.3-3D鹈鹕.html"
+      },
+      {
+        "value": "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js",
+        "found_in": "3D鹈鹕测试/deepseekv4.1flash.html"
+      },
+      {
+        "value": "https://unpkg.com/three@0.128.0/build/three.min.js",
+        "found_in": "3D鹈鹕测试/体素鹈鹕骑自行车-天气循环场景-qwen3.8max.html"
+      },
+      {
+        "value": "https://unpkg.com/three@0.149.0/build/three.min.js",
+        "found_in": "3D鹈鹕测试/鹈鹕白天骑自行车-体素场景-GLM5.3.html"
+      },
+      {
+        "value": "https://unpkg.com/three@0.157.0/build/three.module.js",
+        "found_in": "3D鹈鹕测试/V4FLASH官网.html"
+      },
+      {
+        "value": "https://unpkg.com/three@0.157.0/examples/jsm/",
+        "found_in": "3D鹈鹕测试/V4FLASH官网.html"
+      },
+      {
+        "value": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "found_in": "3D鹈鹕测试/HY40909-1145-体素鹈鹕骑行场景.html"
+      }
+    ]
+  },
+  "environment_variables": {
+    "declared": [],
+    "used_in_code": [
+      "DIST",
+      "PATH",
+      "ROOT"
+    ],
+    "used_locations": {
+      "DIST": [
+        "OpsDev/deploy-pages.sh"
+      ],
+      "PATH": [
+        "OpsDev/deploy-pages.sh"
+      ],
+      "ROOT": [
+        "OpsDev/deploy-pages.sh"
+      ]
+    },
+    "used_but_not_declared": [
+      "DIST",
+      "PATH",
+      "ROOT"
+    ],
+    "declared_but_not_used": [],
+    "high_entropy_values": []
+  },
+  "database": {
+    "clients": [],
+    "orm": [],
+    "migrations": []
+  },
+  "native_embedded_ai": {
+    "manifests": {
+      "go": [],
+      "rust": [],
+      "java_jvm": [],
+      "dotnet": [],
+      "native_build": [],
+      "embedded": []
+    },
+    "source_counts": {
+      "c": 0,
+      "cpp": 0,
+      "headers": 0,
+      "asm": 0
+    },
+    "compilers_and_build_tools": [
+      {
+        "name": "Make/Ninja",
+        "found_in": "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/static/js/params.js"
+      }
+    ],
+    "embedded_signals": [
+      {
+        "name": "Arduino",
+        "found_in": "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/xl-player/lib/libffmpeg.js"
+      }
+    ],
+    "inference_engines": [],
+    "model_files": []
+  },
+  "api_routes": [],
+  "api_specs": [],
+  "lan_startup": {
+    "config_files": [
+      "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/background.js-7414d968.js",
+      "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/background.js-7414d968.js"
+    ],
+    "npm_scripts": []
+  },
+  "frontend_mock": {
+    "packages": [],
+    "directories": []
+  },
+  "dev_platform": {
+    "tools": {},
+    "claude_skills": {
+      "project": [],
+      "global": [],
+      "agents_dir": [],
+      "all": []
+    },
+    "claude_commands": [],
+    "os_hints": []
+  },
+  "mcp_servers": [],
+  "wsl_dependency": {
+    "uses_wsl": false,
+    "evidence": []
+  },
+  "monitoring": [],
+  "testing": {
+    "config_files": [],
+    "test_directories": [],
+    "test_scripts": [],
+    "test_files": [],
+    "test_file_count": 0
+  },
+  "npm_scripts": {},
+  "dependency_counts": {
+    "node": 0,
+    "python": 0
+  },
+  "git": {
+    "remote": "",
+    "branch": "main",
+    "hash": "6b67e47b22ba27de24c7011b1b4480f4f2b95313",
+    "last_commit": "6b67e47 2026-10-06 按方案A重排分类顺序(GPT→Claude→DeepSeek→通义→智谱+腾讯→Kimi+Grok→豆包+阶跃→MiniMax+小米→Gemini→SpaceBunny)，并列改为显式组合配置",
+    "commit_count": "17",
+    "contributors": [
+      "17\tMyparjna"
+    ]
+  },
+  "directory_tree": [
+    "[DIR] 01-ProjectDoc",
+    "  10月5日-1743-鹈鹕骑行天气动画需求排期.md",
+    "  10月5日-1755-gpt6-luna-鹈鹕骑行天气动画需求排期.md",
+    "  10月5日-1800-gpt6.1sol需求与验证.md",
+    "[DIR] 02-TempFiles",
+    "  [DIR] chrome-profile-gpt6-luna-pelican-9303",
+    "    [DIR] ActorSafetyLists",
+    "    [DIR] AmountExtractionHeuristicRegexes",
+    "    [DIR] CaptchaProviders",
+    "    [DIR] CertificateRevocation",
+    "    [DIR] Crashpad",
+    "    [DIR] Crowd Deny",
+    "    [DIR] Default",
+    "    [DIR] FileTypePolicies",
+    "    [DIR] FirstPartySetsPreloaded",
+    "    [DIR] GPUPersistentCache",
+    "    [DIR] GrShaderCache",
+    "    [DIR] MEIPreload",
+    "    [DIR] OnDeviceHeadSuggestModel",
+    "    [DIR] OptimizationGuideModelsManifest",
+    "    [DIR] OptimizationHints",
+    "    [DIR] OriginTrials",
+    "    [DIR] PKIMetadata",
+    "    [DIR] PrivacySandboxAttestationsPreloaded",
+    "    [DIR] RecoveryImproved",
+    "    [DIR] SSLErrorAssistant",
+    "    [DIR] Safe Browsing",
+    "    [DIR] SafetyTips",
+    "    [DIR] ShaderCache",
+    "    [DIR] Subresource Filter",
+    "    [DIR] TrustTokenKeyCommitments",
+    "    [DIR] WasmTtsEngine",
+    "    [DIR] WidevineCdm",
+    "    [DIR] ZxcvbnData",
+    "    [DIR] component_crx_cache",
+    "    [DIR] extensions_crx_cache",
+    "    [DIR] hyphen-data",
+    "    [DIR] optimization_guide_model_store",
+    "    [DIR] segmentation_platform",
+    "    BrowserMetrics-spare.pma",
+    "    Last Browser",
+    "    Last Version",
+    "    Local State",
+    "    Variations",
+    "    VariationsSafeSeedV2",
+    "    VariationsSeedV2",
+    "    en-US-10-2.bdic",
+    "    first_party_sets.db",
+    "    first_party_sets.db-journal",
+    "  [DIR] chrome-profile-gpt6-sol-validation-9301",
+    "    [DIR] ActorSafetyLists",
+    "    [DIR] AmountExtractionHeuristicRegexes",
+    "    [DIR] CaptchaProviders",
+    "    [DIR] CertificateRevocation",
+    "    [DIR] Crashpad",
+    "    [DIR] Crowd Deny",
+    "    [DIR] Default",
+    "    [DIR] FileTypePolicies",
+    "    [DIR] FirstPartySetsPreloaded",
+    "    [DIR] GPUPersistentCache",
+    "    [DIR] GrShaderCache",
+    "    [DIR] MEIPreload",
+    "    [DIR] OnDeviceHeadSuggestModel",
+    "    [DIR] OptimizationGuideModelsManifest",
+    "    [DIR] OptimizationHints",
+    "    [DIR] OriginTrials",
+    "    [DIR] PKIMetadata",
+    "    [DIR] PrivacySandboxAttestationsPreloaded",
+    "    [DIR] RecoveryImproved",
+    "    [DIR] SSLErrorAssistant",
+    "    [DIR] Safe Browsing",
+    "    [DIR] SafetyTips",
+    "    [DIR] ShaderCache",
+    "    [DIR] Subresource Filter",
+    "    [DIR] TrustTokenKeyCommitments",
+    "    [DIR] WasmTtsEngine",
+    "    [DIR] WidevineCdm",
+    "    [DIR] ZxcvbnData",
+    "    [DIR] component_crx_cache",
+    "    [DIR] extensions_crx_cache",
+    "    [DIR] hyphen-data",
+    "    [DIR] optimization_guide_model_store",
+    "    [DIR] segmentation_platform",
+    "    BrowserMetrics-spare.pma",
+    "    Last Browser",
+    "    Last Version",
+    "    Local State",
+    "    Variations",
+    "    VariationsSafeSeedV2",
+    "    VariationsSeedV2",
+    "    en-US-10-2.bdic",
+    "    first_party_sets.db",
+    "    first_party_sets.db-journal",
+    "  [DIR] chrome-profile-gpt6.1sol-validation-9303",
+    "    [DIR] Crashpad",
+    "    [DIR] Default",
+    "    [DIR] GPUPersistentCache",
+    "    [DIR] GrShaderCache",
+    "    [DIR] OptimizationGuideModelsManifest",
+    "    [DIR] Safe Browsing",
+    "    [DIR] ShaderCache",
+    "    [DIR] component_crx_cache",
+    "    [DIR] extensions_crx_cache",
+    "    [DIR] segmentation_platform",
+    "    Last Browser",
+    "    Last Version",
+    "    Local State",
+    "    Variations",
+    "    VariationsSafeSeedV2",
+    "    VariationsSeedV2",
+    "    first_party_sets.db",
+    "    first_party_sets.db-journal",
+    "  [DIR] chrome-profile-pelican-9301-p1",
+    "    [DIR] ActorSafetyLists",
+    "    [DIR] AmountExtractionHeuristicRegexes",
+    "    [DIR] CaptchaProviders",
+    "    [DIR] CertificateRevocation",
+    "    [DIR] Crashpad",
+    "    [DIR] Crowd Deny",
+    "    [DIR] Default",
+    "    [DIR] FileTypePolicies",
+    "    [DIR] GPUPersistentCache",
+    "    [DIR] GrShaderCache",
+    "    [DIR] MEIPreload",
+    "    [DIR] OnDeviceHeadSuggestModel",
+    "    [DIR] OptimizationGuideModelsManifest",
+    "    [DIR] OptimizationHints",
+    "    [DIR] OriginTrials",
+    "    [DIR] PKIMetadata",
+    "    [DIR] PrivacySandboxAttestationsPreloaded",
+    "    [DIR] RecoveryImproved",
+    "    [DIR] SSLErrorAssistant",
+    "    [DIR] Safe Browsing",
+    "    [DIR] SafetyTips",
+    "    [DIR] ShaderCache",
+    "    [DIR] Subresource Filter",
+    "    [DIR] TrustTokenKeyCommitments",
+    "    [DIR] WasmTtsEngine",
+    "    [DIR] WidevineCdm",
+    "    [DIR] ZxcvbnData",
+    "    [DIR] component_crx_cache",
+    "    [DIR] extensions_crx_cache",
+    "    [DIR] hyphen-data",
+    "    [DIR] segmentation_platform",
+    "    Last Version",
+    "    Local State",
+    "    Variations",
+    "    VariationsSafeSeedV2",
+    "    VariationsSeedV2",
+    "    en-US-10-2.bdic"
+  ],
+  "scan_completeness": {
+    "total_files": 4843,
+    "scanned_files": 665,
+    "truncated": false,
+    "max_files": 3000
+  },
+  "key_files_to_read": [
+    "OpsDev/deploy-pages.sh",
+    "sites-data.js",
+    "02-TempFiles/live-data.js"
+  ],
+  "key_file_fingerprints": {
+    "OpsDev/deploy-pages.sh": {
+      "sha256": "655723cfd126f10f4a11f200c6bc0fbed4e7ed861cd78002f3311dfd6c478e90",
+      "size": 910,
+      "modified_at": "2026-10-05T11:48:37.814022+00:00"
+    },
+    "sites-data.js": {
+      "sha256": "fb0cc9c3f5bff3a05183b94c5c49a7392ca7da8974bf31460703cc3946a7f7c0",
+      "size": 14939,
+      "modified_at": "2026-10-05T16:15:01.093791+00:00"
+    },
+    "02-TempFiles/live-data.js": {
+      "sha256": "b494b967bbcc9092b94a87305a3d906bc5e7de898b05af0f4ee7cc671561e910",
+      "size": 15364,
+      "modified_at": "2026-10-05T11:44:24.381483+00:00"
+    }
+  },
+  "source_file_fingerprints": {
+    "10月5日-1720-spacebunny-鹈鹕白天骑自行车动画.html": {
+      "sha256": "854640eee4ac1dd4c11404f3f46c867809eef434d697b6b2a2c8289271064197"
+    },
+    "GLM5.3.html": {
+      "sha256": "c3d115ef437fc83bf544f9362c6601122bc81f5f1f4109788279fc5ed201fff1"
+    },
+    "GLM52workbuddy.html": {
+      "sha256": "6f19e9cdd55253488876d1a8eaa8be34f5185ef7ba6ceb09948e15e9f42407e0"
+    },
+    "HY3workbuddy.html": {
+      "sha256": "a03a62d2896a267552cff6625093dee3f86683ca514e6b2d667e461d88aac69c"
+    },
+    "ZAIglm5.3flash.html": {
+      "sha256": "7de4307fd3ff826e6976b1a055e6140e8ca0cde7a6320b1368e8db9328af90e5"
+    },
+    "apideepseekv4flash0731.html": {
+      "sha256": "33fc2d15c99d0b5bd356fe24985f3885920d6b528daa3bc1fc77275462e26581"
+    },
+    "deepseek0424pro trae.html": {
+      "sha256": "bf7ffa7b21bbc43a222ae8182571797bd965fe85c3e7f34887334fd813d4f5b7"
+    },
+    "deepseekflash0424官网版.html": {
+      "sha256": "2f3ad3ab29d443b08faea9a6bd58e1cc8e90ada8783810cea3effe0334df478d"
+    },
+    "deepseekv4.1flash-10月5日-鹈鹕白天骑自行车动画.html": {
+      "sha256": "5c4bced809ef13a8376d544944aff5c502e0961d82d442ba4a173f6856b5f154"
+    },
+    "deepseekv4flash0424-workbuddy.html": {
+      "sha256": "c558a35f668cf47569ac1047f6a2a7d36b0a7aa6dcf605070f8b6d86925c2b52"
+    },
+    "deepseekv4flash0424trae.html": {
+      "sha256": "42477a9b4acf1654e3b05479ac5f047eecfe7991d5914a314823c8526daec838"
+    },
+    "deepseekv4flash0731+dsh+极简模式.html": {
+      "sha256": "4aeabb83b407a0c47441e16544845ea894fb24109a48300abd3f6cd59195244c"
+    },
+    "deepseekv4pro-0424-workbuddy.html": {
+      "sha256": "3fdac164b1cdb912cf05e6792eaf3d011fbbbd26a732d0db8f3526315fe4ba38"
+    },
+    "deepseekv4pro0813+dsh+极简模式.html": {
+      "sha256": "f7d91b9edba743b4d8ba5af77f0416fe1fcfed8396c3ca73894464edee60b07d"
+    },
+    "deepseekv4pro424官网版本.html": {
+      "sha256": "78875b6d7008a3c222f27a95fdd3e3c1e8bdb77cfbd8113707c40575a55ecb05"
+    },
+    "gemini3.6flash官网.html": {
+      "sha256": "ee6fa0230ccef9aad59dde8a0546ee743bc66865beb171e61bf6f1382e37fd0e"
+    },
+    "gemini3.7.html": {
+      "sha256": "e23c5db059a035dd3149b173d963142babae2c099a7b888c6afa5fa5d356e27d"
+    },
+    "gemini31pro官网.html": {
+      "sha256": "ecbbf9c93984119b82c216ba2c4b9eb52b132e103cb9417b4e93389a4b45ea84"
+    },
+    "gpt5.6luna-codex.html": {
+      "sha256": "7ea2d8ff868429f99a7a2cbf90dab1bffebc27aa56c702b5463cc46ee4e03130"
+    },
+    "gpt5.6solcodex.html": {
+      "sha256": "f0f13319203e65347c8e1bc7e08f56af3ef3486fffc25897e03b4560c74a208d"
+    },
+    "gpt6-luna.html": {
+      "sha256": "3342e873c7eec8e6e2ea81e6513448e248e6f89e16eaeb4688b13411b7e0aebf"
+    },
+    "gpt6-sol-鹈鹕白天骑自行车动画.html": {
+      "sha256": "3784b51f22b5a958f161a60458146cf2300f86e7dff77d11dfa539eba020f855"
+    },
+    "gpt6.1sol.html": {
+      "sha256": "6a52b85979d656defceebc3e11c6ba2be48f3f492c7c10a09d01339ca85359de"
+    },
+    "grok4.5.html": {
+      "sha256": "b9859e6a33ec7da11ecf5219bd863aa9a4fa7fc1c088e556d00f8747a0634b9b"
+    },
+    "grok4.6.html": {
+      "sha256": "cc883d4ad7793d81e7b6ef9c1d994d9bdc66de929961869329d251e52353b82d"
+    },
+    "grok4.7.html": {
+      "sha256": "7f5816032bbf8d44f2e3c062c49758036f39d91bf3f2d2192acec3c3031c8a7b"
+    },
+    "grok45真.html": {
+      "sha256": "3f24d9f2260fd425039eb90e3fcdd7646258806272eff914837dffd43ecb206d"
+    },
+    "hy4preview-10月5日-1715-鹈鹕白天骑自行车动画.html": {
+      "sha256": "04fec35062368a303e59953d7d09b8c68bdbbb413279aa071157f9438ef24078"
+    },
+    "index.html": {
+      "sha256": "22f1e499b5b277e06ea563faa79d276a9f2c0d0ac289c306bc0b9d826685a606"
+    },
+    "kimik2.8-10月5日-1715-鹈鹕白天骑自行车动画.html": {
+      "sha256": "ca9372ddfa678aaa49555700c16db3cacc833a28799e41f687cbcef529c863d0"
+    },
+    "kimik3.html": {
+      "sha256": "6feb71ef53279df0aa551b494e8486f627b1930dd69f79b90b0474324c8a5c0c"
+    },
+    "mimov2.6.html": {
+      "sha256": "7bcfa7fbd4d1bea45a98539734af6c11c8b4d97671cac0333a9a086851bc8f49"
+    },
+    "mimov2.6pro.html": {
+      "sha256": "8ee2cd3bb80bbd77ef6116876685cfb5844d10ac06afbe858de968d6fd3e136f"
+    },
+    "minimax-M3官网.html": {
+      "sha256": "48d63972e70873aafcf1ca276a8fc54e5d869a5451bff5cbbc7e39d60f9acf31"
+    },
+    "minimax3.1.html": {
+      "sha256": "fa373cae34685e85c17fdca65a144d51fc869f01fb4a383b6a5da588d8ed248f"
+    },
+    "pelican-bike-weather.html": {
+      "sha256": "00dbc7b95d6f353032c8c59f71a91b0f212ea401a43a82b39f85f37f2138cbe5"
+    },
+    "qwen3.627b官网.html": {
+      "sha256": "79da723e4a76f3ca11ae608dd5ab9af3d7665c6d248a07ba1870b76bd11952ea"
+    },
+    "qwen3.6flash官网.html": {
+      "sha256": "fdc2c8388be31207caddd1e7831c06bedbf0835ad28b2640dee98ed097c3cf3e"
+    },
+    "qwen3.7plus官网.html": {
+      "sha256": "4854490dd27ba8953aaedcb5544005d3997e1c87a18eba24d1577b088afe54ec"
+    },
+    "qwen3.827b.html": {
+      "sha256": "433e414ef3a627dd9a320a63b88b5c0be0f70cbfc51bf9f673a32150c26d084d"
+    },
+    "qwen3.8flashAPI.html": {
+      "sha256": "9fd590e7f01b3cae42f660fae93cd8a7a19064829e51e65957841996f33f80e1"
+    },
+    "qwen3.8max.html": {
+      "sha256": "4ac3f6cf7e6ecb016e7c08f06bbccd8d1d81d832449c5d5049ef2c3a1392fd87"
+    },
+    "seed-2.1-pro-0915-20261005.html": {
+      "sha256": "002f7237b48d8208f9409c8e09f3a6de3be8c1f23bec2c6ff0fe7e7027eff166"
+    },
+    "seed21pro trae.html": {
+      "sha256": "ce112554303b8f7eb4855e42fd070252c2f76251c0e1f669d330c15ebf81116e"
+    },
+    "sites-data.js": {
+      "sha256": "fb0cc9c3f5bff3a05183b94c5c49a7392ca7da8974bf31460703cc3946a7f7c0"
+    },
+    "step-5-preview-10月5日-鹈鹕白天骑自行车动画.html": {
+      "sha256": "0fa6a31c9c813ba5dc3fce60d72eb5262d9086d253240f25ad9200314513ae02"
+    },
+    "v4pro813API.html": {
+      "sha256": "402c592baeee0e17bc1ed9c4196afff45fe17a57caa31b792e8afdf84eb01ac3"
+    },
+    "中转API的opus5.html": {
+      "sha256": "c069736514a45d2b84146155238ec5130c632617aea3d4b5da5fd00baa8d39de"
+    },
+    "千问官网3.6flash.html": {
+      "sha256": "8cb22fe47c4fe662af118c5d88b9a6e27b0c06a00c7575a94cfc64e40ccb129d"
+    },
+    "官方正版opus5.5-zcode.html": {
+      "sha256": "15d0461af0b6b52b73ecbcee909d3de80c07b8fb8891b0479004f410db77e5f8"
+    },
+    "官方正版sonnet5.5-10月5日-1500-鹈鹕白天骑自行车动画.html": {
+      "sha256": "ca249489c02efaef9ff1dcdfbb4f2a6b0a9c959e07ba09319160d386886f5401"
+    },
+    "智谱官网glm5.3flash.html": {
+      "sha256": "5234a98d26ed62875211a49549c3fc8acd75041a2b145847626d7e6d9e90f381"
+    },
+    "豆包官网专家模式.html": {
+      "sha256": "1028371cf50012d02de334420386ac5cb756161cff1d8e829b782b4e4c36ccb8"
+    },
+    "01-ProjectDoc/10月5日-1743-鹈鹕骑行天气动画需求排期.md": {
+      "sha256": "10fe56d9f7546ecb32b35b08c970d69a4f5240294ceff9942dce501a30d923c5"
+    },
+    "01-ProjectDoc/10月5日-1755-gpt6-luna-鹈鹕骑行天气动画需求排期.md": {
+      "sha256": "027f7ca87152a8a60dc0945de5458944ec3a0f553ee0fd05dbb881da25331549"
+    },
+    "01-ProjectDoc/10月5日-1800-gpt6.1sol需求与验证.md": {
+      "sha256": "ae48c92c9a6703c26e20a548023e77f052a362b01179de3a924340441d336c6b"
+    },
+    "02-TempFiles/live-data.js": {
+      "sha256": "037e4d2ce3bcb8024c87279a8fb1453dc988339c1f94ecbd053cc8ba8ea0d3af"
+    },
+    "02-TempFiles/live-data2.js": {
+      "sha256": "9ab11a231d69ab271bc955d5c877e21cad1e30d7cefa74c7b87fe49a2e90102a"
+    },
+    "02-TempFiles/live-data3.js": {
+      "sha256": "aadf3f6aec8e63b771a5e253686972f8c4c52a4260b62256b2f81ffcb1024341"
+    },
+    "02-TempFiles/live-data4.js": {
+      "sha256": "fb0cc9c3f5bff3a05183b94c5c49a7392ca7da8974bf31460703cc3946a7f7c0"
+    },
+    "02-TempFiles/sites-data.backup.js": {
+      "sha256": "037e4d2ce3bcb8024c87279a8fb1453dc988339c1f94ecbd053cc8ba8ea0d3af"
+    },
+    "02-TempFiles/sites-data.backup2.js": {
+      "sha256": "9ab11a231d69ab271bc955d5c877e21cad1e30d7cefa74c7b87fe49a2e90102a"
+    },
+    "02-TempFiles/sites-data.backup3.js": {
+      "sha256": "aadf3f6aec8e63b771a5e253686972f8c4c52a4260b62256b2f81ffcb1024341"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/ActorSafetyLists/9.8200.9609/manifest.json": {
+      "sha256": "10068caf4ca65248f2479f859c264e77ef420877065374278bea00269f2ab551"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/ActorSafetyLists/9.8200.9609/_metadata/verified_contents.json": {
+      "sha256": "70e6ea57b6cc9d05b3ce1525cec1a17b746d0c0e2714ac93f60311a83a95ba6b"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/CertificateRevocation/10820/manifest.json": {
+      "sha256": "e7d282e34bc3363587e317dc85a262ec48620ec3ff772defa803c039f70772c1"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/CertificateRevocation/10820/_metadata/verified_contents.json": {
+      "sha256": "6b7ad4930f204a0e24f803a77bb92700fbafdd1aa0b459d6339c9a2b96814b21"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/asset-manifest.json": {
+      "sha256": "77920832ea3594a78f07fc0fa314756472cd3bce92b2692340698ecbe80120c4"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/floatBallClick.js": {
+      "sha256": "f46146f22ae47b9dda36beb1a2f4d6d81a090e8667035d26bf95b7e88b2c5287"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/index.html": {
+      "sha256": "902cabbe524a96c67fe801b685f9a01143a82549cbdc99dde65761db89166de9"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/insert.js": {
+      "sha256": "e45a471a03028318baf432ea8141523a5ac7bab2ed8d794d565e058735f74f57"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/manifest.json": {
+      "sha256": "61de1296cd20b3e272d7e16d35c2ee8c67c00f74de3cea2e73d02d62e6a2d590"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/options.html": {
+      "sha256": "34b1634adf15991a0a2635569baded250e82de8f1f3895cd18866c27e29b0871"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/params.html": {
+      "sha256": "902a3d6a561df4b8ba43ca6120c6e3defd3ecd6949eb5c28a378d82b9422a9d3"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/popup.html": {
+      "sha256": "450f68863fb86c73c6da69bf9be2d460fdf91ecdd98d4d409c9f7969baea1219"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/prompts.json": {
+      "sha256": "f196b79852795b5676f29c494a6e9b85d90a181cacbec26dee687b3bf3bfb6ab"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/wanfangDataWindowOpen.js": {
+      "sha256": "483eaac4f139ebc59ad9c0d55e88c54bd5eadf8e4a2fdb93d1d4e720f6a716dd"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/windowOpen.js": {
+      "sha256": "1b7ba79b1c028b46ba5035597af8d63cfb3fa124bbd4e5d960dd7a0bbfebaf83"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/_locales/en/messages.json": {
+      "sha256": "e4c01aabc1aaf24a870c432e6a3be4b047aec6527c0624331b66ffee410896b3"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/_locales/zh_CN/messages.json": {
+      "sha256": "e4c01aabc1aaf24a870c432e6a3be4b047aec6527c0624331b66ffee410896b3"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/_metadata/verified_contents.json": {
+      "sha256": "d1c03a0e17290eacc1b8da93bb63df2f4e61965fa74949d285fdf78ca11d84c6"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/static/js/params.js": {
+      "sha256": "6adbcb74e90edcc441ea29683391d864d0930e7a0a2b95bc05228a036b4c8caf"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/manifest.json": {
+      "sha256": "d54dc51f2d18147bea16271adc93d95367f2d84894f7fbeb49ef9b04f904819d"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/options.html": {
+      "sha256": "35c1b15749517e5b188bc29ae32a25d1c640bb669c2aec0e83f60a0c616b8fd5"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/popup.html": {
+      "sha256": "7f401fb6d0c7266223748a6408f52911e653301af14325da07623eb59b0e7aed"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/service-worker-loader.js": {
+      "sha256": "2d7273a9c08ed558dc70d251c20b20139e7ba0da7c9b41450af3a1a714ca9dd6"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/xl-images.html": {
+      "sha256": "0c7e981b4987f31e3bd753892d80e83485b6058761cdb0b7f59e731107cb7d82"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/_locales/zh_CN/messages.json": {
+      "sha256": "cad4ce8ea577de134a58e35f09f1b81dafd3900f97851a7c9128805fa2b8c2e2"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/_locales/zh_TW/messages.json": {
+      "sha256": "bbfd08468e06d95f7eef14e63be4fe42a7aea99e654445607061256aa2301570"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/_metadata/verified_contents.json": {
+      "sha256": "b177fb834fc282a7d35d3cc9ab1f51e5bf2e111323886dc7d93b5b2979ccd906"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/Jsq-4d01198b.js": {
+      "sha256": "4c86df2e80648fcb051fd5fd993eacc28e2c9b82882b5e0eaa212088fa3dbebf"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/background.js-22906370.js": {
+      "sha256": "4b6bd5121268e6e3128690ae1abe196f68b22153bf1fe4a38147db8fc5426307"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/content.js-e4490f5d.js": {
+      "sha256": "3b6a1dddead6849652249b15631df17bff1b26fb7abbda667c8dec6cccfc88e5"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/content.js-loader-9a2f598c.js": {
+      "sha256": "9a2f598ce322be8ab1b4c31c00cf4d0d4a2fea2e8a3bb1aa1438e0cc0b40efc8"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/index-9000aff5.js": {
+      "sha256": "401864d2ec5be44eaec9dc50ae0bba711f2b9040a7699ffc8d177c918d5a8e08"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/modulepreload-polyfill-2ad73d06.js": {
+      "sha256": "31191979ee8bf30912f8bb8eae8348182f37e999c8deb54095682926b9435fe3"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/options.html-0306a3d1.js": {
+      "sha256": "cfd0352c62a5b03fada708b3b5b1cbd73dfcbd7e807371fb9ac674d51740eb80"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/popup.html-9251625c.js": {
+      "sha256": "416ee9cec28878dbd12f8c491b18ed42157f08f66150423a5378a2ded385fc59"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/runtime-dom.esm-bundler-90e72f46.js": {
+      "sha256": "0afe074a13efe8a6d1a62a4889e89a9947d7ef564d6bcb022f376b569022aa4f"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/stat-e9139785.js": {
+      "sha256": "613dc38e51417ba1713da04d1b82129c91083b618f109ca51aee63aec7c50d9f"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/tool-13238bfa.js": {
+      "sha256": "a8df996b6ebc7a7d98270869006f63a5b24e81aa96438a68275c724bd693e3e6"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/util-ff1b650c.js": {
+      "sha256": "b605968a4652e0eb86730e33282a18bf8e12efc9ac2aca1a78af07989b8f3ef7"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/xl-images-67baeda0.js": {
+      "sha256": "4f6de7c7911e21daceeb1c1d2c18d411ea6676369698236ac134c1154ee67e0c"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/craw_window.js": {
+      "sha256": "5721a4b3f8e09c869a629effd350b51c9d46f0ac136717d4db6265c0ee6f9ac8"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/manifest.json": {
+      "sha256": "5dbdf0ed368be287abaff83d639b760fa5d7dc8a28e92387773b4fd3e1ba4f19"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/bg/messages.json": {
+      "sha256": "a8bb5cf3fa570bd798337f6b81696bd058a817a594b72afb3742ebb32a47dddc"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/ca/messages.json": {
+      "sha256": "e8b4991787e773677311f3ae7559854c12cded12eb59c6fd0373171e191116a8"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/cs/messages.json": {
+      "sha256": "bc201f50cb52a042e53d6df24e196ccbcc9a5d5dc482bfcbeb0c44686afabab7"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/da/messages.json": {
+      "sha256": "9e5a1af181c9b7f70b9c28e2ac42061c14f9b3d6cd9a452e0f447d7ec495093d"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/de/messages.json": {
+      "sha256": "258382bd17a9307183c331cd88733634c523ea42169e4cabb33213c0e88d4aed"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/el/messages.json": {
+      "sha256": "d4e77302769e0d4f59d627f24194f0c3f3489adefac3903fb7d066216800896b"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/en/messages.json": {
+      "sha256": "3a2170deeaa0559e67da96a6530e5f29b957e72155bf8ad743edef83bf363c28"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/en_GB/messages.json": {
+      "sha256": "3a2170deeaa0559e67da96a6530e5f29b957e72155bf8ad743edef83bf363c28"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/es/messages.json": {
+      "sha256": "c0743808e652dd81cb3c14d8d3908c5283a5c02cf15d3d7adfbce2572ad92286"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/es_419/messages.json": {
+      "sha256": "1e4bef29513bf66f020f80c41f8f133b52ea356e593dc93f6d4f9cb2bbc221fd"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/et/messages.json": {
+      "sha256": "fc7ed74810b611c17f6231b4bbb5c54c932b82bf45a10fa1088d542779249adf"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/fi/messages.json": {
+      "sha256": "4ccad22d43cb7484e8696321d7402f3bd7035c3fa7ebd27df53efab0a99b4951"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/fil/messages.json": {
+      "sha256": "f302cf73f7dcdb7abbb76887531cf60008338d4456aba4fe484eab749bb39c1a"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/fr/messages.json": {
+      "sha256": "425c924431588edb55bc274f9b82b6dce4407fb40cd79e9c368d1db9d654b6f0"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/hi/messages.json": {
+      "sha256": "a4e4cd5172d9c607ea486c3cf2f9da5272333f1e175d75e173399cb0738bbcd6"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/hr/messages.json": {
+      "sha256": "713ae9ac2c4b93a66541c666bd43361d00b597d30ce18275b5fe0eab7200573b"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/hu/messages.json": {
+      "sha256": "bbe7bef0789a6c9dff7aa760379d1f992f3efd888efca28cab8b411a8805d51a"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/id/messages.json": {
+      "sha256": "9289dd47a5ca9d70b35dcc65260e759242ed349d75706e09930dade27ccd97e9"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/it/messages.json": {
+      "sha256": "04539ec30baeceb570b082feb8dc21fab9b952365c7ee29feb9fcf64d5425329"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/ja/messages.json": {
+      "sha256": "92926bcce9eccce167e261c3312fd8d41363b75fa73c04dd80482c2219a476cd"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/ko/messages.json": {
+      "sha256": "24f0abf87d8c4799187ae8b522507edeb7f90fccda7fb0ab64e4ef899927caee"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/lt/messages.json": {
+      "sha256": "0c058e77552ff9d0bc9f09a32213aac68faeee2f30908e031ac7c79a6d0cdf39"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/lv/messages.json": {
+      "sha256": "6b990595bf4d81bb6e779774ca0b33895edaa5ac8925990c9bcca870dd408869"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/nb/messages.json": {
+      "sha256": "4ad88196076f7204112ccec036e4e8b760dfb041d4df2ab94f0887aaaa262a88"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/nl/messages.json": {
+      "sha256": "ae4110e3fb6702604fcfc5a9267d4c92aab55bd1aada3ab59a6b4737b7e3d6a6"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/pl/messages.json": {
+      "sha256": "f55c30bce5a043a78e867f8f4cf181feacadef0cbb5d4c83402f054847bd7c80"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/pt_BR/messages.json": {
+      "sha256": "7ff7265293b31febaa87c5f2329df5c6a8eb9f903cccd941f70fd563b5336b59"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/pt_PT/messages.json": {
+      "sha256": "ef28551516e35caa633d3b011552c8ed2ecacbc66af83b60852e136253a4de6a"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/ro/messages.json": {
+      "sha256": "65ee3fd8019b7146c3b006f0ca489f9eaf4ed47dfe759bc394b4bc6d46d8ea90"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/ru/messages.json": {
+      "sha256": "d085a8dacc38cf7285bd67ff6c10cda34b1c37c577f1dbbf5be55c43c13b1eaa"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/sk/messages.json": {
+      "sha256": "9876a7d102e915e5870b8c69dc39485c85b8546d5b4bff8c31202fba8b100d4f"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/sl/messages.json": {
+      "sha256": "2f57689da236775e94b547419c7bd81ed1401e6d1f3dd0b11c94533a88d930a2"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/sr/messages.json": {
+      "sha256": "66f7f84a8a20060f7f05bd9b532ea3c4d18e2392c9bdfe4481f8f35f08c9fdc1"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/sv/messages.json": {
+      "sha256": "80da2cb02de66fd946379af43da88cbaa1d56c4c4fa0e6fea55a0760d6fac5b8"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/th/messages.json": {
+      "sha256": "db81752467a936b153d8131a21fc5b965ce8551096d537ec8f61ba308da36304"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/tr/messages.json": {
+      "sha256": "ef61d11d7752eb68a695fe9bbfa5f55582abd701ace6952254c786ad64467623"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/uk/messages.json": {
+      "sha256": "28a592385c1cf1a5dc952c3df7a3069f7a527e9a26d0716f9849c9c27d2e07af"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/vi/messages.json": {
+      "sha256": "a849cc3a067e91fed53ec39f6ffaef1a98affc14ce0b436dc97e7dd4d3837122"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/zh_CN/messages.json": {
+      "sha256": "52b181f050eb7df9e6a74021f14da8c8c433894a1dd961094042bcd59405477b"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/zh_TW/messages.json": {
+      "sha256": "3b9d772213d148aa99a5b893242d00bc32081c464a5a595a5f6b1a7349ee8b02"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_metadata/computed_hashes.json": {
+      "sha256": "965203d541e442c107dbc6d5b395168123d0397559774beae4e5b9abc44ef268"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_metadata/verified_contents.json": {
+      "sha256": "52a24fa2fb3bcb18d9d8571ae385c4a830ff98ce4c18384d40a84ea7f6ba7f69"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/html/craw_window.html": {
+      "sha256": "bb8742615e4cd996ae5d0200e443ae6a6f0b473255f03affdb8fb4660de4554d"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/MEIPreload/1.1.0.3/manifest.json": {
+      "sha256": "8bd59f33a6e286c7e7352dfaebc9b03cea4e0e959a8ebb2f04b69bd92e107dc1"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/MEIPreload/1.1.0.3/_metadata/verified_contents.json": {
+      "sha256": "48264eccb505f5c0eb1e0d8ddabf79e4fd664018dce8f65642e0052fbeeba6ad"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/OptimizationGuideModelsManifest/1.20260927.2/manifest.json": {
+      "sha256": "39bf83d824ef9898fb26f7ea20dcc8977bc7cede10f41f01d38a871af408ae18"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/OptimizationGuideModelsManifest/1.20260927.2/_metadata/verified_contents.json": {
+      "sha256": "31bbbd9f0b67e60b65847851544ae7d21f767e899b344f43f1eef3b16519f700"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/OptimizationHints/754/manifest.json": {
+      "sha256": "240d8c559ff346d955434d83a10225e96c186b1b711e1529f6b6b166d98b7de4"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/OptimizationHints/754/_metadata/verified_contents.json": {
+      "sha256": "c572c81ce47cbacf8077623c476a6952922cbbf90079dd54d18e417da9042b44"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/PKIMetadata/1798/manifest.json": {
+      "sha256": "1ded1c975584bb4bfc8e09db7c8257b3b3e91f31be11af8b25563a3b43b98b58"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/PKIMetadata/1798/_metadata/verified_contents.json": {
+      "sha256": "c2222b869abc4ceebfe99f67574ee323185c14be6907ff153ec8b7791cd5b5db"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/SSLErrorAssistant/7/manifest.json": {
+      "sha256": "20b91160e2611d3159ad82857323febc906457756678ab73f305c3a1e399d18d"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/SSLErrorAssistant/7/_metadata/verified_contents.json": {
+      "sha256": "a0bc246e8e160a9bb32fa60f4e7a04d148a17125f426509466031e07731fdf81"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Subresource Filter/Unindexed Rules/9.72.0/manifest.json": {
+      "sha256": "3cf4bdd23d314f45538d4db80cc5a30dbe7b546ffc488a24cfe9dad08a461dcd"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/Subresource Filter/Unindexed Rules/9.72.0/_metadata/verified_contents.json": {
+      "sha256": "181ce80a847a2562a18a822f0c95b63e43a949c412b1cef777ed347f880accb0"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/TrustTokenKeyCommitments/2026.8.3.1/keys.json": {
+      "sha256": "3d6c659801f1686ff3ac64bc3b24b1d0ae76ffdd5f0e9c399ba37d1354a15ab4"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/TrustTokenKeyCommitments/2026.8.3.1/manifest.json": {
+      "sha256": "c7e506687caffcf3906916ad3fc190a19212d67a2535479241096bd0d4418b03"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/TrustTokenKeyCommitments/2026.8.3.1/_metadata/verified_contents.json": {
+      "sha256": "721a6439a0b19869aaace755c9e795f83aed516e4b42d8a13f4fd978d0586d18"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/component_crx_cache/metadata.json": {
+      "sha256": "6df9308ed839da9ff625636648bb0ea7612176d5d7b16ac7aef14afadb3e7f3d"
+    },
+    "02-TempFiles/chrome-profile-gpt6-luna-pelican-9303/extensions_crx_cache/metadata.json": {
+      "sha256": "2771d13c637c267132afff9db67537bef95708534b79ae8d954254c4e64e4e0f"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/ActorSafetyLists/9.8200.9609/manifest.json": {
+      "sha256": "10068caf4ca65248f2479f859c264e77ef420877065374278bea00269f2ab551"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/ActorSafetyLists/9.8200.9609/_metadata/verified_contents.json": {
+      "sha256": "70e6ea57b6cc9d05b3ce1525cec1a17b746d0c0e2714ac93f60311a83a95ba6b"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/asset-manifest.json": {
+      "sha256": "77920832ea3594a78f07fc0fa314756472cd3bce92b2692340698ecbe80120c4"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/floatBallClick.js": {
+      "sha256": "f46146f22ae47b9dda36beb1a2f4d6d81a090e8667035d26bf95b7e88b2c5287"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/index.html": {
+      "sha256": "902cabbe524a96c67fe801b685f9a01143a82549cbdc99dde65761db89166de9"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/insert.js": {
+      "sha256": "e45a471a03028318baf432ea8141523a5ac7bab2ed8d794d565e058735f74f57"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/manifest.json": {
+      "sha256": "61de1296cd20b3e272d7e16d35c2ee8c67c00f74de3cea2e73d02d62e6a2d590"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/options.html": {
+      "sha256": "34b1634adf15991a0a2635569baded250e82de8f1f3895cd18866c27e29b0871"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/params.html": {
+      "sha256": "902a3d6a561df4b8ba43ca6120c6e3defd3ecd6949eb5c28a378d82b9422a9d3"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/popup.html": {
+      "sha256": "450f68863fb86c73c6da69bf9be2d460fdf91ecdd98d4d409c9f7969baea1219"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/prompts.json": {
+      "sha256": "f196b79852795b5676f29c494a6e9b85d90a181cacbec26dee687b3bf3bfb6ab"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/wanfangDataWindowOpen.js": {
+      "sha256": "483eaac4f139ebc59ad9c0d55e88c54bd5eadf8e4a2fdb93d1d4e720f6a716dd"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/windowOpen.js": {
+      "sha256": "1b7ba79b1c028b46ba5035597af8d63cfb3fa124bbd4e5d960dd7a0bbfebaf83"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/_locales/en/messages.json": {
+      "sha256": "e4c01aabc1aaf24a870c432e6a3be4b047aec6527c0624331b66ffee410896b3"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/_locales/zh_CN/messages.json": {
+      "sha256": "e4c01aabc1aaf24a870c432e6a3be4b047aec6527c0624331b66ffee410896b3"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/_metadata/verified_contents.json": {
+      "sha256": "d1c03a0e17290eacc1b8da93bb63df2f4e61965fa74949d285fdf78ca11d84c6"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/static/js/params.js": {
+      "sha256": "6adbcb74e90edcc441ea29683391d864d0930e7a0a2b95bc05228a036b4c8caf"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/manifest.json": {
+      "sha256": "d54dc51f2d18147bea16271adc93d95367f2d84894f7fbeb49ef9b04f904819d"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/options.html": {
+      "sha256": "35c1b15749517e5b188bc29ae32a25d1c640bb669c2aec0e83f60a0c616b8fd5"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/popup.html": {
+      "sha256": "7f401fb6d0c7266223748a6408f52911e653301af14325da07623eb59b0e7aed"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/service-worker-loader.js": {
+      "sha256": "2d7273a9c08ed558dc70d251c20b20139e7ba0da7c9b41450af3a1a714ca9dd6"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/xl-images.html": {
+      "sha256": "0c7e981b4987f31e3bd753892d80e83485b6058761cdb0b7f59e731107cb7d82"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/_locales/zh_CN/messages.json": {
+      "sha256": "cad4ce8ea577de134a58e35f09f1b81dafd3900f97851a7c9128805fa2b8c2e2"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/_locales/zh_TW/messages.json": {
+      "sha256": "bbfd08468e06d95f7eef14e63be4fe42a7aea99e654445607061256aa2301570"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/_metadata/verified_contents.json": {
+      "sha256": "b177fb834fc282a7d35d3cc9ab1f51e5bf2e111323886dc7d93b5b2979ccd906"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/Jsq-4d01198b.js": {
+      "sha256": "4c86df2e80648fcb051fd5fd993eacc28e2c9b82882b5e0eaa212088fa3dbebf"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/background.js-22906370.js": {
+      "sha256": "4b6bd5121268e6e3128690ae1abe196f68b22153bf1fe4a38147db8fc5426307"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/content.js-e4490f5d.js": {
+      "sha256": "3b6a1dddead6849652249b15631df17bff1b26fb7abbda667c8dec6cccfc88e5"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/content.js-loader-9a2f598c.js": {
+      "sha256": "9a2f598ce322be8ab1b4c31c00cf4d0d4a2fea2e8a3bb1aa1438e0cc0b40efc8"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/index-9000aff5.js": {
+      "sha256": "401864d2ec5be44eaec9dc50ae0bba711f2b9040a7699ffc8d177c918d5a8e08"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/modulepreload-polyfill-2ad73d06.js": {
+      "sha256": "31191979ee8bf30912f8bb8eae8348182f37e999c8deb54095682926b9435fe3"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/options.html-0306a3d1.js": {
+      "sha256": "cfd0352c62a5b03fada708b3b5b1cbd73dfcbd7e807371fb9ac674d51740eb80"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/popup.html-9251625c.js": {
+      "sha256": "416ee9cec28878dbd12f8c491b18ed42157f08f66150423a5378a2ded385fc59"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/runtime-dom.esm-bundler-90e72f46.js": {
+      "sha256": "0afe074a13efe8a6d1a62a4889e89a9947d7ef564d6bcb022f376b569022aa4f"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/stat-e9139785.js": {
+      "sha256": "613dc38e51417ba1713da04d1b82129c91083b618f109ca51aee63aec7c50d9f"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/tool-13238bfa.js": {
+      "sha256": "a8df996b6ebc7a7d98270869006f63a5b24e81aa96438a68275c724bd693e3e6"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/util-ff1b650c.js": {
+      "sha256": "b605968a4652e0eb86730e33282a18bf8e12efc9ac2aca1a78af07989b8f3ef7"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/xl-images-67baeda0.js": {
+      "sha256": "4f6de7c7911e21daceeb1c1d2c18d411ea6676369698236ac134c1154ee67e0c"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/craw_window.js": {
+      "sha256": "5721a4b3f8e09c869a629effd350b51c9d46f0ac136717d4db6265c0ee6f9ac8"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/manifest.json": {
+      "sha256": "5dbdf0ed368be287abaff83d639b760fa5d7dc8a28e92387773b4fd3e1ba4f19"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/bg/messages.json": {
+      "sha256": "a8bb5cf3fa570bd798337f6b81696bd058a817a594b72afb3742ebb32a47dddc"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/ca/messages.json": {
+      "sha256": "e8b4991787e773677311f3ae7559854c12cded12eb59c6fd0373171e191116a8"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/cs/messages.json": {
+      "sha256": "bc201f50cb52a042e53d6df24e196ccbcc9a5d5dc482bfcbeb0c44686afabab7"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/da/messages.json": {
+      "sha256": "9e5a1af181c9b7f70b9c28e2ac42061c14f9b3d6cd9a452e0f447d7ec495093d"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/de/messages.json": {
+      "sha256": "258382bd17a9307183c331cd88733634c523ea42169e4cabb33213c0e88d4aed"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/el/messages.json": {
+      "sha256": "d4e77302769e0d4f59d627f24194f0c3f3489adefac3903fb7d066216800896b"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/en/messages.json": {
+      "sha256": "3a2170deeaa0559e67da96a6530e5f29b957e72155bf8ad743edef83bf363c28"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/en_GB/messages.json": {
+      "sha256": "3a2170deeaa0559e67da96a6530e5f29b957e72155bf8ad743edef83bf363c28"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/es/messages.json": {
+      "sha256": "c0743808e652dd81cb3c14d8d3908c5283a5c02cf15d3d7adfbce2572ad92286"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/es_419/messages.json": {
+      "sha256": "1e4bef29513bf66f020f80c41f8f133b52ea356e593dc93f6d4f9cb2bbc221fd"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/et/messages.json": {
+      "sha256": "fc7ed74810b611c17f6231b4bbb5c54c932b82bf45a10fa1088d542779249adf"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/fi/messages.json": {
+      "sha256": "4ccad22d43cb7484e8696321d7402f3bd7035c3fa7ebd27df53efab0a99b4951"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/fil/messages.json": {
+      "sha256": "f302cf73f7dcdb7abbb76887531cf60008338d4456aba4fe484eab749bb39c1a"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/fr/messages.json": {
+      "sha256": "425c924431588edb55bc274f9b82b6dce4407fb40cd79e9c368d1db9d654b6f0"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/hi/messages.json": {
+      "sha256": "a4e4cd5172d9c607ea486c3cf2f9da5272333f1e175d75e173399cb0738bbcd6"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/hr/messages.json": {
+      "sha256": "713ae9ac2c4b93a66541c666bd43361d00b597d30ce18275b5fe0eab7200573b"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/hu/messages.json": {
+      "sha256": "bbe7bef0789a6c9dff7aa760379d1f992f3efd888efca28cab8b411a8805d51a"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/id/messages.json": {
+      "sha256": "9289dd47a5ca9d70b35dcc65260e759242ed349d75706e09930dade27ccd97e9"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/it/messages.json": {
+      "sha256": "04539ec30baeceb570b082feb8dc21fab9b952365c7ee29feb9fcf64d5425329"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/ja/messages.json": {
+      "sha256": "92926bcce9eccce167e261c3312fd8d41363b75fa73c04dd80482c2219a476cd"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/ko/messages.json": {
+      "sha256": "24f0abf87d8c4799187ae8b522507edeb7f90fccda7fb0ab64e4ef899927caee"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/lt/messages.json": {
+      "sha256": "0c058e77552ff9d0bc9f09a32213aac68faeee2f30908e031ac7c79a6d0cdf39"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/lv/messages.json": {
+      "sha256": "6b990595bf4d81bb6e779774ca0b33895edaa5ac8925990c9bcca870dd408869"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/nb/messages.json": {
+      "sha256": "4ad88196076f7204112ccec036e4e8b760dfb041d4df2ab94f0887aaaa262a88"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/nl/messages.json": {
+      "sha256": "ae4110e3fb6702604fcfc5a9267d4c92aab55bd1aada3ab59a6b4737b7e3d6a6"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/pl/messages.json": {
+      "sha256": "f55c30bce5a043a78e867f8f4cf181feacadef0cbb5d4c83402f054847bd7c80"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/pt_BR/messages.json": {
+      "sha256": "7ff7265293b31febaa87c5f2329df5c6a8eb9f903cccd941f70fd563b5336b59"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/pt_PT/messages.json": {
+      "sha256": "ef28551516e35caa633d3b011552c8ed2ecacbc66af83b60852e136253a4de6a"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/ro/messages.json": {
+      "sha256": "65ee3fd8019b7146c3b006f0ca489f9eaf4ed47dfe759bc394b4bc6d46d8ea90"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/ru/messages.json": {
+      "sha256": "d085a8dacc38cf7285bd67ff6c10cda34b1c37c577f1dbbf5be55c43c13b1eaa"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/sk/messages.json": {
+      "sha256": "9876a7d102e915e5870b8c69dc39485c85b8546d5b4bff8c31202fba8b100d4f"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/sl/messages.json": {
+      "sha256": "2f57689da236775e94b547419c7bd81ed1401e6d1f3dd0b11c94533a88d930a2"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/sr/messages.json": {
+      "sha256": "66f7f84a8a20060f7f05bd9b532ea3c4d18e2392c9bdfe4481f8f35f08c9fdc1"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/sv/messages.json": {
+      "sha256": "80da2cb02de66fd946379af43da88cbaa1d56c4c4fa0e6fea55a0760d6fac5b8"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/th/messages.json": {
+      "sha256": "db81752467a936b153d8131a21fc5b965ce8551096d537ec8f61ba308da36304"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/tr/messages.json": {
+      "sha256": "ef61d11d7752eb68a695fe9bbfa5f55582abd701ace6952254c786ad64467623"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/uk/messages.json": {
+      "sha256": "28a592385c1cf1a5dc952c3df7a3069f7a527e9a26d0716f9849c9c27d2e07af"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/vi/messages.json": {
+      "sha256": "a849cc3a067e91fed53ec39f6ffaef1a98affc14ce0b436dc97e7dd4d3837122"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/zh_CN/messages.json": {
+      "sha256": "52b181f050eb7df9e6a74021f14da8c8c433894a1dd961094042bcd59405477b"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/zh_TW/messages.json": {
+      "sha256": "3b9d772213d148aa99a5b893242d00bc32081c464a5a595a5f6b1a7349ee8b02"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_metadata/computed_hashes.json": {
+      "sha256": "965203d541e442c107dbc6d5b395168123d0397559774beae4e5b9abc44ef268"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_metadata/verified_contents.json": {
+      "sha256": "52a24fa2fb3bcb18d9d8571ae385c4a830ff98ce4c18384d40a84ea7f6ba7f69"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/html/craw_window.html": {
+      "sha256": "bb8742615e4cd996ae5d0200e443ae6a6f0b473255f03affdb8fb4660de4554d"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/FileTypePolicies/145.0.7584.0/manifest.json": {
+      "sha256": "31a56f514d228a98683b8cbf7e8a3ced78857ef3e745a06fbc2c5b33162d3220"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/FileTypePolicies/145.0.7584.0/_metadata/verified_contents.json": {
+      "sha256": "7fcb89cf8d975c3982b3fe815e53224e7548b73fcf1b65e613b2867fddcb3077"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/OptimizationGuideModelsManifest/1.20260927.2/manifest.json": {
+      "sha256": "39bf83d824ef9898fb26f7ea20dcc8977bc7cede10f41f01d38a871af408ae18"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/OptimizationGuideModelsManifest/1.20260927.2/_metadata/verified_contents.json": {
+      "sha256": "31bbbd9f0b67e60b65847851544ae7d21f767e899b344f43f1eef3b16519f700"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/OptimizationHints/754/manifest.json": {
+      "sha256": "240d8c559ff346d955434d83a10225e96c186b1b711e1529f6b6b166d98b7de4"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/OptimizationHints/754/_metadata/verified_contents.json": {
+      "sha256": "c572c81ce47cbacf8077623c476a6952922cbbf90079dd54d18e417da9042b44"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/SSLErrorAssistant/7/manifest.json": {
+      "sha256": "20b91160e2611d3159ad82857323febc906457756678ab73f305c3a1e399d18d"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/SSLErrorAssistant/7/_metadata/verified_contents.json": {
+      "sha256": "a0bc246e8e160a9bb32fa60f4e7a04d148a17125f426509466031e07731fdf81"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Subresource Filter/Unindexed Rules/9.72.0/manifest.json": {
+      "sha256": "3cf4bdd23d314f45538d4db80cc5a30dbe7b546ffc488a24cfe9dad08a461dcd"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/Subresource Filter/Unindexed Rules/9.72.0/_metadata/verified_contents.json": {
+      "sha256": "181ce80a847a2562a18a822f0c95b63e43a949c412b1cef777ed347f880accb0"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/TrustTokenKeyCommitments/2026.8.3.1/keys.json": {
+      "sha256": "3d6c659801f1686ff3ac64bc3b24b1d0ae76ffdd5f0e9c399ba37d1354a15ab4"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/TrustTokenKeyCommitments/2026.8.3.1/manifest.json": {
+      "sha256": "c7e506687caffcf3906916ad3fc190a19212d67a2535479241096bd0d4418b03"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/TrustTokenKeyCommitments/2026.8.3.1/_metadata/verified_contents.json": {
+      "sha256": "721a6439a0b19869aaace755c9e795f83aed516e4b42d8a13f4fd978d0586d18"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/component_crx_cache/metadata.json": {
+      "sha256": "5b3bdaac75f2f278dcf498fe5c0fea642fde4f0f87dee6a5461e1bb14a9d7495"
+    },
+    "02-TempFiles/chrome-profile-gpt6-sol-validation-9301/extensions_crx_cache/metadata.json": {
+      "sha256": "2771d13c637c267132afff9db67537bef95708534b79ae8d954254c4e64e4e0f"
+    },
+    "02-TempFiles/chrome-profile-gpt6.1sol-validation-9303/OptimizationGuideModelsManifest/1.20260927.2/manifest.json": {
+      "sha256": "39bf83d824ef9898fb26f7ea20dcc8977bc7cede10f41f01d38a871af408ae18"
+    },
+    "02-TempFiles/chrome-profile-gpt6.1sol-validation-9303/OptimizationGuideModelsManifest/1.20260927.2/_metadata/verified_contents.json": {
+      "sha256": "31bbbd9f0b67e60b65847851544ae7d21f767e899b344f43f1eef3b16519f700"
+    },
+    "02-TempFiles/chrome-profile-gpt6.1sol-validation-9303/component_crx_cache/metadata.json": {
+      "sha256": "2771d13c637c267132afff9db67537bef95708534b79ae8d954254c4e64e4e0f"
+    },
+    "02-TempFiles/chrome-profile-gpt6.1sol-validation-9303/extensions_crx_cache/metadata.json": {
+      "sha256": "2771d13c637c267132afff9db67537bef95708534b79ae8d954254c4e64e4e0f"
+    },
+    "02-TempFiles/chrome-profile-pelican-9301-p1/extensions_crx_cache/metadata.json": {
+      "sha256": "2771d13c637c267132afff9db67537bef95708534b79ae8d954254c4e64e4e0f"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/ActorSafetyLists/9.8200.9609/manifest.json": {
+      "sha256": "10068caf4ca65248f2479f859c264e77ef420877065374278bea00269f2ab551"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/ActorSafetyLists/9.8200.9609/_metadata/verified_contents.json": {
+      "sha256": "70e6ea57b6cc9d05b3ce1525cec1a17b746d0c0e2714ac93f60311a83a95ba6b"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/AmountExtractionHeuristicRegexes/4/manifest.json": {
+      "sha256": "95a2b0748baee70740ff2d5da78f98b5a29950562f989591f0b0b5bf13354b85"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/AmountExtractionHeuristicRegexes/4/_metadata/verified_contents.json": {
+      "sha256": "7b6a0e35b924a1a8ec78a59d4d5ead7cb73fcfe03d946c3a4a70ba17f81ade03"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/CertificateRevocation/10820/manifest.json": {
+      "sha256": "e7d282e34bc3363587e317dc85a262ec48620ec3ff772defa803c039f70772c1"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/CertificateRevocation/10820/_metadata/verified_contents.json": {
+      "sha256": "6b7ad4930f204a0e24f803a77bb92700fbafdd1aa0b459d6339c9a2b96814b21"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Crowd Deny/2026.10.1.64/manifest.json": {
+      "sha256": "82605a08e5bb2a8244118e81e8242c769ee6554ad428adbb02c69a6c8a7cb34f"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Crowd Deny/2026.10.1.64/_metadata/verified_contents.json": {
+      "sha256": "e0310097f4de96fa7396e823c2c6260e0b9f14d4d7ecbf4e580060c9f0e3927b"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/asset-manifest.json": {
+      "sha256": "adf7be6ef8628c45da747bf88dcd710bdb9603adcfadda94f077aa43d044b4db"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/floatBallClick.js": {
+      "sha256": "f46146f22ae47b9dda36beb1a2f4d6d81a090e8667035d26bf95b7e88b2c5287"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/index.html": {
+      "sha256": "902cabbe524a96c67fe801b685f9a01143a82549cbdc99dde65761db89166de9"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/insert.js": {
+      "sha256": "e45a471a03028318baf432ea8141523a5ac7bab2ed8d794d565e058735f74f57"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/manifest.json": {
+      "sha256": "eedca311ebb5b790a59748122806a5fc6c392fa621827b986f3207f725ce1400"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/options.html": {
+      "sha256": "34b1634adf15991a0a2635569baded250e82de8f1f3895cd18866c27e29b0871"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/params.html": {
+      "sha256": "902a3d6a561df4b8ba43ca6120c6e3defd3ecd6949eb5c28a378d82b9422a9d3"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/popup.html": {
+      "sha256": "450f68863fb86c73c6da69bf9be2d460fdf91ecdd98d4d409c9f7969baea1219"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/prompts.json": {
+      "sha256": "f196b79852795b5676f29c494a6e9b85d90a181cacbec26dee687b3bf3bfb6ab"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/wanfangDataWindowOpen.js": {
+      "sha256": "483eaac4f139ebc59ad9c0d55e88c54bd5eadf8e4a2fdb93d1d4e720f6a716dd"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/windowOpen.js": {
+      "sha256": "1b7ba79b1c028b46ba5035597af8d63cfb3fa124bbd4e5d960dd7a0bbfebaf83"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/_locales/en/messages.json": {
+      "sha256": "e4c01aabc1aaf24a870c432e6a3be4b047aec6527c0624331b66ffee410896b3"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/_locales/zh_CN/messages.json": {
+      "sha256": "e4c01aabc1aaf24a870c432e6a3be4b047aec6527c0624331b66ffee410896b3"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/_metadata/verified_contents.json": {
+      "sha256": "bdad8d2502ea4b492ce0373d1ab03b2c1d41a5d977c0806bdb8052be6c02259c"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/static/js/content.js": {
+      "sha256": "1e34e5a50ffa205c08ed42a558cc519f37813ba4a33404736deaa4621805e9c7"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/static/js/params.js": {
+      "sha256": "b398366f35e80d1ae10b31fd14f50e705c11b5470d6babfa81bbfe53d91e6be9"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/connection-exception.html": {
+      "sha256": "29f33e3e150c9b7048b02759d17bb1718bd7a08aa1b12095a8be8c772b32ce9a"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/login-success.html": {
+      "sha256": "c3a5b7917f13075b65070cdf9671d40b8ce379f23310c00db39da6a6cc370ffe"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/logout-success.html": {
+      "sha256": "4e58ec0261bb94a8810f2e4897740ca3c2c2c9e7661d64774ef312b5d3557e63"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/manifest.json": {
+      "sha256": "d937b7f76428348f9e63141846e5e630c7868eaf013073bae2fd353268665f1c"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/options.html": {
+      "sha256": "2fdcb37df9749eacb2b9374168b87f849c5e9ef1f681aff20cb2d6383e327f6b"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/popup.html": {
+      "sha256": "1defe7a174afdd5dc4e6cc33cf51093048a1a858f656b5714dc492f809c2848e"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/service-worker-loader.js": {
+      "sha256": "082d594ecfd1c19d2a3f4bba71542321db352edfd8141a7af054313f2dcc6aee"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/xl-images.html": {
+      "sha256": "0f642224da4a77652dec1cdcdaeb0f0eadb9c854c830d982a27f4c36e568bc94"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/xl-player.html": {
+      "sha256": "06d1bb9f1c08d5d8bd65bd8bcf7c926e39060f94b24d21d9f9abbe0313fdcc85"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/_locales/zh_CN/messages.json": {
+      "sha256": "45659d569ce0a618eb30dddfd4650a4c98a26656b9330748af06b5848f73ccaf"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/_locales/zh_TW/messages.json": {
+      "sha256": "3523fb038f9b8ad0c78d2ced2d5dc282cf89e56e6d41868ddaf9434c50ef7089"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/_metadata/verified_contents.json": {
+      "sha256": "c05bd7f6ff28182b9b26bb1ef3606d7cad5e29ffb5ea649926a6315e33fe3c72"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/_plugin-vue_export-helper-85192461.js": {
+      "sha256": "eaaa55cefd474a238d0a4c1e067bb4ea6d6509a4cb91abfbffdeb57ed13f888d"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/background.js-7414d968.js": {
+      "sha256": "3e08dd140e909b31dd344669ff693c09bed845e9f62a15b9629ab1f7e39996e3"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/chrome-api-2bbac261.js": {
+      "sha256": "75682deb01b9ded2816f386d02e3c52462ded4da703edf8277d9ce505d2a7274"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/chrome-message-a1dcbd16.js": {
+      "sha256": "675edfa4924e4d6e161ada8fa6ff65d92edf12d5c69f0f1aca88c5288bc192c7"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/connection-exception-963de9c8.js": {
+      "sha256": "e141d2033300517fe6a0b22fbeae94d315456aa34a30b73c31b244905f8f3ada"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/content.js-4b73743c.js": {
+      "sha256": "ccd2fb7aa60eeb8f47531bd5892e7e8ccf69018e5e160a57c43c2ccb52f1d43c"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/content.js-loader-397dfa72.js": {
+      "sha256": "397dfa72d86645cb5063cf9e0de7662c7f9ffdd986353d69692446f3a977b91b"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/extension-storage-720de7b2.js": {
+      "sha256": "df3945cc6f5c04f889f8cabc5412d865e5e9799dcfd227b68953c74b5f37c03d"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/get-dom-caa529e9.js": {
+      "sha256": "18c3c6c55e31cdeb1d604487edd0612293979c569b55d017641b097233524963"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/index-52585ddd.js": {
+      "sha256": "e6ba58920378929bc937fc85a0f5a3183e2580f2c55c88d74631e36f18caf058"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/index-7f10a347.js": {
+      "sha256": "d02c93b03574af61a364bb128b4b1f82773c9ce2122d6a74516cf57406773481"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/index-8340e26a.js": {
+      "sha256": "6d9f6a83b18c6ab169a0bd00a7237e6a25d17df868965c49ad68c8cd27b2a6ac"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/index-f7a6c63b.js": {
+      "sha256": "968561746e9cc7d3f09312467de0bd5d20fa5a3c3b279edb61c78e9da6eb63f0"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/login-success-162fee85.js": {
+      "sha256": "ce2749c835ac4a82eba9895955d28b036a3b3a29835c7dc6aed856afe047ce3b"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/logout-success-14c874c7.js": {
+      "sha256": "3edfa03c11789810f9c1821b82c6e1c1225dc6a6cddc5bfcaff22f1808ca4018"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/message-service-b24c7c86.js": {
+      "sha256": "ef992de0600eea58868d50f73bb9c1edff65b2b26240a64b4fe506025ec22fe3"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/messages-82e0e143.js": {
+      "sha256": "dae7368de166e548b7ef085dc82c4fe2afa5f98ebfcad1cef5027541ff64c4a8"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/messages-94096533.js": {
+      "sha256": "96a7948f87ca09dd9a77f2b27ce07310f981e083e80bd7dccba0a10b3bf0f318"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/modulepreload-polyfill-2ad73d06.js": {
+      "sha256": "31191979ee8bf30912f8bb8eae8348182f37e999c8deb54095682926b9435fe3"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/options-tab-2013941f.js": {
+      "sha256": "95e793a942a9adc6d546b80c31108f6a605ed4c0f779fc0732cb11eeef046b4f"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/options.html-684ac5ac.js": {
+      "sha256": "6db486898163eba4bcd9b192288eb920327e1d3629a2814fd0d37a7f506d3d13"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/pino-aef3f866.js": {
+      "sha256": "d9b3069e993d7896d67471db299cb0e0c5e95b271df6a9a3acf8396011de2b71"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/popup.html-871b2971.js": {
+      "sha256": "0c43356d145d721ad8196b843fd3d6e1ec3d51f14cbd39b776ba581f5285efa9"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/risk-error-6a79c80a.js": {
+      "sha256": "e3a6c84205cbe4d453747ade5a82d1a00f0b600f30c512b530e96c02f0d8a070"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/runtime-dom.esm-bundler-beca12b0.js": {
+      "sha256": "7f36dd67b07fdcd7a1558592f8042f375e8e8c3ca53a4474a8bcfe08a83460c4"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/takeover-settings-38f56d62.js": {
+      "sha256": "e2b59ea715044aa58f31f3ce5946864779f0f96d7374bd0c4da25ffc7e94ea6e"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/util-9ee2f234.js": {
+      "sha256": "7f072fd8a28da0aebd6be24b92807f370b0ee27cd58a14e9dd7792297d90f722"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/util-e26c1ce0.js": {
+      "sha256": "28e2db00e3ab73e3f23f5cf30a59a80fc4dbdff27e012cce890aead46c538b00"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/xl-images-f2f64126.js": {
+      "sha256": "65f53b8adb6ccc2462dc9803916fd0cfc04eec7da0303d71d7b4f6347fe3049a"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/xl-player/lib/TAppDecoderStatic.js": {
+      "sha256": "ec85a4206ba083ad61d625a4fcbf31b6b6acdd54f8c6a49b4571bd41b02d36d5"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/xl-player/lib/libffmpeg.js": {
+      "sha256": "42e82214a2ae8960a652cd4d95d4583acbac9559dad1a00b1d610c36ae9c59e2"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/xl-player/lib/ts-decode-worker.js": {
+      "sha256": "48657a908535493189d5226a4c64bd1a90a02680e5e7f5674647bdf240b12840"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/xl-player/lib/ts-demux-worker.js": {
+      "sha256": "96f4750ee2f4f6dd855aa127fc6c8bf4f444b1b8e4d689913c55a1046e804ed2"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/xl-player/lib/ts-http-worker.js": {
+      "sha256": "60dd2c70cdc5601b046c1e8b00d57104d53dd507fec9fa53b8f68966d724fbf7"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/craw_window.js": {
+      "sha256": "5721a4b3f8e09c869a629effd350b51c9d46f0ac136717d4db6265c0ee6f9ac8"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/manifest.json": {
+      "sha256": "5dbdf0ed368be287abaff83d639b760fa5d7dc8a28e92387773b4fd3e1ba4f19"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/bg/messages.json": {
+      "sha256": "a8bb5cf3fa570bd798337f6b81696bd058a817a594b72afb3742ebb32a47dddc"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/ca/messages.json": {
+      "sha256": "e8b4991787e773677311f3ae7559854c12cded12eb59c6fd0373171e191116a8"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/cs/messages.json": {
+      "sha256": "bc201f50cb52a042e53d6df24e196ccbcc9a5d5dc482bfcbeb0c44686afabab7"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/da/messages.json": {
+      "sha256": "9e5a1af181c9b7f70b9c28e2ac42061c14f9b3d6cd9a452e0f447d7ec495093d"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/de/messages.json": {
+      "sha256": "258382bd17a9307183c331cd88733634c523ea42169e4cabb33213c0e88d4aed"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/el/messages.json": {
+      "sha256": "d4e77302769e0d4f59d627f24194f0c3f3489adefac3903fb7d066216800896b"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/en/messages.json": {
+      "sha256": "3a2170deeaa0559e67da96a6530e5f29b957e72155bf8ad743edef83bf363c28"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/en_GB/messages.json": {
+      "sha256": "3a2170deeaa0559e67da96a6530e5f29b957e72155bf8ad743edef83bf363c28"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/es/messages.json": {
+      "sha256": "c0743808e652dd81cb3c14d8d3908c5283a5c02cf15d3d7adfbce2572ad92286"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/es_419/messages.json": {
+      "sha256": "1e4bef29513bf66f020f80c41f8f133b52ea356e593dc93f6d4f9cb2bbc221fd"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/et/messages.json": {
+      "sha256": "fc7ed74810b611c17f6231b4bbb5c54c932b82bf45a10fa1088d542779249adf"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/fi/messages.json": {
+      "sha256": "4ccad22d43cb7484e8696321d7402f3bd7035c3fa7ebd27df53efab0a99b4951"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/fil/messages.json": {
+      "sha256": "f302cf73f7dcdb7abbb76887531cf60008338d4456aba4fe484eab749bb39c1a"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/fr/messages.json": {
+      "sha256": "425c924431588edb55bc274f9b82b6dce4407fb40cd79e9c368d1db9d654b6f0"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/hi/messages.json": {
+      "sha256": "a4e4cd5172d9c607ea486c3cf2f9da5272333f1e175d75e173399cb0738bbcd6"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/hr/messages.json": {
+      "sha256": "713ae9ac2c4b93a66541c666bd43361d00b597d30ce18275b5fe0eab7200573b"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/hu/messages.json": {
+      "sha256": "bbe7bef0789a6c9dff7aa760379d1f992f3efd888efca28cab8b411a8805d51a"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/id/messages.json": {
+      "sha256": "9289dd47a5ca9d70b35dcc65260e759242ed349d75706e09930dade27ccd97e9"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/it/messages.json": {
+      "sha256": "04539ec30baeceb570b082feb8dc21fab9b952365c7ee29feb9fcf64d5425329"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/ja/messages.json": {
+      "sha256": "92926bcce9eccce167e261c3312fd8d41363b75fa73c04dd80482c2219a476cd"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/ko/messages.json": {
+      "sha256": "24f0abf87d8c4799187ae8b522507edeb7f90fccda7fb0ab64e4ef899927caee"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/lt/messages.json": {
+      "sha256": "0c058e77552ff9d0bc9f09a32213aac68faeee2f30908e031ac7c79a6d0cdf39"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/lv/messages.json": {
+      "sha256": "6b990595bf4d81bb6e779774ca0b33895edaa5ac8925990c9bcca870dd408869"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/nb/messages.json": {
+      "sha256": "4ad88196076f7204112ccec036e4e8b760dfb041d4df2ab94f0887aaaa262a88"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/nl/messages.json": {
+      "sha256": "ae4110e3fb6702604fcfc5a9267d4c92aab55bd1aada3ab59a6b4737b7e3d6a6"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/pl/messages.json": {
+      "sha256": "f55c30bce5a043a78e867f8f4cf181feacadef0cbb5d4c83402f054847bd7c80"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/pt_BR/messages.json": {
+      "sha256": "7ff7265293b31febaa87c5f2329df5c6a8eb9f903cccd941f70fd563b5336b59"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/pt_PT/messages.json": {
+      "sha256": "ef28551516e35caa633d3b011552c8ed2ecacbc66af83b60852e136253a4de6a"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/ro/messages.json": {
+      "sha256": "65ee3fd8019b7146c3b006f0ca489f9eaf4ed47dfe759bc394b4bc6d46d8ea90"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/ru/messages.json": {
+      "sha256": "d085a8dacc38cf7285bd67ff6c10cda34b1c37c577f1dbbf5be55c43c13b1eaa"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/sk/messages.json": {
+      "sha256": "9876a7d102e915e5870b8c69dc39485c85b8546d5b4bff8c31202fba8b100d4f"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/sl/messages.json": {
+      "sha256": "2f57689da236775e94b547419c7bd81ed1401e6d1f3dd0b11c94533a88d930a2"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/sr/messages.json": {
+      "sha256": "66f7f84a8a20060f7f05bd9b532ea3c4d18e2392c9bdfe4481f8f35f08c9fdc1"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/sv/messages.json": {
+      "sha256": "80da2cb02de66fd946379af43da88cbaa1d56c4c4fa0e6fea55a0760d6fac5b8"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/th/messages.json": {
+      "sha256": "db81752467a936b153d8131a21fc5b965ce8551096d537ec8f61ba308da36304"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/tr/messages.json": {
+      "sha256": "ef61d11d7752eb68a695fe9bbfa5f55582abd701ace6952254c786ad64467623"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/uk/messages.json": {
+      "sha256": "28a592385c1cf1a5dc952c3df7a3069f7a527e9a26d0716f9849c9c27d2e07af"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/vi/messages.json": {
+      "sha256": "a849cc3a067e91fed53ec39f6ffaef1a98affc14ce0b436dc97e7dd4d3837122"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/zh_CN/messages.json": {
+      "sha256": "52b181f050eb7df9e6a74021f14da8c8c433894a1dd961094042bcd59405477b"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/zh_TW/messages.json": {
+      "sha256": "3b9d772213d148aa99a5b893242d00bc32081c464a5a595a5f6b1a7349ee8b02"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_metadata/computed_hashes.json": {
+      "sha256": "965203d541e442c107dbc6d5b395168123d0397559774beae4e5b9abc44ef268"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_metadata/verified_contents.json": {
+      "sha256": "52a24fa2fb3bcb18d9d8571ae385c4a830ff98ce4c18384d40a84ea7f6ba7f69"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/html/craw_window.html": {
+      "sha256": "bb8742615e4cd996ae5d0200e443ae6a6f0b473255f03affdb8fb4660de4554d"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/FileTypePolicies/145.0.7584.0/manifest.json": {
+      "sha256": "31a56f514d228a98683b8cbf7e8a3ced78857ef3e745a06fbc2c5b33162d3220"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/FileTypePolicies/145.0.7584.0/_metadata/verified_contents.json": {
+      "sha256": "7fcb89cf8d975c3982b3fe815e53224e7548b73fcf1b65e613b2867fddcb3077"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/OptimizationGuideModelsManifest/1.20260927.2/manifest.json": {
+      "sha256": "39bf83d824ef9898fb26f7ea20dcc8977bc7cede10f41f01d38a871af408ae18"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/OptimizationGuideModelsManifest/1.20260927.2/_metadata/verified_contents.json": {
+      "sha256": "31bbbd9f0b67e60b65847851544ae7d21f767e899b344f43f1eef3b16519f700"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/OptimizationHints/754/manifest.json": {
+      "sha256": "240d8c559ff346d955434d83a10225e96c186b1b711e1529f6b6b166d98b7de4"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/OptimizationHints/754/_metadata/verified_contents.json": {
+      "sha256": "c572c81ce47cbacf8077623c476a6952922cbbf90079dd54d18e417da9042b44"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/PKIMetadata/1798/manifest.json": {
+      "sha256": "1ded1c975584bb4bfc8e09db7c8257b3b3e91f31be11af8b25563a3b43b98b58"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/PKIMetadata/1798/_metadata/verified_contents.json": {
+      "sha256": "c2222b869abc4ceebfe99f67574ee323185c14be6907ff153ec8b7791cd5b5db"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/SSLErrorAssistant/7/manifest.json": {
+      "sha256": "20b91160e2611d3159ad82857323febc906457756678ab73f305c3a1e399d18d"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/SSLErrorAssistant/7/_metadata/verified_contents.json": {
+      "sha256": "a0bc246e8e160a9bb32fa60f4e7a04d148a17125f426509466031e07731fdf81"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/SafetyTips/3091/manifest.json": {
+      "sha256": "8541ddcefc17c421e19c9768a70c4772315795eac3268fd8820b0fb4f409720a"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/SafetyTips/3091/_metadata/verified_contents.json": {
+      "sha256": "6cc8b90820b5474238253b5c044555a7b646b1c76acd9068032e672b27dc7c76"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Subresource Filter/Unindexed Rules/9.72.0/manifest.json": {
+      "sha256": "3cf4bdd23d314f45538d4db80cc5a30dbe7b546ffc488a24cfe9dad08a461dcd"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/Subresource Filter/Unindexed Rules/9.72.0/_metadata/verified_contents.json": {
+      "sha256": "181ce80a847a2562a18a822f0c95b63e43a949c412b1cef777ed347f880accb0"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/TrustTokenKeyCommitments/2026.8.3.1/keys.json": {
+      "sha256": "3d6c659801f1686ff3ac64bc3b24b1d0ae76ffdd5f0e9c399ba37d1354a15ab4"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/TrustTokenKeyCommitments/2026.8.3.1/manifest.json": {
+      "sha256": "c7e506687caffcf3906916ad3fc190a19212d67a2535479241096bd0d4418b03"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/TrustTokenKeyCommitments/2026.8.3.1/_metadata/verified_contents.json": {
+      "sha256": "721a6439a0b19869aaace755c9e795f83aed516e4b42d8a13f4fd978d0586d18"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/ZxcvbnData/3/manifest.json": {
+      "sha256": "aeb364b60303212808fac02eb490ee5b054ae843ce084376e5981ef8767e5198"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/ZxcvbnData/3/_metadata/verified_contents.json": {
+      "sha256": "5d6bcb37f239a11bcdeebf2960594eb2c26af18244572c07412f7af4a975c168"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/component_crx_cache/metadata.json": {
+      "sha256": "546b5fd28611b24407bc9e3a4828e6db3871dcd018f8214eb025ed509efc2d39"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9300/extensions_crx_cache/metadata.json": {
+      "sha256": "6671a602004ac4f17de216f4d2f09f462b3401e0d915d9b7837c6894d0c21564"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/ActorSafetyLists/9.8200.9609/manifest.json": {
+      "sha256": "10068caf4ca65248f2479f859c264e77ef420877065374278bea00269f2ab551"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/ActorSafetyLists/9.8200.9609/_metadata/verified_contents.json": {
+      "sha256": "70e6ea57b6cc9d05b3ce1525cec1a17b746d0c0e2714ac93f60311a83a95ba6b"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/CertificateRevocation/10820/manifest.json": {
+      "sha256": "e7d282e34bc3363587e317dc85a262ec48620ec3ff772defa803c039f70772c1"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/CertificateRevocation/10820/_metadata/verified_contents.json": {
+      "sha256": "6b7ad4930f204a0e24f803a77bb92700fbafdd1aa0b459d6339c9a2b96814b21"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Crowd Deny/2026.10.1.64/manifest.json": {
+      "sha256": "82605a08e5bb2a8244118e81e8242c769ee6554ad428adbb02c69a6c8a7cb34f"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Crowd Deny/2026.10.1.64/_metadata/verified_contents.json": {
+      "sha256": "e0310097f4de96fa7396e823c2c6260e0b9f14d4d7ecbf4e580060c9f0e3927b"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/asset-manifest.json": {
+      "sha256": "77920832ea3594a78f07fc0fa314756472cd3bce92b2692340698ecbe80120c4"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/floatBallClick.js": {
+      "sha256": "f46146f22ae47b9dda36beb1a2f4d6d81a090e8667035d26bf95b7e88b2c5287"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/index.html": {
+      "sha256": "902cabbe524a96c67fe801b685f9a01143a82549cbdc99dde65761db89166de9"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/insert.js": {
+      "sha256": "e45a471a03028318baf432ea8141523a5ac7bab2ed8d794d565e058735f74f57"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/manifest.json": {
+      "sha256": "61de1296cd20b3e272d7e16d35c2ee8c67c00f74de3cea2e73d02d62e6a2d590"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/options.html": {
+      "sha256": "34b1634adf15991a0a2635569baded250e82de8f1f3895cd18866c27e29b0871"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/params.html": {
+      "sha256": "902a3d6a561df4b8ba43ca6120c6e3defd3ecd6949eb5c28a378d82b9422a9d3"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/popup.html": {
+      "sha256": "450f68863fb86c73c6da69bf9be2d460fdf91ecdd98d4d409c9f7969baea1219"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/prompts.json": {
+      "sha256": "f196b79852795b5676f29c494a6e9b85d90a181cacbec26dee687b3bf3bfb6ab"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/wanfangDataWindowOpen.js": {
+      "sha256": "483eaac4f139ebc59ad9c0d55e88c54bd5eadf8e4a2fdb93d1d4e720f6a716dd"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/windowOpen.js": {
+      "sha256": "1b7ba79b1c028b46ba5035597af8d63cfb3fa124bbd4e5d960dd7a0bbfebaf83"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/_locales/en/messages.json": {
+      "sha256": "e4c01aabc1aaf24a870c432e6a3be4b047aec6527c0624331b66ffee410896b3"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/_locales/zh_CN/messages.json": {
+      "sha256": "e4c01aabc1aaf24a870c432e6a3be4b047aec6527c0624331b66ffee410896b3"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/_metadata/verified_contents.json": {
+      "sha256": "d1c03a0e17290eacc1b8da93bb63df2f4e61965fa74949d285fdf78ca11d84c6"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.0.8_0/static/js/params.js": {
+      "sha256": "6adbcb74e90edcc441ea29683391d864d0930e7a0a2b95bc05228a036b4c8caf"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/asset-manifest.json": {
+      "sha256": "adf7be6ef8628c45da747bf88dcd710bdb9603adcfadda94f077aa43d044b4db"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/floatBallClick.js": {
+      "sha256": "f46146f22ae47b9dda36beb1a2f4d6d81a090e8667035d26bf95b7e88b2c5287"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/index.html": {
+      "sha256": "902cabbe524a96c67fe801b685f9a01143a82549cbdc99dde65761db89166de9"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/insert.js": {
+      "sha256": "e45a471a03028318baf432ea8141523a5ac7bab2ed8d794d565e058735f74f57"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/manifest.json": {
+      "sha256": "eedca311ebb5b790a59748122806a5fc6c392fa621827b986f3207f725ce1400"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/options.html": {
+      "sha256": "34b1634adf15991a0a2635569baded250e82de8f1f3895cd18866c27e29b0871"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/params.html": {
+      "sha256": "902a3d6a561df4b8ba43ca6120c6e3defd3ecd6949eb5c28a378d82b9422a9d3"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/popup.html": {
+      "sha256": "450f68863fb86c73c6da69bf9be2d460fdf91ecdd98d4d409c9f7969baea1219"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/prompts.json": {
+      "sha256": "f196b79852795b5676f29c494a6e9b85d90a181cacbec26dee687b3bf3bfb6ab"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/wanfangDataWindowOpen.js": {
+      "sha256": "483eaac4f139ebc59ad9c0d55e88c54bd5eadf8e4a2fdb93d1d4e720f6a716dd"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/windowOpen.js": {
+      "sha256": "1b7ba79b1c028b46ba5035597af8d63cfb3fa124bbd4e5d960dd7a0bbfebaf83"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/_locales/en/messages.json": {
+      "sha256": "e4c01aabc1aaf24a870c432e6a3be4b047aec6527c0624331b66ffee410896b3"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/_locales/zh_CN/messages.json": {
+      "sha256": "e4c01aabc1aaf24a870c432e6a3be4b047aec6527c0624331b66ffee410896b3"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/_metadata/verified_contents.json": {
+      "sha256": "bdad8d2502ea4b492ce0373d1ab03b2c1d41a5d977c0806bdb8052be6c02259c"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/static/js/content.js": {
+      "sha256": "1e34e5a50ffa205c08ed42a558cc519f37813ba4a33404736deaa4621805e9c7"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/jelniggicmclhfgnlapbkgfibmgelfnp/0.1.6_0/static/js/params.js": {
+      "sha256": "b398366f35e80d1ae10b31fd14f50e705c11b5470d6babfa81bbfe53d91e6be9"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/manifest.json": {
+      "sha256": "d54dc51f2d18147bea16271adc93d95367f2d84894f7fbeb49ef9b04f904819d"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/options.html": {
+      "sha256": "35c1b15749517e5b188bc29ae32a25d1c640bb669c2aec0e83f60a0c616b8fd5"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/popup.html": {
+      "sha256": "7f401fb6d0c7266223748a6408f52911e653301af14325da07623eb59b0e7aed"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/service-worker-loader.js": {
+      "sha256": "2d7273a9c08ed558dc70d251c20b20139e7ba0da7c9b41450af3a1a714ca9dd6"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/xl-images.html": {
+      "sha256": "0c7e981b4987f31e3bd753892d80e83485b6058761cdb0b7f59e731107cb7d82"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/_locales/zh_CN/messages.json": {
+      "sha256": "cad4ce8ea577de134a58e35f09f1b81dafd3900f97851a7c9128805fa2b8c2e2"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/_locales/zh_TW/messages.json": {
+      "sha256": "bbfd08468e06d95f7eef14e63be4fe42a7aea99e654445607061256aa2301570"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/_metadata/verified_contents.json": {
+      "sha256": "b177fb834fc282a7d35d3cc9ab1f51e5bf2e111323886dc7d93b5b2979ccd906"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/Jsq-4d01198b.js": {
+      "sha256": "4c86df2e80648fcb051fd5fd993eacc28e2c9b82882b5e0eaa212088fa3dbebf"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/background.js-22906370.js": {
+      "sha256": "4b6bd5121268e6e3128690ae1abe196f68b22153bf1fe4a38147db8fc5426307"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/content.js-e4490f5d.js": {
+      "sha256": "3b6a1dddead6849652249b15631df17bff1b26fb7abbda667c8dec6cccfc88e5"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/content.js-loader-9a2f598c.js": {
+      "sha256": "9a2f598ce322be8ab1b4c31c00cf4d0d4a2fea2e8a3bb1aa1438e0cc0b40efc8"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/index-9000aff5.js": {
+      "sha256": "401864d2ec5be44eaec9dc50ae0bba711f2b9040a7699ffc8d177c918d5a8e08"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/modulepreload-polyfill-2ad73d06.js": {
+      "sha256": "31191979ee8bf30912f8bb8eae8348182f37e999c8deb54095682926b9435fe3"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/options.html-0306a3d1.js": {
+      "sha256": "cfd0352c62a5b03fada708b3b5b1cbd73dfcbd7e807371fb9ac674d51740eb80"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/popup.html-9251625c.js": {
+      "sha256": "416ee9cec28878dbd12f8c491b18ed42157f08f66150423a5378a2ded385fc59"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/runtime-dom.esm-bundler-90e72f46.js": {
+      "sha256": "0afe074a13efe8a6d1a62a4889e89a9947d7ef564d6bcb022f376b569022aa4f"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/stat-e9139785.js": {
+      "sha256": "613dc38e51417ba1713da04d1b82129c91083b618f109ca51aee63aec7c50d9f"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/tool-13238bfa.js": {
+      "sha256": "a8df996b6ebc7a7d98270869006f63a5b24e81aa96438a68275c724bd693e3e6"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/util-ff1b650c.js": {
+      "sha256": "b605968a4652e0eb86730e33282a18bf8e12efc9ac2aca1a78af07989b8f3ef7"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/3.52.14_0/assets/xl-images-67baeda0.js": {
+      "sha256": "4f6de7c7911e21daceeb1c1d2c18d411ea6676369698236ac134c1154ee67e0c"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/connection-exception.html": {
+      "sha256": "29f33e3e150c9b7048b02759d17bb1718bd7a08aa1b12095a8be8c772b32ce9a"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/login-success.html": {
+      "sha256": "c3a5b7917f13075b65070cdf9671d40b8ce379f23310c00db39da6a6cc370ffe"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/logout-success.html": {
+      "sha256": "4e58ec0261bb94a8810f2e4897740ca3c2c2c9e7661d64774ef312b5d3557e63"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/manifest.json": {
+      "sha256": "d937b7f76428348f9e63141846e5e630c7868eaf013073bae2fd353268665f1c"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/options.html": {
+      "sha256": "2fdcb37df9749eacb2b9374168b87f849c5e9ef1f681aff20cb2d6383e327f6b"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/popup.html": {
+      "sha256": "1defe7a174afdd5dc4e6cc33cf51093048a1a858f656b5714dc492f809c2848e"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/service-worker-loader.js": {
+      "sha256": "082d594ecfd1c19d2a3f4bba71542321db352edfd8141a7af054313f2dcc6aee"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/xl-images.html": {
+      "sha256": "0f642224da4a77652dec1cdcdaeb0f0eadb9c854c830d982a27f4c36e568bc94"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/xl-player.html": {
+      "sha256": "06d1bb9f1c08d5d8bd65bd8bcf7c926e39060f94b24d21d9f9abbe0313fdcc85"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/_locales/zh_CN/messages.json": {
+      "sha256": "45659d569ce0a618eb30dddfd4650a4c98a26656b9330748af06b5848f73ccaf"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/_locales/zh_TW/messages.json": {
+      "sha256": "3523fb038f9b8ad0c78d2ced2d5dc282cf89e56e6d41868ddaf9434c50ef7089"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/_metadata/verified_contents.json": {
+      "sha256": "c05bd7f6ff28182b9b26bb1ef3606d7cad5e29ffb5ea649926a6315e33fe3c72"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/_plugin-vue_export-helper-85192461.js": {
+      "sha256": "eaaa55cefd474a238d0a4c1e067bb4ea6d6509a4cb91abfbffdeb57ed13f888d"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/background.js-7414d968.js": {
+      "sha256": "3e08dd140e909b31dd344669ff693c09bed845e9f62a15b9629ab1f7e39996e3"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/chrome-api-2bbac261.js": {
+      "sha256": "75682deb01b9ded2816f386d02e3c52462ded4da703edf8277d9ce505d2a7274"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/chrome-message-a1dcbd16.js": {
+      "sha256": "675edfa4924e4d6e161ada8fa6ff65d92edf12d5c69f0f1aca88c5288bc192c7"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/connection-exception-963de9c8.js": {
+      "sha256": "e141d2033300517fe6a0b22fbeae94d315456aa34a30b73c31b244905f8f3ada"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/content.js-4b73743c.js": {
+      "sha256": "ccd2fb7aa60eeb8f47531bd5892e7e8ccf69018e5e160a57c43c2ccb52f1d43c"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/content.js-loader-397dfa72.js": {
+      "sha256": "397dfa72d86645cb5063cf9e0de7662c7f9ffdd986353d69692446f3a977b91b"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/extension-storage-720de7b2.js": {
+      "sha256": "df3945cc6f5c04f889f8cabc5412d865e5e9799dcfd227b68953c74b5f37c03d"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/get-dom-caa529e9.js": {
+      "sha256": "18c3c6c55e31cdeb1d604487edd0612293979c569b55d017641b097233524963"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/index-52585ddd.js": {
+      "sha256": "e6ba58920378929bc937fc85a0f5a3183e2580f2c55c88d74631e36f18caf058"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/index-7f10a347.js": {
+      "sha256": "d02c93b03574af61a364bb128b4b1f82773c9ce2122d6a74516cf57406773481"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/index-8340e26a.js": {
+      "sha256": "6d9f6a83b18c6ab169a0bd00a7237e6a25d17df868965c49ad68c8cd27b2a6ac"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/index-f7a6c63b.js": {
+      "sha256": "968561746e9cc7d3f09312467de0bd5d20fa5a3c3b279edb61c78e9da6eb63f0"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/login-success-162fee85.js": {
+      "sha256": "ce2749c835ac4a82eba9895955d28b036a3b3a29835c7dc6aed856afe047ce3b"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/logout-success-14c874c7.js": {
+      "sha256": "3edfa03c11789810f9c1821b82c6e1c1225dc6a6cddc5bfcaff22f1808ca4018"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/message-service-b24c7c86.js": {
+      "sha256": "ef992de0600eea58868d50f73bb9c1edff65b2b26240a64b4fe506025ec22fe3"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/messages-82e0e143.js": {
+      "sha256": "dae7368de166e548b7ef085dc82c4fe2afa5f98ebfcad1cef5027541ff64c4a8"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/messages-94096533.js": {
+      "sha256": "96a7948f87ca09dd9a77f2b27ce07310f981e083e80bd7dccba0a10b3bf0f318"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/modulepreload-polyfill-2ad73d06.js": {
+      "sha256": "31191979ee8bf30912f8bb8eae8348182f37e999c8deb54095682926b9435fe3"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/options-tab-2013941f.js": {
+      "sha256": "95e793a942a9adc6d546b80c31108f6a605ed4c0f779fc0732cb11eeef046b4f"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/options.html-684ac5ac.js": {
+      "sha256": "6db486898163eba4bcd9b192288eb920327e1d3629a2814fd0d37a7f506d3d13"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/pino-aef3f866.js": {
+      "sha256": "d9b3069e993d7896d67471db299cb0e0c5e95b271df6a9a3acf8396011de2b71"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/popup.html-871b2971.js": {
+      "sha256": "0c43356d145d721ad8196b843fd3d6e1ec3d51f14cbd39b776ba581f5285efa9"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/risk-error-6a79c80a.js": {
+      "sha256": "e3a6c84205cbe4d453747ade5a82d1a00f0b600f30c512b530e96c02f0d8a070"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/runtime-dom.esm-bundler-beca12b0.js": {
+      "sha256": "7f36dd67b07fdcd7a1558592f8042f375e8e8c3ca53a4474a8bcfe08a83460c4"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/takeover-settings-38f56d62.js": {
+      "sha256": "e2b59ea715044aa58f31f3ce5946864779f0f96d7374bd0c4da25ffc7e94ea6e"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/util-9ee2f234.js": {
+      "sha256": "7f072fd8a28da0aebd6be24b92807f370b0ee27cd58a14e9dd7792297d90f722"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/util-e26c1ce0.js": {
+      "sha256": "28e2db00e3ab73e3f23f5cf30a59a80fc4dbdff27e012cce890aead46c538b00"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/xl-images-f2f64126.js": {
+      "sha256": "65f53b8adb6ccc2462dc9803916fd0cfc04eec7da0303d71d7b4f6347fe3049a"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/xl-player/lib/TAppDecoderStatic.js": {
+      "sha256": "ec85a4206ba083ad61d625a4fcbf31b6b6acdd54f8c6a49b4571bd41b02d36d5"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/xl-player/lib/libffmpeg.js": {
+      "sha256": "42e82214a2ae8960a652cd4d95d4583acbac9559dad1a00b1d610c36ae9c59e2"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/xl-player/lib/ts-decode-worker.js": {
+      "sha256": "48657a908535493189d5226a4c64bd1a90a02680e5e7f5674647bdf240b12840"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/xl-player/lib/ts-demux-worker.js": {
+      "sha256": "96f4750ee2f4f6dd855aa127fc6c8bf4f444b1b8e4d689913c55a1046e804ed2"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/ncennffkjdiamlpmcbajkmaiiiddgioo/4.1.3_0/assets/xl-player/lib/ts-http-worker.js": {
+      "sha256": "60dd2c70cdc5601b046c1e8b00d57104d53dd507fec9fa53b8f68966d724fbf7"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/craw_window.js": {
+      "sha256": "5721a4b3f8e09c869a629effd350b51c9d46f0ac136717d4db6265c0ee6f9ac8"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/manifest.json": {
+      "sha256": "5dbdf0ed368be287abaff83d639b760fa5d7dc8a28e92387773b4fd3e1ba4f19"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/bg/messages.json": {
+      "sha256": "a8bb5cf3fa570bd798337f6b81696bd058a817a594b72afb3742ebb32a47dddc"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/ca/messages.json": {
+      "sha256": "e8b4991787e773677311f3ae7559854c12cded12eb59c6fd0373171e191116a8"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/cs/messages.json": {
+      "sha256": "bc201f50cb52a042e53d6df24e196ccbcc9a5d5dc482bfcbeb0c44686afabab7"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/da/messages.json": {
+      "sha256": "9e5a1af181c9b7f70b9c28e2ac42061c14f9b3d6cd9a452e0f447d7ec495093d"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/de/messages.json": {
+      "sha256": "258382bd17a9307183c331cd88733634c523ea42169e4cabb33213c0e88d4aed"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/el/messages.json": {
+      "sha256": "d4e77302769e0d4f59d627f24194f0c3f3489adefac3903fb7d066216800896b"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/en/messages.json": {
+      "sha256": "3a2170deeaa0559e67da96a6530e5f29b957e72155bf8ad743edef83bf363c28"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/en_GB/messages.json": {
+      "sha256": "3a2170deeaa0559e67da96a6530e5f29b957e72155bf8ad743edef83bf363c28"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/es/messages.json": {
+      "sha256": "c0743808e652dd81cb3c14d8d3908c5283a5c02cf15d3d7adfbce2572ad92286"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/es_419/messages.json": {
+      "sha256": "1e4bef29513bf66f020f80c41f8f133b52ea356e593dc93f6d4f9cb2bbc221fd"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/et/messages.json": {
+      "sha256": "fc7ed74810b611c17f6231b4bbb5c54c932b82bf45a10fa1088d542779249adf"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/fi/messages.json": {
+      "sha256": "4ccad22d43cb7484e8696321d7402f3bd7035c3fa7ebd27df53efab0a99b4951"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/fil/messages.json": {
+      "sha256": "f302cf73f7dcdb7abbb76887531cf60008338d4456aba4fe484eab749bb39c1a"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/fr/messages.json": {
+      "sha256": "425c924431588edb55bc274f9b82b6dce4407fb40cd79e9c368d1db9d654b6f0"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/hi/messages.json": {
+      "sha256": "a4e4cd5172d9c607ea486c3cf2f9da5272333f1e175d75e173399cb0738bbcd6"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/hr/messages.json": {
+      "sha256": "713ae9ac2c4b93a66541c666bd43361d00b597d30ce18275b5fe0eab7200573b"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/hu/messages.json": {
+      "sha256": "bbe7bef0789a6c9dff7aa760379d1f992f3efd888efca28cab8b411a8805d51a"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/id/messages.json": {
+      "sha256": "9289dd47a5ca9d70b35dcc65260e759242ed349d75706e09930dade27ccd97e9"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/it/messages.json": {
+      "sha256": "04539ec30baeceb570b082feb8dc21fab9b952365c7ee29feb9fcf64d5425329"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/ja/messages.json": {
+      "sha256": "92926bcce9eccce167e261c3312fd8d41363b75fa73c04dd80482c2219a476cd"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/ko/messages.json": {
+      "sha256": "24f0abf87d8c4799187ae8b522507edeb7f90fccda7fb0ab64e4ef899927caee"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/lt/messages.json": {
+      "sha256": "0c058e77552ff9d0bc9f09a32213aac68faeee2f30908e031ac7c79a6d0cdf39"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/lv/messages.json": {
+      "sha256": "6b990595bf4d81bb6e779774ca0b33895edaa5ac8925990c9bcca870dd408869"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/nb/messages.json": {
+      "sha256": "4ad88196076f7204112ccec036e4e8b760dfb041d4df2ab94f0887aaaa262a88"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/nl/messages.json": {
+      "sha256": "ae4110e3fb6702604fcfc5a9267d4c92aab55bd1aada3ab59a6b4737b7e3d6a6"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/pl/messages.json": {
+      "sha256": "f55c30bce5a043a78e867f8f4cf181feacadef0cbb5d4c83402f054847bd7c80"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/pt_BR/messages.json": {
+      "sha256": "7ff7265293b31febaa87c5f2329df5c6a8eb9f903cccd941f70fd563b5336b59"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/pt_PT/messages.json": {
+      "sha256": "ef28551516e35caa633d3b011552c8ed2ecacbc66af83b60852e136253a4de6a"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/ro/messages.json": {
+      "sha256": "65ee3fd8019b7146c3b006f0ca489f9eaf4ed47dfe759bc394b4bc6d46d8ea90"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/ru/messages.json": {
+      "sha256": "d085a8dacc38cf7285bd67ff6c10cda34b1c37c577f1dbbf5be55c43c13b1eaa"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/sk/messages.json": {
+      "sha256": "9876a7d102e915e5870b8c69dc39485c85b8546d5b4bff8c31202fba8b100d4f"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/sl/messages.json": {
+      "sha256": "2f57689da236775e94b547419c7bd81ed1401e6d1f3dd0b11c94533a88d930a2"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/sr/messages.json": {
+      "sha256": "66f7f84a8a20060f7f05bd9b532ea3c4d18e2392c9bdfe4481f8f35f08c9fdc1"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/sv/messages.json": {
+      "sha256": "80da2cb02de66fd946379af43da88cbaa1d56c4c4fa0e6fea55a0760d6fac5b8"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/th/messages.json": {
+      "sha256": "db81752467a936b153d8131a21fc5b965ce8551096d537ec8f61ba308da36304"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/tr/messages.json": {
+      "sha256": "ef61d11d7752eb68a695fe9bbfa5f55582abd701ace6952254c786ad64467623"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/uk/messages.json": {
+      "sha256": "28a592385c1cf1a5dc952c3df7a3069f7a527e9a26d0716f9849c9c27d2e07af"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/vi/messages.json": {
+      "sha256": "a849cc3a067e91fed53ec39f6ffaef1a98affc14ce0b436dc97e7dd4d3837122"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/zh_CN/messages.json": {
+      "sha256": "52b181f050eb7df9e6a74021f14da8c8c433894a1dd961094042bcd59405477b"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_locales/zh_TW/messages.json": {
+      "sha256": "3b9d772213d148aa99a5b893242d00bc32081c464a5a595a5f6b1a7349ee8b02"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_metadata/computed_hashes.json": {
+      "sha256": "965203d541e442c107dbc6d5b395168123d0397559774beae4e5b9abc44ef268"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/_metadata/verified_contents.json": {
+      "sha256": "52a24fa2fb3bcb18d9d8571ae385c4a830ff98ce4c18384d40a84ea7f6ba7f69"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/1.0.0.6_0/html/craw_window.html": {
+      "sha256": "bb8742615e4cd996ae5d0200e443ae6a6f0b473255f03affdb8fb4660de4554d"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/FileTypePolicies/145.0.7584.0/manifest.json": {
+      "sha256": "31a56f514d228a98683b8cbf7e8a3ced78857ef3e745a06fbc2c5b33162d3220"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/FileTypePolicies/145.0.7584.0/_metadata/verified_contents.json": {
+      "sha256": "7fcb89cf8d975c3982b3fe815e53224e7548b73fcf1b65e613b2867fddcb3077"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/MEIPreload/1.1.0.3/manifest.json": {
+      "sha256": "8bd59f33a6e286c7e7352dfaebc9b03cea4e0e959a8ebb2f04b69bd92e107dc1"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/MEIPreload/1.1.0.3/_metadata/verified_contents.json": {
+      "sha256": "48264eccb505f5c0eb1e0d8ddabf79e4fd664018dce8f65642e0052fbeeba6ad"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/OptimizationGuideModelsManifest/1.20260927.2/manifest.json": {
+      "sha256": "39bf83d824ef9898fb26f7ea20dcc8977bc7cede10f41f01d38a871af408ae18"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/OptimizationGuideModelsManifest/1.20260927.2/_metadata/verified_contents.json": {
+      "sha256": "31bbbd9f0b67e60b65847851544ae7d21f767e899b344f43f1eef3b16519f700"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/OptimizationHints/754/manifest.json": {
+      "sha256": "240d8c559ff346d955434d83a10225e96c186b1b711e1529f6b6b166d98b7de4"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/OptimizationHints/754/_metadata/verified_contents.json": {
+      "sha256": "c572c81ce47cbacf8077623c476a6952922cbbf90079dd54d18e417da9042b44"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/PKIMetadata/1798/manifest.json": {
+      "sha256": "1ded1c975584bb4bfc8e09db7c8257b3b3e91f31be11af8b25563a3b43b98b58"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/PKIMetadata/1798/_metadata/verified_contents.json": {
+      "sha256": "c2222b869abc4ceebfe99f67574ee323185c14be6907ff153ec8b7791cd5b5db"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/SSLErrorAssistant/7/manifest.json": {
+      "sha256": "20b91160e2611d3159ad82857323febc906457756678ab73f305c3a1e399d18d"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/SSLErrorAssistant/7/_metadata/verified_contents.json": {
+      "sha256": "a0bc246e8e160a9bb32fa60f4e7a04d148a17125f426509466031e07731fdf81"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/SafetyTips/3091/manifest.json": {
+      "sha256": "8541ddcefc17c421e19c9768a70c4772315795eac3268fd8820b0fb4f409720a"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/SafetyTips/3091/_metadata/verified_contents.json": {
+      "sha256": "6cc8b90820b5474238253b5c044555a7b646b1c76acd9068032e672b27dc7c76"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Subresource Filter/Unindexed Rules/9.72.0/manifest.json": {
+      "sha256": "3cf4bdd23d314f45538d4db80cc5a30dbe7b546ffc488a24cfe9dad08a461dcd"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/Subresource Filter/Unindexed Rules/9.72.0/_metadata/verified_contents.json": {
+      "sha256": "181ce80a847a2562a18a822f0c95b63e43a949c412b1cef777ed347f880accb0"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/TrustTokenKeyCommitments/2026.8.3.1/keys.json": {
+      "sha256": "3d6c659801f1686ff3ac64bc3b24b1d0ae76ffdd5f0e9c399ba37d1354a15ab4"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/TrustTokenKeyCommitments/2026.8.3.1/manifest.json": {
+      "sha256": "c7e506687caffcf3906916ad3fc190a19212d67a2535479241096bd0d4418b03"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/TrustTokenKeyCommitments/2026.8.3.1/_metadata/verified_contents.json": {
+      "sha256": "721a6439a0b19869aaace755c9e795f83aed516e4b42d8a13f4fd978d0586d18"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/WasmTtsEngine/20260917.1/background_compiled.js": {
+      "sha256": "04ceb1738d7c8b9f2e0eefbe5cedf0aa499525882af449bd82ec811974b55cb0"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/WasmTtsEngine/20260917.1/bindings_main.js": {
+      "sha256": "aa1ee3e7900c8b5413f57d5216251ebec1091bbb4e3744bd905db0c515079258"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/WasmTtsEngine/20260917.1/manifest.json": {
+      "sha256": "eaa9162eff5487f63b2728a61a8c6893c5e4783291677dec230ffbadf812cc33"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/WasmTtsEngine/20260917.1/offscreen.html": {
+      "sha256": "90c94c10674d45fcf96eae555b55ab4c0250519850794d990d0e5a316596a1ec"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/WasmTtsEngine/20260917.1/offscreen_compiled.js": {
+      "sha256": "993200d2a91c0a13f39b87151d3a213b60510af9660f4a0d01df768b70bb4918"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/WasmTtsEngine/20260917.1/streaming_worklet_processor.js": {
+      "sha256": "aa543f45b3440d4fd1ec8bb5eaf5d165574e353848a7d3b32909d1e9e29ef61c"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/WasmTtsEngine/20260917.1/voices.json": {
+      "sha256": "a4366e6293072f140c0c1ddfbb1b2ec3ca5d7686c68d9b620ff4eac718589a07"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/WasmTtsEngine/20260917.1/wasm_tts_manifest_v3.json": {
+      "sha256": "32d7cfed6df3f0dd9d561c43f3cca697bc3399f3024a43a603d6e97801eb87e0"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/WasmTtsEngine/20260917.1/_metadata/verified_contents.json": {
+      "sha256": "e3f18cdb84f0c8023a3d153d4355997812c8ea03f4f761cd2886d61f89c84021"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/ZxcvbnData/3/manifest.json": {
+      "sha256": "aeb364b60303212808fac02eb490ee5b054ae843ce084376e5981ef8767e5198"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/ZxcvbnData/3/_metadata/verified_contents.json": {
+      "sha256": "5d6bcb37f239a11bcdeebf2960594eb2c26af18244572c07412f7af4a975c168"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/component_crx_cache/metadata.json": {
+      "sha256": "22f4db324d68340b400bc41a439344536cc77551c769d130d11c2159d8a64692"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/extensions_crx_cache/metadata.json": {
+      "sha256": "6671a602004ac4f17de216f4d2f09f462b3401e0d915d9b7837c6894d0c21564"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/hyphen-data/120.0.6050.0/manifest.json": {
+      "sha256": "d571ef33b0e707571f10bb37b99a607d6f43afe33f53d15b4395b16ef3fda665"
+    },
+    "02-TempFiles/chrome-profile-展厅评分校验-9303/hyphen-data/120.0.6050.0/_metadata/verified_contents.json": {
+      "sha256": "65491b21947d60c87c6358dcf69df9aca2b99e8f3b611bd3d559699bbc25000b"
+    },
+    "02-TempFiles/gpt6.1sol-validation/results.json": {
+      "sha256": "01d3afd57f120d7743e9de1b2c45c5030ed70550b6ecbf8fa6c946a2e078853f"
+    },
+    "02-TempFiles/pelican-shots/state-cloudy.html": {
+      "sha256": "4e21db3344fe251bc5df98afee29f01213d58e8fa00f26ff6c4f83e11388dcd1"
+    },
+    "02-TempFiles/pelican-shots/state-rainy.html": {
+      "sha256": "6210c58b35ed21c1a2aa934f5e57b0386369b8ffa5ab5c2bf80b5c503251d111"
+    },
+    "03-TempScr/10月5日-1745-gpt6-sol浏览器验证.py": {
+      "sha256": "bfb02c3410995299a8cc3bbb883ba945d9c3cded54b3e69263d91e27f97f05f6"
+    },
+    "03-TempScr/10月5日-1800-gpt6.1sol浏览器验证.cjs": {
+      "sha256": "2b63601ca81adc7adf6969f548405d430a2ba457c346ec10b1917680fe17d0f3"
+    },
+    "03-TempScr/10月5日-1800-鹈鹕页面CDP截图.ps1": {
+      "sha256": "0e5141a8c81e9bab9a59bec5ea8d24b683bbbf8dad619bfa0030286eb4ad07c9"
+    },
+    "03-TempScr/10月5日-1815-生成展厅缩略图.py": {
+      "sha256": "733722b2ba37ca722a45a25f3d07d685e73f5b54a6e1209b1fc01f6f6c6ba875"
+    },
+    "03-TempScr/10月5日-1935-更新模型元数据.py": {
+      "sha256": "23263381dc0303dc855524faf05e7c86d930b4b14bfaaeb1806002429b10cb11"
+    },
+    "03-TempScr/10月5日-2030-重排展厅数据并收录新模型.js": {
+      "sha256": "51654ba31162b0be09cd4dbad073bd76d2e51765bf60541eca53f445c9eb7c2a"
+    },
+    "03-TempScr/10月5日-2110-展厅查看器交互校验.js": {
+      "sha256": "75792f9e42445789895b51746c09821cdc035b86896ee189e9659b7c2641e7fe"
+    },
+    "03-TempScr/10月5日-2120-查看器二次打开复测.js": {
+      "sha256": "f7770c71d8e6e160a2e538ef43cb7e3a6e68a4d20df8c9e0e96fa4ca0c47e241"
+    },
+    "03-TempScr/10月5日-2125-查看器截图.js": {
+      "sha256": "0af9253525642e9d7d8dfeab137362d39cfc83e762274ece3973132bba264797"
+    },
+    "03-TempScr/10月5日-2335-本次改动冒烟.js": {
+      "sha256": "6ff5c31511c5068c702d551a0e8ab93e5c65b4078e7a743c11301e9a33f7d98c"
+    },
+    "03-TempScr/make-weather-previews.cjs": {
+      "sha256": "4bb00e3495fdf4c3db2b35de0d64f7e5c2fe91d76f7672d27068a8bac5d667d1"
+    },
+    "04-OpsDev/gpt6.1sol-preview.cjs": {
+      "sha256": "59bcce8b27b216989993c3f91522887cd6832e0e21fb76f5ee2181f9b9cae2af"
+    },
+    "3D鹈鹕测试/GLM5.3-3D鹈鹕.html": {
+      "sha256": "07a5b9611f2ea881852d715204272c94b72a621e1e6c45d1585f659f8bb981f4"
+    },
+    "3D鹈鹕测试/HY40909-1145-体素鹈鹕骑行场景.html": {
+      "sha256": "9d373af1b40f267927f6de44fb72bba42c0669e13bf0e1579f4f7c359142f0a9"
+    },
+    "3D鹈鹕测试/KIMI-K3体素鹈鹕.html": {
+      "sha256": "5ea06b0ad3fb91b9decb173a4010c888961ccaad9213ba3e89b213bee2f158e9"
+    },
+    "3D鹈鹕测试/V4FLASH官网.html": {
+      "sha256": "5d2cffd0ee407f88c7a061a04622ab583297278993167f0c069eab7c790be43b"
+    },
+    "3D鹈鹕测试/V4PRO官网.html": {
+      "sha256": "87f47ae1a22a2fd228360667d34e708077815c1f7ae4e0a8435c50d50a6b1348"
+    },
+    "3D鹈鹕测试/deepseekv4.1flash.html": {
+      "sha256": "e74c315eed14cbe2e4111116cc8c896ce62f465e9cf8e270111efbfe49ddc642"
+    },
+    "3D鹈鹕测试/体素鹈鹕骑自行车-天气循环场景-qwen3.8max.html": {
+      "sha256": "b1535a22064e1388ec9244695dfc2878e9b7d52bf7cd7e347abd0e1bd17d0fd4"
+    },
+    "3D鹈鹕测试/体素鹈鹕骑自行车V4FLASH VISION EXP.html": {
+      "sha256": "710e4fcfd64a5e6363ecc28fd4dd30d07ee1a80ea015bebf9a0955e54cbef04d"
+    },
+    "3D鹈鹕测试/模型鹈鹕-gpt5.6sol.html": {
+      "sha256": "85d3ed1e7e5e91edfc030716b9b73eeb47b68141aa491339bee1b8abcbf18e73"
+    },
+    "3D鹈鹕测试/鹈鹕gpt5.6luna.html": {
+      "sha256": "9ef279e640cd7f8d12765485e344356e3e4d86bb74e4851b7ed86ff6b8aa9039"
+    },
+    "3D鹈鹕测试/鹈鹕白天骑自行车-体素场景-GLM5.3.html": {
+      "sha256": "e9c37ffd8b162b3e6c023bb4981d7a11a0d6262605b411d62dad0a168544799e"
+    },
+    "OpsDev/deploy-pages.sh": {
+      "sha256": "655723cfd126f10f4a11f200c6bc0fbed4e7ed861cd78002f3311dfd6c478e90"
+    },
+    "Trash/grok-4-5-real.html": {
+      "sha256": "3f24d9f2260fd425039eb90e3fcdd7646258806272eff914837dffd43ecb206d"
+    },
+    "Trash/grok-4-5.html": {
+      "sha256": "b9859e6a33ec7da11ecf5219bd863aa9a4fa7fc1c088e556d00f8747a0634b9b"
+    },
+    "Trash/kimik3workbuddy.html": {
+      "sha256": "a73513193b519c1e46564cf3f25ac5c02524ae0d3e0f06d9a8263c313d8d805b"
+    },
+    "Trash/minimaxm3-workbuddy.html": {
+      "sha256": "3fa7ea2bef6dcf00a7df2558c5de07520e1b7e84c78acc05007f4d5bbfd2cf5e"
+    },
+    "Trash/qwen-3-6-flash.html": {
+      "sha256": "fdc2c8388be31207caddd1e7831c06bedbf0835ad28b2640dee98ed097c3cf3e"
+    },
+    "assets/app.js": {
+      "sha256": "2fa5a96ce62d50f351462e212793844299ee9d4e6c74f8166b59bdffa3b696f4"
+    },
+    "sites/claude-opus-5-5-zcode.html": {
+      "sha256": "15d0461af0b6b52b73ecbcee909d3de80c07b8fb8891b0479004f410db77e5f8"
+    },
+    "sites/claude-sonnet-5-5.html": {
+      "sha256": "ca249489c02efaef9ff1dcdfbb4f2a6b0a9c959e07ba09319160d386886f5401"
+    },
+    "sites/deepseek-v4-1-flash.html": {
+      "sha256": "5c4bced809ef13a8376d544944aff5c502e0961d82d442ba4a173f6856b5f154"
+    },
+    "sites/deepseek-v4-flash-0424-wb.html": {
+      "sha256": "c558a35f668cf47569ac1047f6a2a7d36b0a7aa6dcf605070f8b6d86925c2b52"
+    },
+    "sites/deepseek-v4-flash-0731-dsh-minimal.html": {
+      "sha256": "4aeabb83b407a0c47441e16544845ea894fb24109a48300abd3f6cd59195244c"
+    },
+    "sites/deepseek-v4-flash-api-0731.html": {
+      "sha256": "33fc2d15c99d0b5bd356fe24985f3885920d6b528daa3bc1fc77275462e26581"
+    },
+    "sites/deepseek-v4-pro-0424-wb.html": {
+      "sha256": "3fdac164b1cdb912cf05e6792eaf3d011fbbbd26a732d0db8f3526315fe4ba38"
+    },
+    "sites/deepseek-v4-pro-0813-dsh-minimal.html": {
+      "sha256": "f7d91b9edba743b4d8ba5af77f0416fe1fcfed8396c3ca73894464edee60b07d"
+    },
+    "sites/deepseek-v4-pro-api-0813.html": {
+      "sha256": "402c592baeee0e17bc1ed9c4196afff45fe17a57caa31b792e8afdf84eb01ac3"
+    },
+    "sites/doubao-expert.html": {
+      "sha256": "1028371cf50012d02de334420386ac5cb756161cff1d8e829b782b4e4c36ccb8"
+    },
+    "sites/gemini-3-1-pro.html": {
+      "sha256": "ecbbf9c93984119b82c216ba2c4b9eb52b132e103cb9417b4e93389a4b45ea84"
+    },
+    "sites/gemini-3-6-flash.html": {
+      "sha256": "ee6fa0230ccef9aad59dde8a0546ee743bc66865beb171e61bf6f1382e37fd0e"
+    },
+    "sites/gemini-3-7.html": {
+      "sha256": "e23c5db059a035dd3149b173d963142babae2c099a7b888c6afa5fa5d356e27d"
+    },
+    "sites/gemini-3-8.html": {
+      "sha256": "7c8a78bf97d24a486d66c808e9f2bcf6ad20848cd160eb6e3fa3597281e10d6a"
+    },
+    "sites/glm-5-2-wb.html": {
+      "sha256": "6f19e9cdd55253488876d1a8eaa8be34f5185ef7ba6ceb09948e15e9f42407e0"
+    },
+    "sites/glm-5-3-flash-zai.html": {
+      "sha256": "f751098ec835b9c410443e099d94c1725670459b32114ee18d5bd1def0832a62"
+    },
+    "sites/glm-5-3-flash-zhipu.html": {
+      "sha256": "5234a98d26ed62875211a49549c3fc8acd75041a2b145847626d7e6d9e90f381"
+    },
+    "sites/glm-5-3-wb.html": {
+      "sha256": "c3d115ef437fc83bf544f9362c6601122bc81f5f1f4109788279fc5ed201fff1"
+    },
+    "sites/gpt-5-6-codex.html": {
+      "sha256": "f0f13319203e65347c8e1bc7e08f56af3ef3486fffc25897e03b4560c74a208d"
+    },
+    "sites/gpt-5-6-luna-codex.html": {
+      "sha256": "7ea2d8ff868429f99a7a2cbf90dab1bffebc27aa56c702b5463cc46ee4e03130"
+    },
+    "sites/gpt-6-1-sol.html": {
+      "sha256": "6a52b85979d656defceebc3e11c6ba2be48f3f492c7c10a09d01339ca85359de"
+    },
+    "sites/gpt-6-luna.html": {
+      "sha256": "3342e873c7eec8e6e2ea81e6513448e248e6f89e16eaeb4688b13411b7e0aebf"
+    },
+    "sites/gpt-6-sol.html": {
+      "sha256": "3784b51f22b5a958f161a60458146cf2300f86e7dff77d11dfa539eba020f855"
+    },
+    "sites/gpt-6.html": {
+      "sha256": "eb38e4cc95e37d123c8300cac0280e20ba775a1f1030a0d418bff6848ade45d6"
+    },
+    "sites/grok-4-6.html": {
+      "sha256": "cc883d4ad7793d81e7b6ef9c1d994d9bdc66de929961869329d251e52353b82d"
+    },
+    "sites/grok-4-7.html": {
+      "sha256": "7f5816032bbf8d44f2e3c062c49758036f39d91bf3f2d2192acec3c3031c8a7b"
+    },
+    "sites/hunyuan-hy3-wb.html": {
+      "sha256": "a03a62d2896a267552cff6625093dee3f86683ca514e6b2d667e461d88aac69c"
+    },
+    "sites/hy4-preview.html": {
+      "sha256": "04fec35062368a303e59953d7d09b8c68bdbbb413279aa071157f9438ef24078"
+    },
+    "sites/kimi-k2-8.html": {
+      "sha256": "ca9372ddfa678aaa49555700c16db3cacc833a28799e41f687cbcef529c863d0"
+    },
+    "sites/kimi-k3-wb.html": {
+      "sha256": "6feb71ef53279df0aa551b494e8486f627b1930dd69f79b90b0474324c8a5c0c"
+    },
+    "sites/mimo-v2-6-pro.html": {
+      "sha256": "8ee2cd3bb80bbd77ef6116876685cfb5844d10ac06afbe858de968d6fd3e136f"
+    },
+    "sites/mimo-v2-6.html": {
+      "sha256": "7bcfa7fbd4d1bea45a98539734af6c11c8b4d97671cac0333a9a086851bc8f49"
+    },
+    "sites/minimax-m3-1.html": {
+      "sha256": "fa373cae34685e85c17fdca65a144d51fc869f01fb4a383b6a5da588d8ed248f"
+    },
+    "sites/minimax-m3-wb.html": {
+      "sha256": "48d63972e70873aafcf1ca276a8fc54e5d869a5451bff5cbbc7e39d60f9acf31"
+    },
+    "sites/opus-5-relay.html": {
+      "sha256": "c069736514a45d2b84146155238ec5130c632617aea3d4b5da5fd00baa8d39de"
+    },
+    "sites/qianwen-3-6-flash.html": {
+      "sha256": "8cb22fe47c4fe662af118c5d88b9a6e27b0c06a00c7575a94cfc64e40ccb129d"
+    },
+    "sites/qwen-3-6-27b.html": {
+      "sha256": "79da723e4a76f3ca11ae608dd5ab9af3d7665c6d248a07ba1870b76bd11952ea"
+    },
+    "sites/qwen-3-7-plus.html": {
+      "sha256": "4854490dd27ba8953aaedcb5544005d3997e1c87a18eba24d1577b088afe54ec"
+    },
+    "sites/qwen-3-8-27b.html": {
+      "sha256": "433e414ef3a627dd9a320a63b88b5c0be0f70cbfc51bf9f673a32150c26d084d"
+    },
+    "sites/qwen-3-8-flash-api.html": {
+      "sha256": "9fd590e7f01b3cae42f660fae93cd8a7a19064829e51e65957841996f33f80e1"
+    },
+    "sites/qwen-3-8-max.html": {
+      "sha256": "4ac3f6cf7e6ecb016e7c08f06bbccd8d1d81d832449c5d5049ef2c3a1392fd87"
+    },
+    "sites/seed-2-1-pro-0915.html": {
+      "sha256": "002f7237b48d8208f9409c8e09f3a6de3be8c1f23bec2c6ff0fe7e7027eff166"
+    },
+    "sites/seed-2-1-pro-trae.html": {
+      "sha256": "ce112554303b8f7eb4855e42fd070252c2f76251c0e1f669d330c15ebf81116e"
+    },
+    "sites/spacebunny.html": {
+      "sha256": "854640eee4ac1dd4c11404f3f46c867809eef434d697b6b2a2c8289271064197"
+    },
+    "sites/step-5-preview.html": {
+      "sha256": "0fa6a31c9c813ba5dc3fce60d72eb5262d9086d253240f25ad9200314513ae02"
+    }
+  },
+  "source_fingerprints_complete": true
+}
