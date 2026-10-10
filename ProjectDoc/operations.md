@@ -35,7 +35,7 @@ client_level: developer
 3. 评分基线：确认 `assets/app.js` 的 `DEFAULT_RATINGS` 是最新导出版（最近一次基线文件在桌面：`C:/Users/mypra/Desktop/peilika-ratings-2026-10-05.json`）。
 4. 死链/缺失：核对 `sites-data.js` 每条的 `src`/`thumb` 文件真实存在（可用 `03-TempScr/10月5日-2335-本次改动冒烟.js` 的思路跑一遍）。
 5. 证书：Cloudflare 自动管理，无需检查有效期。
-6. 仓库：确认改动已 `git commit`（当前无 remote，不会自动备份到远端）。
+6. 仓库：确认改动已 `git commit`，并 `git push origin main` 同步到 GitHub（`https://github.com/Myparjna/Pelicans-Benchmar`）。
 
 ## 回滚
 

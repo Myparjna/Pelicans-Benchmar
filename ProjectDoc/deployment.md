@@ -41,7 +41,17 @@ bash OpsDev/deploy-pages.sh
    curl -s -o /dev/null -w "%{content_type}\n" -L https://peilika.pages.dev/thumbs/hy4-preview.webp   # 应为 image/webp
    curl -s https://peilika.pages.dev/sites-data.js | grep -c '"slug"'                                  # 应为 45
    ```
-10. 提交 git：`git add` 涉及文件后 `git commit -m "..."`（当前仓库无 remote，不自动推送）。
+10. 提交 git：`git add` 涉及文件后 `git commit -m "..."`；需要远端备份时执行 `git push origin main`（remote `origin` 已指向 `https://github.com/Myparjna/Pelicans-Benchmar.git`）。
+
+## 源码仓库同步（GitHub）
+
+仓库地址 **https://github.com/Myparjna/Pelicans-Benchmar**（公开仓库，默认分支 `main`，本地已配置 remote 别名 `origin`）。
+
+推送要点：
+1. 认证走 GitHub CLI（`gh auth login` 后 `gh auth setup-git`）。本机 git 全局 `credential.helper` 为 `helper-selector`（Git Credential Manager），在无人值守场景下会等待弹窗导致推送卡住，需要交互式确认时请改用带令牌的方式：`git -c credential.helper= push https://x-access-token:$(gh auth token)@github.com/Myparjna/Pelicans-Benchmar.git main`。
+2. 网络走 Clash 代理 `http://127.0.0.1:7897`（git 的 `http.proxy` 与 `https.proxy` 已配置）。
+3. 提交作者邮箱已统一为 GitHub noreply 地址 `48089881+Myparjna@users.noreply.github.com`。若改回私人邮箱，公开仓库推送会被 GitHub 邮箱隐私策略拦截（错误码 `GH007`）。
+4. 2026-10-10 首次同步时，8 月 15 日的旧版本历史已单独保留在分支 `backup-2026-08-15`，本地 `main` 以强推方式覆盖远端 `main`。此后按普通 `git push origin main` 即可，无需再强推。
 
 > 详见 [environment.md](./environment.md)：本项目无环境变量需要配置。
 
@@ -60,7 +70,7 @@ bash OpsDev/deploy-pages.sh
 | 服务 | 用途 | 账号归属 | 交接动作 |
 |---|---|---|---|
 | Cloudflare Pages（项目 `peilika`） | 静态托管与生产域名 | wrangler OAuth 账号 `905443848@qq.com`，[需向交接人确认: 账号归属/是否转移] | 在 Cloudflare Dashboard 把接手方加为成员，或让对方 `wrangler login` 后自行部署 |
-| GitHub `Myparjna/Pelicans-Benchmar` | 历史曾推送过的公开仓库；当前本地仓库 `git remote -v` 为空 | [需向交接人确认: GitHub 账号归属] | 若需继续同步，重新 `git remote add origin <url>` 并推送 |
+| GitHub `Myparjna/Pelicans-Benchmar` | 源码仓库（公开），2026-10-10 已同步本地 19 个提交 | GitHub 账号 `Myparjna`（本机 `gh` 已登录，令牌含 `repo` 权限） | 让接手方 `gh auth login` 后加入仓库协作者，或把仓库转移到对方账号 |
 | jsdelivr CDN（Tabler Icons Webfont） | 图标字体 | 无账号 | 无需交接；若要离线化需自托管字体 |
 
 ## 服务器/托管资源

@@ -8,8 +8,6 @@ client_level: developer
 
 ## 待确认问题
 
-- [需向交接人确认: GitHub 仓库 https://github.com/Myparjna/Pelicans-Benchmar 是否仍需同步？当前本地仓库 `git remote -v` 为空，历史提交未推送]
-- [需向交接人确认: GitHub 账号归属]
 - [需向交接人确认: 45 个模型产出分别是在哪些账号/平台生成的，是否有费用需要跟踪]
 - [需向交接人确认: Cloudflare Pages 项目 `peilika` 所在账号归属（当前 wrangler OAuth 登录账号 `905443848@qq.com`），后续是否要转移所有权]
 - [需向交接人确认: 新增 5 个模型（Grok 4.7 / DeepSeek V4.1 Flash / 小米 MiMo V2.6 与 Pro / MiniMax M3.1）的 `channel` 字段来源尚未确认，界面已隐藏渠道标签但数据仍保留占位 `—`]
@@ -67,6 +65,7 @@ cd "C:/Users/mypra/Desktop/VibeCoding指南/skills测评项目/03-鹈鹕自行�
 |---|---|---|
 | 本地访问地址 | `http://127.0.0.1:8137/index.html` | `python -m http.server 8137` |
 | 生产访问入口 | `https://peilika.pages.dev` | Cloudflare Pages 项目 `peilika` |
+| 源码仓库 | `https://github.com/Myparjna/Pelicans-Benchmar` | GitHub 账号 `Myparjna`，默认分支 `main`，已配置 remote `origin` |
 | 启动一行命令 | `python -m http.server 8137 --bind 127.0.0.1` | 项目根目录 |
 | 部署一行命令 | `bash OpsDev/deploy-pages.sh` | 需 wrangler OAuth 已登录，详见 deployment.md |
 | 回滚一行命令 | Cloudflare Dashboard → Workers & Pages → peilika → Deployments → 选上一版本 Rollback | 无 CLI 回滚记录，详见 operations.md |
