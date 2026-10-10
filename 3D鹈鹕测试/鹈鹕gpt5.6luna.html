@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
+  <title>鹈鹕 GPT-5.6 Luna · 体素骑行天气场景</title>
+  <style>
+    :root {
+      --ink: #10233b;
+      --muted: #5f7087;
+      --panel: rgba(255, 255, 255, 0.84);
+      --panel-border: rgba(255, 255, 255, 0.7);
+      --accent: #ff8a3d;
+      --accent-deep: #d75d2d;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #bce8ff;
+      font-family: "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+      color: var(--ink);
+    }
+
+    body { transition: background 900ms ease; }
+
+    #app {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      isolation: isolate;
+    }
+
+    #scene {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+    }
+
+    .topbar {
+      position: absolute;
+      z-index: 5;
+      top: max(18px, env(safe-area-inset-top));
+      left: max(18px, env(safe-area-inset-left));
+      right: max(18px, env(safe-area-inset-right));
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      pointer-events: none;
+    }
+
+    .brand-card, .weather-card, .hint-card {
+      border: 1px solid var(--panel-border);
+      background: var(--panel);
+      box-shadow: 0 16px 40px rgba(25, 67, 104, 0.12);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .brand-card {
+      padding: 14px 17px 13px;
+      border-radius: 18px;
+      min-width: 230px;
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent-deep);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(255, 138, 61, 0.16);
+    }
+
+    h1 {
+      margin: 6px 0 3px;
+      font-size: clamp(18px, 2.6vw, 29px);
+      line-height: 1.12;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .weather-card {
+      min-width: 164px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      text-align: right;
+    }
+
+    .weather-label {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+    }
+
+    .weather-value {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+      font-size: 19px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .weather-icon { font-size: 21px; }
+
+    .weather-countdown {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .bottom-ui {
+      position: absolute;
+      z-index: 5;
+      right: max(18px, env(safe-area-inset-right));
+      bottom: max(18px, env(safe-area-inset-bottom));
+      left: max(18px, env(safe-area-inset-left));
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 14px;
+      pointer-events: none;
+    }
+
+    .hint-card {
+      max-width: 400px;
+      padding: 10px 13px;
+      border-radius: 14px;
+      color: #476178;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .hint-card strong { color: var(--ink); }
+
+    .weather-button {
+      pointer-events: auto;
+      border: 0;
+      border-radius: 14px;
+      padding: 11px 14px;
+      color: white;
+      background: var(--ink);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 12px 24px rgba(16, 35, 59, 0.2);
+      transition: transform 180ms ease, background 180ms ease;
+    }
+
+    .weather-button:hover { transform: translateY(-2px); }
+    .weather-button:active { transform: translateY(0); }
+
+    .vignette {
+      position: absolute;
+      z-index: 2;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(255,255,255,0.15), transparent 32%, rgba(12, 35, 57, 0.08));
+      mix-blend-mode: multiply;
+    }
+
+    @media (max-width: 560px) {
+      .topbar { align-items: stretch; flex-direction: column; gap: 9px; }
+      .brand-card { min-width: 0; padding: 12px 14px; }
+      .weather-card { align-self: flex-start; min-width: 0; padding: 9px 12px; text-align: left; }
+      .weather-value { justify-content: flex-start; font-size: 16px; }
+      .weather-countdown { margin-top: 3px; }
+      .bottom-ui { align-items: stretch; flex-direction: column; }
+      .hint-card { min-width: 0; width: 100%; max-width: none; }
+      .weather-button { align-self: flex-end; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main id="app">
+    <canvas id="scene" aria-label="体素鹈鹕骑自行车天气场景"></canvas>
+    <div class="vignette"></div>
+
+    <header class="topbar">
+      <section class="brand-card">
+        <div class="eyebrow">Voxel Day Ride</div>
+        <h1>鹈鹕的晴雨骑行</h1>
+        <p class="subtitle">体素建模 · 手机竖屏 / 电脑横屏自适应</p>
+      </section>
+
+      <section class="weather-card" aria-live="polite">
+        <span class="weather-label">自动天气循环 · 每 5 秒</span>
+        <div class="weather-value"><span id="weatherIcon" class="weather-icon">☀️</span><span id="weatherName">晴天</span></div>
+        <div id="weatherCountdown" class="weather-countdown">下次切换 5.0 秒</div>
+      </section>
+    </header>
+
+    <footer class="bottom-ui">
+      <div class="hint-card"><strong>骑行档案：</strong>白鹈鹕 · 体素模型 · 海边公路 · 轻微踏板动画</div>
+      <button id="weatherButton" class="weather-button" type="button">立即切换天气</button>
+    </footer>
+  </main>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const canvas = document.getElementById('scene');
+      const ctx = canvas.getContext('2d');
+      const weatherName = document.getElementById('weatherName');
+      const weatherIcon = document.getElementById('weatherIcon');
+      const weatherCountdown = document.getElementById('weatherCountdown');
+      const weatherButton = document.getElementById('weatherButton');
+
+      if (!ctx) {
+        weatherName.textContent = '画布加载失败';
+        weatherCountdown.textContent = '请使用现代浏览器打开';
+        return;
+      }
+
+      const palettes = {
+        sunny: { skyTop: '#96daf8', skyBottom: '#eaf9ff', hill: '#8bcf9b', ground: '#6bb975', groundDark: '#4c9969', road: '#355666', roadEdge: '#f6d77e', sea: '#64bed6', cloud: '#ffffff', cloudShade: '#e5eff0', sun: '#ffd55d', sunRay: '#ffb83d', shadow: 'rgba(18,52,70,0.22)', rain: '#eaf8ff', tint: 'rgba(255,246,198,0)' },
+        cloudy: { skyTop: '#8199ae', skyBottom: '#dbe5ec', hill: '#7da893', ground: '#659a73', groundDark: '#4f7d66', road: '#3d5260', roadEdge: '#dbcb86', sea: '#6fa0af', cloud: '#e7edef', cloudShade: '#b9c7ce', sun: '#aebcc2', sunRay: '#b8c8ce', shadow: 'rgba(19,43,56,0.27)', rain: '#dfeef6', tint: 'rgba(25,49,68,0.04)' },
+        rainy: { skyTop: '#4e6a82', skyBottom: '#a9c0cf', hill: '#608477', ground: '#527f69', groundDark: '#3f665d', road: '#2d4656', roadEdge: '#b9bca4', sea: '#517e99', cloud: '#7b929f', cloudShade: '#5d7382', sun: '#7e929d', sunRay: '#8299a7', shadow: 'rgba(8,30,47,0.34)', rain: '#e8f7ff', tint: 'rgba(16,39,58,0.13)' }
+      };
+
+      const weather = [
+        { key: 'sunny', name: '晴天', icon: '☀️' },
+        { key: 'cloudy', name: '阴天', icon: '☁️' },
+        { key: 'rainy', name: '雨天', icon: '🌧️' }
+      ];
+
+      const viewport = { width: 1, height: 1, dpr: 1, scale: 1 };
+      const pointer = { x: 0, y: 0, targetX: 0, targetY: 0 };
+      const rainDrops = Array.from({ length: 150 }, (_, index) => ({
+        x: (index * 73) % 1000 / 1000,
+        y: (index * 137) % 1000 / 1000,
+        length: 0.018 + (index % 5) * 0.004,
+        speed: 0.42 + (index % 7) * 0.04
+      }));
+
+      let weatherIndex = 0;
+      let nextWeatherAt = performance.now() + 5000;
+      let rideTime = 0;
+      let last = performance.now();
+
+      function resize() {
+        viewport.width = window.innerWidth;
+        viewport.height = window.innerHeight;
+        viewport.dpr = Math.min(window.devicePixelRatio || 1, 2);
+        viewport.scale = Math.min(viewport.width / 15, viewport.height / 12) * 0.75;
+        canvas.width = Math.floor(viewport.width * viewport.dpr);
+        canvas.height = Math.floor(viewport.height * viewport.dpr);
+        ctx.setTransform(viewport.dpr, 0, 0, viewport.dpr, 0, 0);
+      }
+
+      function project(x, y, z) {
+        const s = viewport.scale;
+        return [
+          viewport.width * 0.5 + (x - z) * s * 0.84 + pointer.x * s * 0.42,
+          viewport.height * 0.66 - y * s + (x + z) * s * 0.34 + pointer.y * s * 0.24
+        ];
+      }
+
+      function polygon(points, fill, stroke = null) {
+        ctx.beginPath();
+        ctx.moveTo(points[0][0], points[0][1]);
+        for (let i = 1; i < points.length; i++) ctx.lineTo(points[i][0], points[i][1]);
+        ctx.closePath();
+        ctx.fillStyle = fill;
+        ctx.fill();
+        if (stroke) { ctx.strokeStyle = stroke; ctx.stroke(); }
+      }
+
+      function drawVoxel(x, y, z, w, h, d, top, left, right) {
+        const topFace = [
+          project(x - w / 2, y + h, z - d / 2),
+          project(x + w / 2, y + h, z - d / 2),
+          project(x + w / 2, y + h, z + d / 2),
+          project(x - w / 2, y + h, z + d / 2)
+        ];
+        const bottomFace = [
+          project(x - w / 2, y, z - d / 2),
+          project(x + w / 2, y, z - d / 2),
+          project(x + w / 2, y, z + d / 2),
+          project(x - w / 2, y, z + d / 2)
+        ];
+        polygon([topFace[0], topFace[3], bottomFace[3], bottomFace[0]], left);
+        polygon([topFace[1], topFace[2], bottomFace[2], bottomFace[1]], right);
+        polygon(topFace, top);
+      }
+
+      function drawBeam(a, b, color, width) {
+        const p1 = project(...a);
+        const p2 = project(...b);
+        ctx.beginPath();
+        ctx.moveTo(p1[0], p1[1]);
+        ctx.lineTo(p2[0], p2[1]);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = Math.max(1.5, width * viewport.scale);
+        ctx.lineCap = 'square';
+        ctx.stroke();
+      }
+
+      function drawShadow(x, y, z, rx, ry) {
+        const p = project(x, y, z);
+        ctx.save();
+        ctx.translate(p[0], p[1]);
+        ctx.scale(rx * viewport.scale, ry * viewport.scale);
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 1, 1, 0, 0, Math.PI * 2);
+        ctx.fillStyle = palettes[weather[weatherIndex].key].shadow;
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawSun(palette) {
+        const x = viewport.width * 0.81;
+        const y = viewport.height * 0.2;
+        const radius = viewport.scale * 1.1;
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.strokeStyle = palette.sunRay;
+        ctx.lineWidth = Math.max(2, viewport.scale * 0.1);
+        for (let i = 0; i < 8; i++) {
+          const angle = i * Math.PI / 4;
+          ctx.beginPath();
+          ctx.moveTo(Math.cos(angle) * radius * 1.35, Math.sin(angle) * radius * 1.35);
+          ctx.lineTo(Math.cos(angle) * radius * 1.8, Math.sin(angle) * radius * 1.8);
+          ctx.stroke();
+        }
+        ctx.beginPath();
+        ctx.arc(0, 0, radius, 0, Math.PI * 2);
+        ctx.fillStyle = palette.sun;
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawCloud(x, y, z, scale, palette) {
+        drawVoxel(x, y, z, 2.2 * scale, 0.45 * scale, 0.85 * scale, palette.cloud, palette.cloudShade, palette.cloudShade);
+        drawVoxel(x - 0.85 * scale, y + 0.28 * scale, z, 1.15 * scale, 0.65 * scale, 0.85 * scale, palette.cloud, palette.cloudShade, palette.cloudShade);
+        drawVoxel(x + 0.15 * scale, y + 0.35 * scale, z, 1.3 * scale, 0.85 * scale, 0.92 * scale, palette.cloud, palette.cloudShade, palette.cloudShade);
+        drawVoxel(x + 0.9 * scale, y + 0.18 * scale, z, 0.8 * scale, 0.55 * scale, 0.72 * scale, palette.cloud, palette.cloudShade, palette.cloudShade);
+      }
+
+      function drawTree(x, z, scale, palette) {
+        drawVoxel(x, 0, z, 0.34 * scale, 1.8 * scale, 0.34 * scale, '#a55e3e', '#78412f', '#8b4d34');
+        drawVoxel(x, 1.55 * scale, z, 1.4 * scale, 0.72 * scale, 1.15 * scale, palette.ground, palette.groundDark, palette.groundDark);
+        drawVoxel(x - 0.35 * scale, 2.1 * scale, z, 1.1 * scale, 0.8 * scale, 1.0 * scale, '#7dc879', palette.ground, palette.groundDark);
+        drawVoxel(x + 0.32 * scale, 2.16 * scale, z - 0.04, 0.9 * scale, 0.78 * scale, 0.9 * scale, '#86d17d', palette.ground, palette.groundDark);
+        drawVoxel(x, 2.7 * scale, z, 0.62 * scale, 0.58 * scale, 0.66 * scale, '#99db86', palette.ground, palette.groundDark);
+      }
+
+      function drawFlower(x, z, color, palette) {
+        drawBeam([x, 0.05, z], [x, 0.36, z], palette.groundDark, 0.06);
+        drawVoxel(x - 0.1, 0.33, z, 0.16, 0.16, 0.16, color, color, color);
+        drawVoxel(x + 0.1, 0.33, z, 0.16, 0.16, 0.16, color, color, color);
+        drawVoxel(x, 0.33, z + 0.1, 0.16, 0.16, 0.16, color, color, color);
+      }
+
+      function drawWheel(x, y, z, angle) {
+        const center = project(x, y, z);
+        const rx = viewport.scale * 0.85;
+        const ry = viewport.scale * 1.02;
+        ctx.save();
+        ctx.translate(center[0], center[1]);
+        ctx.scale(0.72, 1);
+        ctx.rotate(angle * 0.13);
+        ctx.beginPath();
+        ctx.arc(0, 0, ry, 0, Math.PI * 2);
+        ctx.strokeStyle = '#192c3b';
+        ctx.lineWidth = Math.max(3, viewport.scale * 0.17);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(0, 0, ry * 0.78, 0, Math.PI * 2);
+        ctx.strokeStyle = '#b9c8c8';
+        ctx.lineWidth = Math.max(1, viewport.scale * 0.035);
+        ctx.stroke();
+        ctx.strokeStyle = 'rgba(235,245,242,0.7)';
+        ctx.lineWidth = Math.max(1, viewport.scale * 0.025);
+        for (let i = 0; i < 8; i++) {
+          const a = i * Math.PI / 4;
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.lineTo(Math.cos(a) * ry * 0.78, Math.sin(a) * ry * 0.78);
+          ctx.stroke();
+        }
+        ctx.fillStyle = '#e46c32';
+        ctx.fillRect(-viewport.scale * 0.1, -viewport.scale * 0.1, viewport.scale * 0.2, viewport.scale * 0.2);
+        ctx.restore();
+      }
+
+      function drawBike(time) {
+        const bx = -0.6;
+        const bz = 0.5;
+        const pedal = time * 3.5;
+        drawShadow(bx, 0.19, bz, 2.2, 0.58);
+        drawWheel(bx - 1.12, 1.3, bz, pedal);
+        drawWheel(bx + 1.12, 1.3, bz, pedal);
+
+        const orange = '#e46c32';
+        const metal = '#d9e5e4';
+        drawBeam([bx - 1.12, 1.3, bz], [bx, 1.53, bz], orange, 0.16);
+        drawBeam([bx - 0.35, 2.38, bz], [bx + 0.82, 2.31, bz], orange, 0.16);
+        drawBeam([bx - 1.12, 1.3, bz], [bx - 0.35, 2.38, bz], orange, 0.16);
+        drawBeam([bx, 1.53, bz], [bx + 0.82, 2.31, bz], orange, 0.16);
+        drawBeam([bx - 0.35, 2.38, bz], [bx, 1.53, bz], orange, 0.16);
+        drawBeam([bx + 0.82, 2.31, bz], [bx + 1.12, 1.3, bz], metal, 0.13);
+        drawBeam([bx + 0.82, 2.31, bz], [bx + 0.88, 2.72, bz], metal, 0.12);
+        drawBeam([bx + 0.58, 2.73, bz], [bx + 1.1, 2.73, bz], metal, 0.12);
+        drawVoxel(bx - 0.35, 2.56, bz, 0.58, 0.12, 0.28, '#1d2d3c', '#152531', '#1b2d3b');
+        drawBeam([bx, 1.53, bz], [bx + Math.cos(pedal) * 0.36, 1.53 + Math.sin(pedal) * 0.36, bz], '#1d2d3c', 0.075);
+        drawBeam([bx, 1.53, bz], [bx - Math.cos(pedal) * 0.36, 1.53 - Math.sin(pedal) * 0.36, bz], '#1d2d3c', 0.075);
+        drawVoxel(bx + Math.cos(pedal) * 0.5, 1.53 + Math.sin(pedal) * 0.5, bz, 0.34, 0.09, 0.14, '#1d2d3c', '#142430', '#172936');
+        drawVoxel(bx - Math.cos(pedal) * 0.5, 1.53 - Math.sin(pedal) * 0.5, bz, 0.34, 0.09, 0.14, '#1d2d3c', '#142430', '#172936');
+      }
+
+      function drawPelican(time) {
+        const px = -0.7;
+        const pz = 0.5;
+        const bob = Math.sin(time * 3.5) * 0.035;
+        const whiteTop = '#f8f7ef';
+        const whiteLeft = '#dce5e3';
+        const whiteRight = '#eef1e9';
+        const beak = '#f3a43f';
+        const pouch = '#e87a3d';
+        const orange = '#e46c32';
+
+        drawBeam([px - 0.25, 3.0 + bob, pz + 0.34], [px - 0.08, 2.12 + bob, pz + 0.34], orange, 0.13);
+        drawBeam([px + 0.25, 2.98 + bob, pz - 0.34], [px + 0.12, 1.82 + bob, pz - 0.34], orange, 0.13);
+        drawVoxel(px - 0.02, 2.07 + bob, pz + 0.34, 0.38, 0.12, 0.18, orange, '#b84f2c', '#d2612d');
+        drawVoxel(px + 0.18, 1.77 + bob, pz - 0.34, 0.38, 0.12, 0.18, orange, '#b84f2c', '#d2612d');
+
+        drawVoxel(px - 0.1, 3.05 + bob, pz, 1.55, 1.28, 1.05, whiteTop, whiteLeft, whiteRight);
+        drawVoxel(px - 0.95, 3.0 + bob, pz, 0.92, 0.82, 1.03, whiteLeft, '#c5d3d2', '#dbe5e3');
+        drawVoxel(px + 0.72, 3.24 + bob, pz, 0.72, 0.92, 0.9, whiteTop, whiteLeft, whiteRight);
+        drawVoxel(px - 0.38, 2.92 + bob, pz + 0.54, 0.62, 1.18, 0.92, whiteLeft, '#c6d2d2', '#d7e1e0');
+        drawVoxel(px - 0.52, 2.4 + bob, pz + 0.5, 0.66, 0.52, 0.88, whiteLeft, '#bbcaca', '#cfdcdb');
+        drawVoxel(px - 0.68, 2.12 + bob, pz + 0.46, 0.48, 0.34, 0.8, whiteTop, '#c7d5d4', '#dfe7e2');
+        drawVoxel(px - 1.16, 3.18 + bob, pz, 0.84, 0.46, 0.82, whiteLeft, '#c7d5d4', '#dfe7e2');
+        drawVoxel(px - 1.58, 3.43 + bob, pz, 0.64, 0.32, 0.7, whiteTop, '#cbd9d7', '#e7ece7');
+
+        drawVoxel(px + 0.48, 4.0 + bob, pz, 0.68, 0.86, 0.72, whiteTop, whiteLeft, whiteRight);
+        drawVoxel(px + 0.56, 4.62 + bob, pz, 0.7, 0.78, 0.72, whiteTop, whiteLeft, whiteRight);
+        drawVoxel(px + 0.7, 5.1 + bob, pz, 0.76, 0.7, 0.74, whiteLeft, '#c8d6d6', '#e7ece7');
+        drawVoxel(px + 0.78, 5.56 + bob, pz, 1.18, 0.98, 0.92, whiteTop, whiteLeft, whiteRight);
+        drawVoxel(px + 0.25, 5.4 + bob, pz, 0.56, 0.48, 0.72, whiteLeft, '#c7d5d4', '#e1e9e4');
+
+        drawVoxel(px + 1.62, 5.38 + bob, pz, 1.58, 0.28, 0.58, beak, '#c97832', '#e69234');
+        drawVoxel(px + 1.54, 5.1 + bob, pz, 1.22, 0.42, 0.62, pouch, '#bd5f36', '#df7240');
+        drawVoxel(px + 2.28, 5.31 + bob, pz, 0.54, 0.18, 0.5, beak, '#c97832', '#e69234');
+        drawVoxel(px + 2.35, 5.16 + bob, pz, 0.23, 0.2, 0.42, orange, '#b84f2c', '#d2612d');
+        drawVoxel(px + 1.18, 5.91 + bob, pz + 0.46, 0.12, 0.15, 0.08, '#1d2d3c', '#152531', '#1b2d3b');
+        drawVoxel(px + 1.2, 5.96 + bob, pz + 0.51, 0.035, 0.05, 0.02, whiteTop, whiteTop, whiteTop);
+      }
+
+      function drawGround(palette) {
+        const gradient = ctx.createLinearGradient(0, 0, 0, viewport.height);
+        gradient.addColorStop(0, palette.skyTop);
+        gradient.addColorStop(0.72, palette.skyBottom);
+        gradient.addColorStop(1, palette.ground);
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, viewport.width, viewport.height);
+
+        drawVoxel(0, -0.3, -9, 28, 0.3, 5.4, palette.sea, '#4e9fb7', '#61b8ce');
+        drawVoxel(0, -0.3, 3.2, 28, 0.3, 22, palette.ground, palette.groundDark, palette.groundDark);
+        drawVoxel(0, 0, 1.5, 25, 0.18, 7.4, palette.road, '#284552', '#304f5d');
+        drawVoxel(0, 0.18, -2.18, 25, 0.13, 0.24, palette.roadEdge, '#c0a95d', '#e0c873');
+        drawVoxel(0, 0.18, 5.18, 25, 0.13, 0.24, palette.roadEdge, '#c0a95d', '#e0c873');
+        for (let x = -11; x <= 11; x += 3.9) drawVoxel(x, 0.18, 1.5, 1.8, 0.08, 0.18, palette.roadEdge, '#c0a95d', '#e0c873');
+        for (let x = -10; x <= 10; x += 3.8) drawVoxel(x, 0.08, -6.1, 2.1, 0.12, 0.16, '#f2f1e4', '#cbd8d3', '#e4e8de');
+        drawTree(-7, -1.4, 1.1, palette);
+        drawTree(7.2, -1.2, 0.9, palette);
+        drawTree(-9, 6.5, 0.8, palette);
+        drawTree(9.3, 6.2, 1.15, palette);
+        drawFlower(-5.4, 6.15, '#ff91a5', palette);
+        drawFlower(5.1, 6.5, '#f4a33e', palette);
+        drawFlower(10.2, 3.2, '#ff91a5', palette);
+      }
+
+      function drawWeather(palette, time) {
+        if (weather[weatherIndex].key === 'sunny') drawSun(palette);
+        if (weather[weatherIndex].key !== 'sunny') {
+          drawCloud(-6.4 + Math.sin(time * 0.08) * 0.5, 9.0, -8.5, 1.25, palette);
+          drawCloud(1.6 + Math.sin(time * 0.06) * 0.35, 9.9, -9.5, 0.85, palette);
+          drawCloud(8 + Math.sin(time * 0.1) * 0.3, 8.6, -7.6, 0.72, palette);
+        }
+        if (weather[weatherIndex].key === 'rainy') {
+          ctx.save();
+          ctx.strokeStyle = palette.rain;
+          ctx.lineWidth = Math.max(1, viewport.scale * 0.045);
+          rainDrops.forEach(drop => {
+            const x = drop.x * viewport.width;
+            const y = drop.y * viewport.height;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x - viewport.scale * 0.15, y + drop.length * viewport.height);
+            ctx.stroke();
+          });
+          ctx.restore();
+          ctx.fillStyle = palette.tint;
+          ctx.fillRect(0, 0, viewport.width, viewport.height);
+        }
+      }
+
+      function setWeather(index) {
+        weatherIndex = (index + weather.length) % weather.length;
+        const item = weather[weatherIndex];
+        weatherName.textContent = item.name;
+        weatherIcon.textContent = item.icon;
+        nextWeatherAt = performance.now() + 5000;
+        document.body.style.background = palettes[item.key].skyBottom;
+      }
+
+      weatherButton.addEventListener('click', () => setWeather(weatherIndex + 1));
+      window.addEventListener('resize', resize);
+      window.addEventListener('pointermove', event => {
+        pointer.targetX = (event.clientX / viewport.width - 0.5) * 1.1;
+        pointer.targetY = (event.clientY / viewport.height - 0.5) * 0.65;
+      }, { passive: true });
+
+      function render(now) {
+        const delta = Math.min((now - last) / 1000, 0.05);
+        last = now;
+        rideTime += delta;
+        if (now >= nextWeatherAt) setWeather(weatherIndex + 1);
+        const secondsLeft = Math.max(0, (nextWeatherAt - now) / 1000);
+        weatherCountdown.textContent = `下次切换 ${secondsLeft.toFixed(1)} 秒`;
+        pointer.x += (pointer.targetX - pointer.x) * 0.035;
+        pointer.y += (pointer.targetY - pointer.y) * 0.035;
+        rainDrops.forEach(drop => {
+          drop.y += delta * drop.speed;
+          if (drop.y > 1.08) drop.y = -0.08;
+        });
+
+        const palette = palettes[weather[weatherIndex].key];
+        ctx.clearRect(0, 0, viewport.width, viewport.height);
+        drawGround(palette);
+        drawWeather(palette, rideTime);
+        drawBike(rideTime);
+        drawPelican(rideTime);
+        requestAnimationFrame(render);
+      }
+
+      resize();
+      setWeather(0);
+      requestAnimationFrame(render);
+    })();
+  </script>
+</body>
+</html>

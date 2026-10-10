@@ -1,0 +1,28 @@
+import { createRequire } from 'node:module';
+import { mkdirSync } from 'node:fs';
+const require = createRequire(import.meta.url);
+const puppeteer = require('C:/Users/mypra/AppData/Roaming/npm/node_modules/puppeteer-core');
+const BASE = process.argv[2] || 'https://peilika.pages.dev';
+const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
+const OUT = 'C:/Users/mypra/Desktop/鹈鹕自行车测试/TempFiles';
+mkdirSync(OUT, { recursive: true });
+const browser = await puppeteer.launch({ executablePath: CHROME, headless: 'new', args: ['--no-sandbox','--disable-setuid-sandbox','--disable-gpu','--force-color-profile=srgb','--hide-scrollbars'] });
+const page = await browser.newPage();
+await page.setViewport({ width: 1280, height: 900 });
+const errors = [];
+page.on('pageerror', e => errors.push('pageerror: ' + e.message));
+await page.goto(BASE, { waitUntil: 'networkidle0', timeout: 30000 });
+await page.waitForSelector('.site-card');
+// 打开第一个预览
+const firstSlug = await page.$eval('.site-card', el => el.dataset.slug);
+await page.click(`.site-card[data-slug="${firstSlug}"] .open-btn`);
+await page.waitForFunction(() => document.getElementById('viewer').getAttribute('aria-hidden') === 'false');
+const result = {};
+result.openNewExists = await page.$('#btnOpenNew') ? true : false;
+result.controlButtons = await page.$$eval('.viewer-controls .icon-btn', els => els.map(e => e.id));
+result.btnWidth = await page.$eval('#btnPrev', el => getComputedStyle(el).width);
+result.btnHeight = await page.$eval('#btnPrev', el => getComputedStyle(el).height);
+await page.screenshot({ path: OUT + '/viewer-controls.png', fullPage: false });
+result.consoleErrors = errors;
+console.log(JSON.stringify(result, null, 2));
+await browser.close();

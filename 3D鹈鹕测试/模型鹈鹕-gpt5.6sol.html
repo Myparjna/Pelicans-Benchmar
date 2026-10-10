@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#8fd9ff">
+  <title>鹈鹕的天气骑行</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17304a;
+      --glass: rgba(255,255,255,.72);
+      --line: rgba(23,48,74,.14);
+    }
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+    body {
+      font-family: Inter, ui-rounded, "SF Pro Rounded", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background: #8fd9ff;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+    .topbar {
+      position: fixed;
+      z-index: 3;
+      top: max(18px, env(safe-area-inset-top));
+      left: max(18px, env(safe-area-inset-left));
+      right: max(18px, env(safe-area-inset-right));
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      pointer-events: none;
+    }
+    .brand, .weather {
+      border: 1px solid rgba(255,255,255,.7);
+      background: var(--glass);
+      box-shadow: 0 12px 38px rgba(31,75,107,.14), inset 0 1px rgba(255,255,255,.82);
+      backdrop-filter: blur(16px) saturate(1.2);
+      -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    }
+    .brand { padding: 13px 16px 12px; border-radius: 18px; }
+    .brand small {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .18em;
+      color: rgba(23,48,74,.56);
+    }
+    .brand strong { font-size: clamp(17px,2.1vw,24px); letter-spacing: -.03em; white-space: nowrap; }
+    .weather {
+      min-width: 120px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      column-gap: 10px;
+      align-items: center;
+    }
+    .weather-icon {
+      grid-row: 1 / span 2;
+      width: 34px; height: 34px;
+      display: grid; place-items: center;
+      border-radius: 11px;
+      background: rgba(255,255,255,.75);
+      font-size: 20px;
+    }
+    .weather strong { font-size: 14px; line-height: 1.1; white-space: nowrap; }
+    .weather small { margin-top: 3px; font-size: 10px; color: rgba(23,48,74,.58); white-space: nowrap; }
+    .progress {
+      position: fixed;
+      z-index: 3;
+      left: 50%;
+      bottom: max(20px, env(safe-area-inset-bottom));
+      width: min(250px, calc(100vw - 44px));
+      height: 6px;
+      padding: 1px;
+      transform: translateX(-50%);
+      border-radius: 99px;
+      background: rgba(255,255,255,.5);
+      box-shadow: 0 4px 20px rgba(22,56,84,.16);
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .progress i { display: block; width: 0; height: 100%; border-radius: inherit; background: #fff; }
+    .hint {
+      position: fixed;
+      z-index: 3;
+      left: 50%;
+      bottom: max(37px, calc(env(safe-area-inset-bottom) + 17px));
+      transform: translateX(-50%);
+      color: rgba(23,48,74,.56);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    @media (max-width: 520px) {
+      .topbar { top: max(12px, env(safe-area-inset-top)); left: 12px; right: 12px; }
+      .brand { padding: 11px 13px 10px; border-radius: 15px; }
+      .brand small { font-size: 8px; }
+      .weather { min-width: 105px; padding: 8px 9px; grid-template-columns: 30px 1fr; gap: 7px; }
+      .weather-icon { width: 30px; height: 30px; font-size: 17px; }
+      .weather strong { font-size: 12px; }
+      .weather small { font-size: 9px; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="scene" aria-label="一只体素鹈鹕在不同天气中骑自行车的动画场景"></canvas>
+  <div class="topbar">
+    <div class="brand"><small>VOXEL DAY TRIP</small><strong>鹈鹕的天气骑行</strong></div>
+    <div class="weather" aria-live="polite">
+      <span class="weather-icon" id="weatherIcon">☀️</span>
+      <strong id="weatherName">晴天</strong>
+      <small id="weatherNext">5 秒后切换</small>
+    </div>
+  </div>
+  <div class="hint">天气每 5 秒自动切换</div>
+  <div class="progress"><i id="progressBar"></i></div>
+
+  <script>
+  (() => {
+    'use strict';
+    const canvas = document.getElementById('scene');
+    const ctx = canvas.getContext('2d', { alpha: false });
+    const weatherName = document.getElementById('weatherName');
+    const weatherIcon = document.getElementById('weatherIcon');
+    const weatherNext = document.getElementById('weatherNext');
+    const progressBar = document.getElementById('progressBar');
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const STATES = [
+      { name: '晴天', icon: '☀️', sky1: '#74cdf8', sky2: '#dff6ff', haze: '#fff2b7', ground: '#7cc866', road: '#72909a' },
+      { name: '阴天', icon: '☁️', sky1: '#849cab', sky2: '#d7e0e2', haze: '#e8ece8', ground: '#669d65', road: '#64777d' },
+      { name: '雨天', icon: '🌧️', sky1: '#465f76', sky2: '#9daeb8', haze: '#c5d3d5', ground: '#527d5d', road: '#465b63' }
+    ];
+    const rain = Array.from({length: 92}, (_, i) => ({
+      x: ((i * 73) % 997) / 997,
+      y: ((i * 193) % 991) / 991,
+      speed: .65 + (i % 7) * .07,
+      len: 8 + (i % 5) * 3
+    }));
+    const clouds = Array.from({length: 7}, (_, i) => ({
+      x: (i * .19 + .03) % 1.15,
+      y: .13 + (i % 3) * .085,
+      size: .65 + (i % 4) * .13,
+      speed: 4 + (i % 3) * 2
+    }));
+
+    let W = 0, H = 0, dpr = 1;
+    let currentState = -1;
+    let last = performance.now();
+    let elapsed = 0;
+
+    function resize() {
+      dpr = Math.min(devicePixelRatio || 1, 2);
+      W = innerWidth; H = innerHeight;
+      canvas.width = Math.round(W * dpr);
+      canvas.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.imageSmoothingEnabled = false;
+    }
+
+    const mix = (a,b,t) => a + (b-a)*t;
+    const clamp = (v,a=0,b=1) => Math.max(a,Math.min(b,v));
+    const ease = t => t*t*(3-2*t);
+    function hexRgb(hex) {
+      const n = parseInt(hex.slice(1),16);
+      return [(n>>16)&255,(n>>8)&255,n&255];
+    }
+    function colorMix(a,b,t) {
+      const A=hexRgb(a), B=hexRgb(b);
+      return `rgb(${Math.round(mix(A[0],B[0],t))},${Math.round(mix(A[1],B[1],t))},${Math.round(mix(A[2],B[2],t))})`;
+    }
+    function shade(hex, amount) {
+      const a=hexRgb(hex);
+      return `rgb(${clamp(a[0]+amount,0,255)},${clamp(a[1]+amount,0,255)},${clamp(a[2]+amount,0,255)})`;
+    }
+    function poly(points, fill) {
+      ctx.beginPath(); ctx.moveTo(points[0][0],points[0][1]);
+      for(let i=1;i<points.length;i++) ctx.lineTo(points[i][0],points[i][1]);
+      ctx.closePath(); ctx.fillStyle=fill; ctx.fill();
+    }
+    function rect(x,y,w,h,c) { ctx.fillStyle=c; ctx.fillRect(Math.round(x),Math.round(y),Math.ceil(w),Math.ceil(h)); }
+
+    // 屏幕空间等距体素：正面、顶面和侧面保持清晰的块面关系。
+    function voxel(x,y,w,h,depth,color) {
+      const d = Math.max(2,depth);
+      poly([[x,y],[x+d,y-d],[x+w+d,y-d],[x+w,y]], shade(color,24));
+      poly([[x+w,y],[x+w+d,y-d],[x+w+d,y+h-d],[x+w,y+h]], shade(color,-34));
+      rect(x,y,w,h,color);
+    }
+
+    function background(t, s, n, blend) {
+      const top=colorMix(s.sky1,n.sky1,blend), bottom=colorMix(s.sky2,n.sky2,blend);
+      const grad=ctx.createLinearGradient(0,0,0,H);
+      grad.addColorStop(0,top); grad.addColorStop(.68,bottom); grad.addColorStop(1,colorMix(s.haze,n.haze,blend));
+      ctx.fillStyle=grad; ctx.fillRect(0,0,W,H);
+
+      const portrait=H>W;
+      const horizon=portrait?H*.58:H*.56;
+      const sunAlpha=(1-blend)*(currentState===0?1:0) + blend*((currentState+1)%3===0?1:0);
+      if(sunAlpha>.01) {
+        ctx.globalAlpha=sunAlpha;
+        const sx=portrait?W*.72:W*.78, sy=H*.2, u=Math.min(W,H)*.012;
+        ctx.fillStyle='rgba(255,239,139,.2)'; ctx.beginPath(); ctx.arc(sx,sy,u*7,0,Math.PI*2); ctx.fill();
+        const pieces=[[0,-4],[0,4],[-4,0],[4,0],[-3,-3],[3,-3],[-3,3],[3,3]];
+        pieces.forEach(([dx,dy])=>rect(sx+dx*u-u*.5,sy+dy*u-u*.5,u,u,'#ffe36e'));
+        voxel(sx-u*2.2,sy-u*2.2,u*4.4,u*4.4,u*.6,'#ffd64a');
+        ctx.globalAlpha=1;
+      }
+
+      const cloudiness=currentState===0?blend:currentState===1?1:1-blend*.25;
+      ctx.globalAlpha=.18+.77*cloudiness;
+      clouds.forEach((c,i)=>{
+        const x=((c.x*W + t*c.speed)%(W+190))-95;
+        const y=c.y*H;
+        drawCloud(x,y,c.size*Math.max(42,Math.min(W,H)*.085), currentState===2?'#b3c1c9':'#eef2f1');
+      });
+      ctx.globalAlpha=1;
+
+      // 远景体素山丘和城市块。
+      const hill=colorMix(s.ground,n.ground,blend);
+      poly([[0,horizon],[W*.13,horizon-H*.12],[W*.25,horizon-H*.035],[W*.39,horizon-H*.16],[W*.54,horizon-H*.05],[W*.7,horizon-H*.13],[W*.87,horizon-H*.02],[W,horizon-H*.11],[W,horizon+H*.15],[0,horizon+H*.15]],shade(hill,16));
+      const unit=Math.max(7,Math.min(W,H)*.015);
+      for(let x=-unit;x<W+unit;x+=unit*2.6){
+        const h=unit*(1+Math.abs(Math.sin(x*.017))*2.4);
+        voxel(x,horizon-h,unit*1.8,h,unit*.32, iColor(x,hill));
+      }
+
+      // 草地与道路。
+      ctx.fillStyle=hill; ctx.fillRect(0,horizon,W,H-horizon);
+      const road=colorMix(s.road,n.road,blend);
+      poly([[0,H*.72],[W,H*.66],[W,H],[0,H]],road);
+      ctx.fillStyle=shade(road,18);
+      ctx.fillRect(0,H*.716,W,Math.max(3,H*.012));
+      const stripeY=H*.84, stripeH=Math.max(4,H*.012), scroll=(t*.12)%(W*.28);
+      for(let x=-W*.3-scroll;x<W+W*.3;x+=W*.28) rect(x,stripeY,W*.11,stripeH,'rgba(255,244,194,.82)');
+      return horizon;
+    }
+    function iColor(x,c){ return (Math.floor(x/19)%2===0)?c:shade(c,-8); }
+
+    function drawCloud(x,y,u,color) {
+      const q=Math.max(4,Math.round(u/7));
+      const blocks=[[0,2,7,2],[1,1,2,1],[3,0,2,2],[5,1,2,1]];
+      blocks.forEach(([bx,by,bw,bh],i)=>voxel(x+bx*q,y+by*q,bw*q,bh*q,q*.5,i===0?shade(color,-4):color));
+    }
+
+    function wheel(cx,cy,r,spin) {
+      const count=24, q=Math.max(3,r*.13);
+      for(let i=0;i<count;i++){
+        const a=i/count*Math.PI*2+spin;
+        const x=cx+Math.cos(a)*r-q/2, y=cy+Math.sin(a)*r-q/2;
+        voxel(x,y,q,q,q*.32,'#263b43');
+      }
+      ctx.save(); ctx.strokeStyle='rgba(224,240,235,.78)'; ctx.lineWidth=Math.max(1,r*.035);
+      ctx.beginPath();
+      for(let i=0;i<8;i++){ const a=i*Math.PI/4+spin*.2; ctx.moveTo(cx,cy); ctx.lineTo(cx+Math.cos(a)*r*.78,cy+Math.sin(a)*r*.78); }
+      ctx.stroke(); ctx.restore();
+      voxel(cx-q*.65,cy-q*.65,q*1.3,q*1.3,q*.45,'#ffd35c');
+    }
+
+    function limb(x1,y1,x2,y2,color,q) {
+      const steps=Math.max(2,Math.ceil(Math.hypot(x2-x1,y2-y1)/(q*.72)));
+      for(let i=0;i<=steps;i++){
+        const p=i/steps;
+        voxel(mix(x1,x2,p)-q/2,mix(y1,y2,p)-q/2,q,q,q*.3,color);
+      }
+    }
+
+    function pelicanBike(t) {
+      const portrait=H>W;
+      const base=Math.min(portrait?W*.95:W*.58,H*.72);
+      const q=Math.max(4,base/58);
+      const cx=W*.5, ground=portrait?H*.79:H*.83;
+      const bob=reduceMotion?0:Math.sin(t*.006)*q*.45;
+      const spin=reduceMotion?0:t*.004;
+      const rearX=cx-q*13, frontX=cx+q*14, wheelY=ground-q*5.3, r=q*6.2;
+
+      // 柔和像素投影。
+      ctx.globalAlpha=.14; ctx.fillStyle='#183a44';
+      ctx.beginPath(); ctx.ellipse(cx,ground+q*.7,q*24,q*2.4,0,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+      wheel(rearX,wheelY,r,spin); wheel(frontX,wheelY,r,spin);
+
+      // 自行车车架。
+      const pedalX=cx, pedalY=wheelY-q*.2;
+      const seatX=cx-q*6, seatY=wheelY-q*8;
+      const handleX=cx+q*10.5, handleY=wheelY-q*10;
+      limb(rearX,wheelY,seatX,seatY,'#e75d4c',q*.8);
+      limb(seatX,seatY,pedalX,pedalY,'#f06b54',q*.8);
+      limb(pedalX,pedalY,rearX,wheelY,'#cf493f',q*.8);
+      limb(pedalX,pedalY,frontX,wheelY,'#df5549',q*.8);
+      limb(pedalX,pedalY,handleX,handleY,'#f06b54',q*.8);
+      limb(handleX,handleY,frontX,wheelY,'#cf493f',q*.7);
+      voxel(seatX-q*2,seatY-q*.8,q*4,q,q*.5,'#334149');
+      limb(handleX,handleY,handleX+q*2.2,handleY-q*.4,'#344950',q*.58);
+      voxel(pedalX-q*.8,pedalY-q*.8,q*1.6,q*1.6,q*.45,'#ffd35c');
+
+      // 踩踏腿，前后腿相位相反。
+      const pa=spin*1.8;
+      const foot1=[pedalX+Math.cos(pa)*q*3,pedalY+Math.sin(pa)*q*2.1];
+      const foot2=[pedalX-Math.cos(pa)*q*3,pedalY-Math.sin(pa)*q*2.1];
+      const hip=[cx-q*4,seatY-q*5+bob];
+      limb(hip[0],hip[1],cx-q*2,seatY-q*1.3,'#f5aa48',q*1.15);
+      limb(cx-q*2,seatY-q*1.3,foot1[0],foot1[1],'#e9983f',q*.95);
+      limb(hip[0]-q*.5,hip[1]+q,seatX-q*.4,seatY-q*.2,'#ffc05c',q*1.05);
+      limb(seatX-q*.4,seatY-q*.2,foot2[0],foot2[1],'#ef9f44',q*.9);
+      voxel(foot1[0]-q*.4,foot1[1]-q*.3,q*2,q*.7,q*.4,'#efc64d');
+      voxel(foot2[0]-q*.4,foot2[1]-q*.3,q*2,q*.7,q*.4,'#efc64d');
+
+      // 鹈鹕身体：用大小不同的体素构成白色羽毛轮廓。
+      const bodyX=cx-q*5, bodyY=seatY-q*13+bob;
+      const feathers=[
+        [-5,3,10,8],[-4,0,9,5],[-2,-3,7,5],[2,-6,5,5],
+        [-8,5,4,4],[-7,8,4,3],[3,4,4,5]
+      ];
+      feathers.forEach((f,i)=>voxel(bodyX+f[0]*q,bodyY+f[1]*q,f[2]*q,f[3]*q,q*.72,i%3===0?'#e9f0e9':'#fffdf1'));
+      // 翅膀。
+      voxel(bodyX-q*4.8,bodyY+q*2,q*6.5,q*6,q*.9,'#dce9e4');
+      voxel(bodyX-q*3.4,bodyY+q*4,q*5,q*4,q*.8,'#cbdcd8');
+
+      // 头、眼睛、喙囊。
+      voxel(bodyX+q*.7,bodyY-q*8,q*7,q*6,q*.9,'#fffdf2');
+      voxel(bodyX+q*2.2,bodyY-q*11,q*5.5,q*5,q*.8,'#f7faf0');
+      voxel(bodyX+q*6.3,bodyY-q*9.4,q*1.25,q*1.25,q*.4,'#172d38');
+      voxel(bodyX+q*7,bodyY-q*7.2,q*10,q*2.1,q*.65,'#f4b63f');
+      voxel(bodyX+q*7.6,bodyY-q*5.2,q*7.4,q*3.6,q*.7,'#ef9140');
+      voxel(bodyX+q*14.2,bodyY-q*6.9,q*4,q*1.5,q*.45,'#ffd461');
+
+      // 翼尖扶车把。
+      limb(bodyX+q*2,bodyY+q*1,handleX-q*.5,handleY-q*.4,'#dce9e4',q*1.15);
+      voxel(handleX-q,handleY-q,q*2,q*1.4,q*.5,'#fffdf1');
+
+      // 尾羽随骑行轻摆。
+      const sway=reduceMotion?0:Math.sin(t*.004)*q;
+      voxel(bodyX-q*9,bodyY+q*5+sway,q*5,q*1.8,q*.55,'#f8f6e9');
+      voxel(bodyX-q*10,bodyY+q*7-sway*.5,q*5,q*1.7,q*.55,'#dce9e4');
+    }
+
+    function foreground(t, rainAmount) {
+      // 近景草丛，随道路滚动。
+      const q=Math.max(4,Math.min(W,H)*.009), scroll=(t*.045)%(q*18);
+      for(let x=-q*20-scroll;x<W+q*20;x+=q*18){
+        const y=H-q*(1+(Math.floor(x/q)%3));
+        voxel(x,y,q*2,q*3,q*.5,'#3f8854');
+        voxel(x+q*2,y+q,q*2,q*2,q*.5,'#57a45f');
+      }
+      if(rainAmount>.01){
+        ctx.save(); ctx.globalAlpha=.18+.58*rainAmount; ctx.strokeStyle='#d9f5ff'; ctx.lineWidth=1.4;
+        rain.forEach(d=>{
+          d.y=(d.y+d.speed*.009)%1.12;
+          const x=(d.x*W + d.y*W*.08)%W, y=d.y*H;
+          ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x-4,y+d.len); ctx.stroke();
+        });
+        ctx.restore();
+        // 水面反光。
+        ctx.globalAlpha=.22*rainAmount;
+        for(let i=0;i<8;i++) rect(((i*137+t*.05)%W),H*(.74+(i%3)*.08),Math.max(14,W*.025),2,'#dff9ff');
+        ctx.globalAlpha=1;
+      }
+    }
+
+    function draw(now) {
+      const dt=Math.min(50,now-last); last=now; elapsed+=reduceMotion?dt*.25:dt;
+      // 每 5 秒进入下一个天气；末段 1.2 秒用于平滑过渡。
+      const cycle=elapsed/5000;
+      const state=Math.floor(cycle)%3;
+      const local=cycle-Math.floor(cycle);
+      const transition=ease(clamp((local-.76)/.24));
+      const next=(state+1)%3;
+      if(state!==currentState){
+        currentState=state;
+        weatherName.textContent=STATES[state].name;
+        weatherIcon.textContent=STATES[state].icon;
+        document.querySelector('meta[name="theme-color"]').content=STATES[state].sky1;
+      }
+      const seconds=Math.max(1,Math.ceil(5-local*5));
+      weatherNext.textContent=`${seconds} 秒后切换`;
+      progressBar.style.width=`${local*100}%`;
+      if(transition>.52){ weatherName.textContent=STATES[next].name; weatherIcon.textContent=STATES[next].icon; }
+
+      background(elapsed,STATES[state],STATES[next],transition);
+      pelicanBike(elapsed);
+      const rainAmount=state===2?(1-transition):(next===2?transition:0);
+      foreground(elapsed,rainAmount);
+      requestAnimationFrame(draw);
+    }
+
+    addEventListener('resize',resize,{passive:true});
+    addEventListener('orientationchange',resize,{passive:true});
+    resize(); requestAnimationFrame(draw);
+  })();
+  </script>
+</body>
+</html>

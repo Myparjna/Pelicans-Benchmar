@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>鹈鹕骑自行车</title>
+<style>
+  :root {
+    --sky-top: #7ec8ff;
+    --sky-bot: #e8f6ff;
+    --sun: #ffe56b;
+    --cloud: 0;
+    --rain: 0;
+    --ground: #7dba5a;
+    --road: #5c6570;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    background: #111;
+    font-family: "Segoe UI", "PingFang SC", sans-serif;
+  }
+  .stage {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    background: linear-gradient(180deg, var(--sky-top), var(--sky-bot));
+    transition: background 1.2s ease;
+  }
+  .sun {
+    position: absolute;
+    width: min(14vw, 110px);
+    height: min(14vw, 110px);
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, #fff6c2, var(--sun));
+    top: 8%;
+    right: 10%;
+    box-shadow: 0 0 40px 12px rgba(255, 220, 80, 0.55);
+    opacity: calc(1 - var(--cloud) * 0.55);
+    transition: opacity 1.2s ease, filter 1.2s ease;
+    filter: brightness(calc(1 - var(--cloud) * 0.25));
+  }
+  .clouds {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: var(--cloud);
+    transition: opacity 1.2s ease;
+  }
+  .cloud {
+    position: absolute;
+    background: #fff;
+    border-radius: 50px;
+    filter: drop-shadow(0 6px 8px rgba(80,100,130,.15));
+    animation: drift linear infinite;
+  }
+  .cloud::before, .cloud::after {
+    content: "";
+    position: absolute;
+    background: inherit;
+    border-radius: 50%;
+  }
+  .c1 { width: 22vw; height: 7vw; top: 12%; left: -30%; animation-duration: 38s; }
+  .c1::before { width: 10vw; height: 10vw; top: -5vw; left: 4vw; }
+  .c1::after  { width: 12vw; height: 8vw; top: -3vw; left: 10vw; }
+  .c2 { width: 18vw; height: 6vw; top: 22%; left: -40%; animation-duration: 52s; animation-delay: -12s; }
+  .c2::before { width: 8vw; height: 8vw; top: -4vw; left: 3vw; }
+  .c2::after  { width: 10vw; height: 7vw; top: -2.5vw; left: 8vw; }
+  .c3 { width: 26vw; height: 8vw; top: 6%; left: -50%; animation-duration: 64s; animation-delay: -28s; }
+  .c3::before { width: 12vw; height: 12vw; top: -6vw; left: 5vw; }
+  .c3::after  { width: 14vw; height: 9vw; top: -3.5vw; left: 12vw; }
+  @keyframes drift {
+    from { transform: translateX(0); }
+    to   { transform: translateX(160vw); }
+  }
+  .rain {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: var(--rain);
+    transition: opacity 0.8s ease;
+    background-image: repeating-linear-gradient(
+      105deg,
+      transparent 0 14px,
+      rgba(180, 210, 255, 0.0) 14px 18px
+    );
+    overflow: hidden;
+  }
+  .rain::before, .rain::after {
+    content: "";
+    position: absolute;
+    inset: -20% 0;
+    background-image: radial-gradient(ellipse 1px 10px at 20% 30%, rgba(200,225,255,.85) 60%, transparent 61%),
+      radial-gradient(ellipse 1px 12px at 40% 70%, rgba(200,225,255,.75) 60%, transparent 61%),
+      radial-gradient(ellipse 1px 9px at 65% 20%, rgba(200,225,255,.8) 60%, transparent 61%),
+      radial-gradient(ellipse 1px 11px at 80% 55%, rgba(200,225,255,.7) 60%, transparent 61%),
+      radial-gradient(ellipse 1px 10px at 10% 80%, rgba(200,225,255,.8) 60%, transparent 61%),
+      radial-gradient(ellipse 1px 13px at 55% 45%, rgba(200,225,255,.75) 60%, transparent 61%);
+    background-size: 180px 220px;
+    animation: fall 0.7s linear infinite;
+  }
+  .rain::after {
+    background-size: 220px 260px;
+    animation-duration: 0.95s;
+    opacity: 0.7;
+  }
+  @keyframes fall {
+    from { transform: translateY(-10%); }
+    to   { transform: translateY(18%); }
+  }
+  .ground {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 28%;
+    background: linear-gradient(#8fc96a, var(--ground));
+    transition: filter 1s ease;
+  }
+  .road {
+    position: absolute;
+    left: -10%; right: -10%;
+    bottom: 8%;
+    height: 16%;
+    background: var(--road);
+    border-radius: 40% 40% 0 0 / 30% 30% 0 0;
+    overflow: hidden;
+  }
+  .dashes {
+    position: absolute;
+    top: 42%;
+    height: 8%;
+    width: 200%;
+    background: repeating-linear-gradient(90deg, #f2e27a 0 8vw, transparent 8vw 16vw);
+    animation: dash 1.2s linear infinite;
+  }
+  @keyframes dash {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-16vw); }
+  }
+  .rider {
+    position: absolute;
+    left: 50%;
+    bottom: 16%;
+    width: min(46vw, 420px);
+    height: min(42vw, 380px);
+    transform: translateX(-50%);
+    animation: bob 0.6s ease-in-out infinite;
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%      { transform: translateX(-50%) translateY(-1.2%); }
+  }
+  svg.bike { width: 100%; height: 100%; overflow: visible; }
+  .wheel { transform-origin: center; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .pedal { transform-origin: 210px 250px; animation: spin 0.7s linear infinite; }
+  .leg-l { transform-origin: 188px 210px; animation: pedalL 0.7s linear infinite; }
+  .leg-r { transform-origin: 188px 210px; animation: pedalR 0.7s linear infinite; }
+  @keyframes pedalL {
+    0%   { transform: rotate(20deg); }
+    50%  { transform: rotate(-28deg); }
+    100% { transform: rotate(20deg); }
+  }
+  @keyframes pedalR {
+    0%   { transform: rotate(-28deg); }
+    50%  { transform: rotate(20deg); }
+    100% { transform: rotate(-28deg); }
+  }
+  .wing { transform-origin: 150px 150px; animation: flap 0.55s ease-in-out infinite; }
+  @keyframes flap {
+    0%, 100% { transform: rotate(8deg); }
+    50%      { transform: rotate(-14deg); }
+  }
+  .badge {
+    position: absolute;
+    top: 4%;
+    left: 4%;
+    color: #123;
+    background: rgba(255,255,255,.55);
+    backdrop-filter: blur(6px);
+    padding: 0.45em 0.8em;
+    border-radius: 999px;
+    font-size: clamp(12px, 2.4vw, 18px);
+    letter-spacing: 0.04em;
+  }
+  .wet .ground { filter: saturate(0.85) brightness(0.92); }
+  @media (orientation: portrait) {
+    .rider {
+      width: min(78vw, 460px);
+      height: min(72vw, 420px);
+      bottom: 18%;
+    }
+    .sun { width: min(22vw, 120px); height: min(22vw, 120px); top: 6%; right: 6%; }
+    .ground { height: 32%; }
+    .road { height: 14%; bottom: 10%; }
+  }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <div class="sun"></div>
+  <div class="clouds">
+    <div class="cloud c1"></div>
+    <div class="cloud c2"></div>
+    <div class="cloud c3"></div>
+  </div>
+  <div class="rain"></div>
+  <div class="ground"></div>
+  <div class="road"><div class="dashes"></div></div>
+
+  <div class="rider">
+    <svg class="bike" viewBox="0 0 420 340" xmlns="http://www.w3.org/2000/svg">
+      <!-- shadow -->
+      <ellipse cx="210" cy="318" rx="130" ry="12" fill="rgba(0,0,0,.18)"/>
+
+      <!-- back wheel -->
+      <g class="wheel" style="transform-origin: 90px 250px">
+        <circle cx="90" cy="250" r="52" fill="none" stroke="#222" stroke-width="10"/>
+        <circle cx="90" cy="250" r="44" fill="none" stroke="#888" stroke-width="2"/>
+        <g stroke="#666" stroke-width="2">
+          <line x1="90" y1="206" x2="90" y2="294"/>
+          <line x1="46" y1="250" x2="134" y2="250"/>
+          <line x1="59" y1="219" x2="121" y2="281"/>
+          <line x1="59" y1="281" x2="121" y2="219"/>
+        </g>
+        <circle cx="90" cy="250" r="6" fill="#333"/>
+      </g>
+      <!-- front wheel -->
+      <g class="wheel" style="transform-origin: 330px 250px">
+        <circle cx="330" cy="250" r="52" fill="none" stroke="#222" stroke-width="10"/>
+        <circle cx="330" cy="250" r="44" fill="none" stroke="#888" stroke-width="2"/>
+        <g stroke="#666" stroke-width="2">
+          <line x1="330" y1="206" x2="330" y2="294"/>
+          <line x1="286" y1="250" x2="374" y2="250"/>
+          <line x1="299" y1="219" x2="361" y2="281"/>
+          <line x1="299" y1="281" x2="361" y2="219"/>
+        </g>
+        <circle cx="330" cy="250" r="6" fill="#333"/>
+      </g>
+
+      <!-- frame -->
+      <g stroke="#2a6fdb" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M90 250 L170 160 L250 160 L330 250"/>
+        <path d="M170 160 L210 250 L250 160"/>
+        <path d="M210 250 L90 250"/>
+        <path d="M250 160 L268 128"/>
+      </g>
+      <!-- seat -->
+      <path d="M150 148 q20 -16 42 0" stroke="#333" stroke-width="8" fill="none" stroke-linecap="round"/>
+      <!-- handlebar -->
+      <path d="M255 120 q18 -18 36 2" stroke="#333" stroke-width="6" fill="none" stroke-linecap="round"/>
+
+      <!-- legs -->
+      <g class="leg-l">
+        <path d="M175 175 Q165 210 200 248" stroke="#f4c07a" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <circle cx="206" cy="252" r="7" fill="#444"/>
+      </g>
+      <g class="leg-r">
+        <path d="M190 178 Q230 215 214 252" stroke="#e8b06a" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <circle cx="214" cy="252" r="6" fill="#333"/>
+      </g>
+      <!-- crank -->
+      <g class="pedal">
+        <line x1="190" y1="250" x2="230" y2="250" stroke="#222" stroke-width="5" stroke-linecap="round"/>
+        <rect x="182" y="246" width="14" height="8" rx="2" fill="#111"/>
+        <rect x="224" y="246" width="14" height="8" rx="2" fill="#111"/>
+      </g>
+
+      <!-- body -->
+      <ellipse cx="168" cy="168" rx="38" ry="26" fill="#f7f7f4" stroke="#d0d0c8" stroke-width="2"/>
+      <!-- wing -->
+      <g class="wing">
+        <path d="M150 160 Q110 140 95 175 Q130 185 160 172 Z" fill="#ecece6" stroke="#c8c8c0"/>
+      </g>
+      <!-- neck + head -->
+      <path d="M198 158 Q230 150 248 118" stroke="#f7f7f4" stroke-width="16" fill="none" stroke-linecap="round"/>
+      <ellipse cx="258" cy="108" rx="28" ry="22" fill="#f7f7f4" stroke="#ddd"/>
+      <!-- eye -->
+      <circle cx="268" cy="102" r="5" fill="#222"/>
+      <circle cx="270" cy="100" r="1.6" fill="#fff"/>
+      <!-- pouch / beak -->
+      <path d="M278 108 Q330 112 318 128 Q290 138 272 120 Z" fill="#f4a24a" stroke="#e08a2e"/>
+      <path d="M278 112 Q320 118 312 126" stroke="#d97820" stroke-width="2" fill="none"/>
+      <!-- feet hint on pedals already -->
+    </svg>
+  </div>
+
+  <div class="badge" id="badge">晴天</div>
+</div>
+<script>
+  const stage = document.getElementById("stage");
+  const badge = document.getElementById("badge");
+  const states = [
+    { name: "晴天", top: "#7ec8ff", bot: "#e8f6ff", cloud: 0.15, rain: 0, wet: false },
+    { name: "阴天", top: "#8ea0b5", bot: "#d5dee8", cloud: 1,    rain: 0, wet: false },
+    { name: "雨天", top: "#6d7e96", bot: "#b7c4d4", cloud: 1,    rain: 1, wet: true  },
+  ];
+  let i = 0;
+  function apply(s) {
+    stage.style.setProperty("--sky-top", s.top);
+    stage.style.setProperty("--sky-bot", s.bot);
+    stage.style.setProperty("--cloud", s.cloud);
+    stage.style.setProperty("--rain", s.rain);
+    stage.classList.toggle("wet", s.wet);
+    badge.textContent = s.name;
+  }
+  apply(states[0]);
+  setInterval(() => {
+    i = (i + 1) % states.length;
+    apply(states[i]);
+  }, 5000);
+</script>
+</body>
+</html>

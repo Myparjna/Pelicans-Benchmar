@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>鹈鹕骑车</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; font-family: sans-serif; }
+.scene {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  transition: background 1.2s ease;
+}
+.sunny { background: linear-gradient(#87CEEB 0%, #E0F7FA 70%, #81C784 70%); }
+.cloudy { background: linear-gradient(#90A4AE 0%, #B0BEC5 70%, #689F38 70%); }
+.rainy { background: linear-gradient(#455A64 0%, #607D8B 70%, #33691E 70%); }
+
+.sun {
+  position: absolute;
+  top: 8%;
+  right: 12%;
+  width: 12vw;
+  height: 12vw;
+  max-width: 90px;
+  max-height: 90px;
+  background: #FFEB3B;
+  border-radius: 50%;
+  box-shadow: 0 0 40px 15px #FFF59D;
+  opacity: 0;
+  transition: opacity 1s;
+}
+.sunny .sun { opacity: 1; }
+
+.cloud {
+  position: absolute;
+  background: #fff;
+  border-radius: 50px;
+ opacity: 0.85;
+  transition: background 1s, opacity 1s;
+}
+.cloud::before, .cloud::after {
+  content: '';
+  position: absolute;
+  background: inherit;
+  border-radius: 50%;
+}
+.cloud1 { width: 18vw; height: 6vw; top: 12%; left: 8%; }
+.cloud1::before { width: 9vw; height: 9vw; top: -5vw; left: 2vw; }
+.cloud1::after { width: 11vw; height: 8vw; top: -4vw; left: 8vw; }
+.cloud2 { width: 22vw; height: 7vw; top: 18%; left: 55%; }
+.cloud2::before { width: 10vw; height: 10vw; top: -6vw; left: 3vw; }
+.cloud2::after { width: 13vw; height: 9vw; top: -5vw; left: 10vw; }
+.cloud3 { width: 16vw; height: 5vw; top: 8%; left: 35%; }
+.cloud3::before { width: 8vw; height: 8vw; top: -4.5vw; left: 1.5vw; }
+.cloud3::after { width: 9vw; height: 7vw; top: -3.5vw; left: 7vw; }
+.cloud4 { width: 20vw; height: 6.5vw; top: 25%; left: 75%; }
+.cloud4::before { width: 9vw; height: 9vw; top: -5vw; left: 4vw; }
+.cloud4::after { width: 12vw; height: 8vw; top: -4vw; left: 9vw; }
+
+.sunny .cloud { background: #fff; opacity: 0.7; }
+.cloudy .cloud { background: #CFD8DC; opacity: 0.95; }
+.rainy .cloud { background: #78909C; opacity: 0.9; }
+
+.ground {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 18%;
+  background: #4CAF50;
+  border-top: 8px solid #388E3C;
+}
+.sunny .ground { background: #66BB6A; }
+.cloudy .ground { background: #7CB342; }
+.rainy .ground { background: #558B2F; }
+
+.rider {
+  position: absolute;
+  bottom: 14%;
+  left: 0;
+  width: 22vw;
+  min-width: 140px;
+  max-width: 280px;
+  animation: ride 14s linear infinite;
+}
+@keyframes ride {
+  0% { transform: translateX(-30vw); }
+  100% { transform: translateX(130vw); }
+}
+
+svg { width: 100%; height: auto; display: block; overflow: visible; }
+
+.spokes {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.rain-container { position: absolute; inset: 0; pointer-events: none; }
+.drop {
+  position: absolute;
+  top: -40px;
+  width: 2px;
+  background: linear-gradient(transparent, #B3E5FC);
+  border-radius: 50%;
+  animation: fall linear infinite;
+  display: none;
+}
+.rainy .drop { display: block; }
+@keyframes fall {
+  to { transform: translateY(110vh); }
+}
+</style>
+</head>
+<body>
+<div class="scene sunny" id="scene">
+  <div class="sun"></div>
+  <div class="cloud cloud1"></div>
+  <div class="cloud cloud2"></div>
+  <div class="cloud cloud3"></div>
+  <div class="cloud cloud4"></div>
+  <div class="ground"></div>
+  <div class="rain-container" id="rain"></div>
+  <div class="rider">
+    <svg viewBox="0 0 260 190" xmlns="http://www.w3.org/2000/svg">
+      <!-- 后轮 -->
+      <circle cx="60" cy="155" r="32" fill="none" stroke="#212121" stroke-width="7"/>
+      <g class="spokes" style="transform-origin: 60px 155px;">
+        <line x1="60" y1="123" x2="60" y2="187" stroke="#424242" stroke-width="2.5"/>
+        <line x1="28" y1="155" x2="92" y2="155" stroke="#424242" stroke-width="2.5"/>
+        <line x1="37" y1="132" x2="83" y2="178" stroke="#424242" stroke-width="2"/>
+        <line x1="37" y1="178" x2="83" y2="132" stroke="#424242" stroke-width="2"/>
+      </g>
+      <!-- 前轮 -->
+      <circle cx="200" cy="155" r="32" fill="none" stroke="#212121" stroke-width="7"/>
+      <g class="spokes" style="transform-origin: 200px 155px;">
+        <line x1="200" y1="123" x2="200" y2="187" stroke="#424242" stroke-width="2.5"/>
+        <line x1="168" y1="155" x2="232" y2="155" stroke="#424242" stroke-width="2.5"/>
+        <line x1="177" y1="132" x2="223" y2="178" stroke="#424242" stroke-width="2"/>
+        <line x1="177" y1="178" x2="223" y2="132" stroke="#424242" stroke-width="2"/>
+      </g>
+      <!-- 车架 -->
+      <path d="M60 155 L115 95 L200 155 M115 95 L95 62 M95 62 L85 48 M115 95 L145 72" 
+            stroke="#212121" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="145" y1="72" x2="175" y2="58" stroke="#212121" stroke-width="5" stroke-linecap="round"/>
+      <line x1="175" y1="58" x2="168" y2="46" stroke="#212121" stroke-width="4"/>
+      <!-- 车座 -->
+      <rect x="98" y="82" width="30" height="9" rx="4" fill="#5D4037"/>
+      <!-- 鹈鹕身体 -->
+      <ellipse cx="118" cy="92" rx="48" ry="30" fill="#FAFAFA" stroke="#E0E0E0"/>
+      <ellipse cx="135" cy="85" rx="28" ry="16" fill="#F5F5F5" transform="rotate(-18 135 85)"/>
+      <!-- 脖子 -->
+      <path d="M78 88 Q48 58 55 32" stroke="#FAFAFA" stroke-width="20" fill="none" stroke-linecap="round"/>
+      <!-- 头 -->
+      <circle cx="52" cy="30" r="17" fill="#FAFAFA"/>
+      <circle cx="46" cy="26" r="3.5" fill="#212121"/>
+      <circle cx="45" cy="25" r="1.2" fill="#fff"/>
+      <!-- 鹈鹕大嘴 -->
+      <path d="M38 32 L-18 48 Q-12 62 38 50 Z" fill="#FF9800"/>
+      <path d="M38 30 L8 36 L38 40" fill="#FFB74D"/>
+    </svg>
+  </div>
+</div>
+<script>
+const scene = document.getElementById('scene');
+const weathers = ['sunny', 'cloudy', 'rainy'];
+let idx = 0;
+setInterval(() => {
+  idx = (idx + 1) % 3;
+  scene.className = 'scene ' + weathers[idx];
+}, 5000);
+
+const rainBox = document.getElementById('rain');
+for (let i = 0; i < 70; i++) {
+  const d = document.createElement('div');
+  d.className = 'drop';
+  d.style.left = Math.random() * 100 + 'vw';
+  d.style.height = (12 + Math.random() * 18) + 'px';
+  d.style.animationDuration = (0.6 + Math.random() * 0.9) + 's';
+  d.style.animationDelay = Math.random() * 3 + 's';
+  rainBox.appendChild(d);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>体素鹈鹕骑自行车</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      font-family: system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    canvas {
+      display: block;
+    }
+
+    #hud {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      z-index: 10;
+      padding: 10px 14px;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 14px;
+      line-height: 1.6;
+      pointer-events: none;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .weather {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    #weatherNext {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    @media (max-width: 600px) {
+      #hud {
+        top: 8px;
+        left: 8px;
+        padding: 8px 12px;
+      }
+
+      .weather {
+        font-size: 16px;
+      }
+
+      #weatherNext {
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="hud">
+    <div class="weather" id="weatherName">天气：晴天</div>
+    <div id="weatherNext">下一种天气：阴天 · 5秒</div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      // 基础场景
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      // 灯光
+      const hemiLight = new THREE.HemisphereLight(0xffffff, 0x445566, 0.65);
+      scene.add(hemiLight);
+
+      const dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
+      dirLight.position.set(5, 10, 7);
+      scene.add(dirLight);
+      scene.add(dirLight.target);
+
+      // 雾与背景
+      scene.background = new THREE.Color(0x87ceeb);
+      scene.fog = new THREE.Fog(0x87ceeb, 15, 45);
+
+      // 工具函数
+      const unitX = new THREE.Vector3(1, 0, 0);
+
+      function makeMat(color) {
+        return new THREE.MeshLambertMaterial({ color: color });
+      }
+
+      function addBox(parent, w, h, d, mat, x, y, z) {
+        const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+        mesh.position.set(x || 0, y || 0, z || 0);
+        parent.add(mesh);
+        return mesh;
+      }
+
+      function createBar(parent, a, b, h, w, mat) {
+        const mesh = new THREE.Mesh(new THREE.BoxGeometry(1, h, w), mat);
+        parent.add(mesh);
+        updateBar(mesh, a, b);
+        return mesh;
+      }
+
+      function updateBar(mesh, a, b) {
+        const dir = new THREE.Vector3().subVectors(b, a);
+        const len = dir.length();
+        if (len < 0.001) return;
+        mesh.position.copy(a).add(b).multiplyScalar(0.5);
+        mesh.scale.set(len, 1, 1);
+        mesh.quaternion.setFromUnitVectors(unitX, dir.normalize());
+      }
+
+      // 地面与道路
+      const groundMat = makeMat(0x6aa84f);
+      const roadMat = makeMat(0x4b5563);
+      const laneMat = makeMat(0xf1f1f1);
+
+      const ground = new THREE.Mesh(new THREE.BoxGeometry(60, 0.4, 60), groundMat);
+      ground.position.y = -0.2;
+      scene.add(ground);
+
+      const road = new THREE.Mesh(new THREE.BoxGeometry(60, 0.04, 3), roadMat);
+      road.position.y = 0.02;
+      scene.add(road);
+
+      addBox(scene, 60, 0.02, 0.15, laneMat, 0, 0.05, 0);
+
+      // 小树
+      function addTree(x, z) {
+        const tree = new THREE.Group();
+        addBox(tree, 0.35, 1, 0.35, makeMat(0x6b4226), 0, 0.5, 0);
+        addBox(tree, 1, 1, 1, makeMat(0x2e8b57), 0, 1.5, 0);
+        addBox(tree, 0.7, 0.7, 0.7, makeMat(0x3cb371), 0, 2.2, 0);
+        tree.position.set(x, 0, z);
+        scene.add(tree);
+      }
+
+      addTree(-5, -4.5);
+      addTree(5.5, -5);
+      addTree(-8, 4.5);
+      addTree(9, 5);
+      addTree(-12, -3.5);
+      addTree(14, -6);
+
+      // 太阳
+      const sunMat = new THREE.MeshBasicMaterial({
+        color: 0xffdd55,
+        transparent: true,
+        opacity: 1,
+        fog: false,
+        depthWrite: false
+      });
+
+      const sunGroup = new THREE.Group();
+      const sunCore = new THREE.Mesh(new THREE.BoxGeometry(1.4, 1.4, 1.4), sunMat);
+      sunGroup.add(sunCore);
+
+      for (let i = 0; i < 8; i++) {
+        const ray = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.85, 0.18), sunMat);
+        const angle = (i / 8) * Math.PI * 2;
+        ray.position.set(Math.cos(angle) * 1.15, Math.sin(angle) * 1.15, 0);
+        ray.rotation.z = angle;
+        sunGroup.add(ray);
+      }
+
+      sunGroup.position.set(-7, 6.5, -12);
+      scene.add(sunGroup);
+
+      // 云
+      const cloudMat = new THREE.MeshLambertMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.55
+      });
+
+      const cloudGroup = new THREE.Group();
+
+      function addCloud(x, y, z, scale) {
+        const cloud = new THREE.Group();
+        const parts = [
+          [0, 0, 0, 1.8, 0.7, 1],
+          [1.2, 0.1, 0, 1.2, 0.55, 0.8],
+          [-1.2, 0.15, 0, 1.1, 0.5, 0.8],
+          [0.3, 0.4, 0, 1, 0.5, 0.7],
+          [-0.4, 0.35, 0.1, 0.9, 0.4, 0.7]
+        ];
+
+        parts.forEach(function (p) {
+          addBox(cloud, p[3], p[4], p[5], cloudMat, p[0], p[1], p[2]);
+        });
+
+        cloud.position.set(x, y, z);
+        cloud.scale.setScalar(scale);
+        cloudGroup.add(cloud);
+      }
+
+      addCloud(-3, 4.5, -8, 1.1);
+      addCloud(4.5, 5, -6, 1.3);
+      addCloud(9, 4.2, -9, 0.9);
+      addCloud(-9, 4.6, -5, 1);
+      scene.add(cloudGroup);
+
+      // 雨
+      const RAIN_COUNT = 450;
+      const rainGeo = new THREE.BufferGeometry();
+      const rainPositions = new Float32Array(RAIN_COUNT * 6);
+      const rainDrops = [];
+
+      for (let i = 0; i < RAIN_COUNT; i++) {
+        const drop = {
+          x: (Math.random() - 0.5) * 28,
+          y: Math.random() * 12,
+          z: (Math.random() - 0.5) * 22 - 2,
+          speed: 8 + Math.random() * 6
+        };
+        rainDrops.push(drop);
+
+        const j = i * 6;
+        rainPositions[j] = drop.x;
+        rainPositions[j + 1] = drop.y;
+        rainPositions[j + 2] = drop.z;
+        rainPositions[j + 3] = drop.x;
+        rainPositions[j + 4] = drop.y - 0.35;
+        rainPositions[j + 5] = drop.z;
+      }
+
+      rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPositions, 3));
+
+      const rainMat = new THREE.LineBasicMaterial({
+        color: 0xa0c4ff,
+        transparent: true,
+        opacity: 0,
+        depthWrite: false
+      });
+
+      const rainLines = new THREE.LineSegments(rainGeo, rainMat);
+      rainLines.frustumCulled = false;
+      rainLines.visible = false;
+      scene.add(rainLines);
+
+      // 天气数据
+      const weatherPresets = [
+        {
+          name: '晴天',
+          sky: new THREE.Color(0x87ceeb),
+          fog: new THREE.Color(0xbae1ff),
+          sunOpacity: 1,
+          cloudOpacity: 0.55,
+          cloudColor: new THREE.Color(0xffffff),
+          rainOpacity: 0,
+          light: 1.15,
+          ambient: 0.65
+        },
+        {
+          name: '阴天',
+          sky: new THREE.Color(0x9ba7b8),
+          fog: new THREE.Color(0xb6c2d0),
+          sunOpacity: 0.25,
+          cloudOpacity: 1,
+          cloudColor: new THREE.Color(0x9aa5b1),
+          rainOpacity: 0,
+          light: 0.7,
+          ambient: 0.55
+        },
+        {
+          name: '雨天',
+          sky: new THREE.Color(0x5b6873),
+          fog: new THREE.Color(0x77828e),
+          sunOpacity: 0,
+          cloudOpacity: 1,
+          cloudColor: new THREE.Color(0x4b5763),
+          rainOpacity: 1,
+          light: 0.45,
+          ambient: 0.5
+        }
+      ];
+
+      const weatherCurrent = {
+        sky: weatherPresets[0].sky.clone(),
+        fog: weatherPresets[0].fog.clone(),
+        cloudColor: weatherPresets[0].cloudColor.clone(),
+        sunOpacity: 1,
+        cloudOpacity: 0.55,
+        rainOpacity: 0,
+        light: 1.15,
+        ambient: 0.65
+      };
+
+      // 自行车 + 鹈鹕
+      const vehicle = new THREE.Group();
+      scene.add(vehicle);
+
+      const bikeGroup = new THREE.Group();
+      const pelican = new THREE.Group();
+      vehicle.add(bikeGroup);
+      vehicle.add(pelican);
+
+      // 材质
+      const whiteMat = makeMat(0xf8f9fa);
+      const wingMat = makeMat(0xeceff1);
+      const orangeMat = makeMat(0xf39c12);
+      const pouchMat = makeMat(0xe67e22);
+      const blackMat = makeMat(0x121212);
+      const grayMat = makeMat(0x8e9aaf);
+      const tireMat = makeMat(0x2c3e50);
+      const frameMat = makeMat(0xc0392b);
+      const pedalMat = makeMat(0x34495e);
+      const redMat = makeMat(0xe74c3c);
+
+      // 体素车轮
+      function createWheel() {
+        const wheel = new THREE.Group();
+        const segCount = 14;
+
+        for (let i = 0; i < segCount; i++) {
+          const angle = (i / segCount) * Math.PI * 2;
+          const seg = new THREE.Mesh(new THREE.BoxGeometry(0.21, 0.09, 0.12), tireMat);
+          seg.position.set(Math.cos(angle) * 0.55, Math.sin(angle) * 0.55, 0);
+          seg.rotation.z = angle + Math.PI / 2;
+          wheel.add(seg);
+        }
+
+        for (let i = 0; i < 4; i++) {
+          const spoke = new THREE.Mesh(new THREE.BoxGeometry(0.035, 1.05, 0.035), grayMat);
+          spoke.rotation.z = i * Math.PI / 4;
+          wheel.add(spoke);
+        }
+
+        addBox(wheel, 0.2, 0.2, 0.14, grayMat);
+        return wheel;
+      }
+
+      const rearWheel = createWheel();
+      rearWheel.position.set(-1.15, 0.62, 0);
+      bikeGroup.add(rearWheel);
+
+      const frontWheel = createWheel();
+      frontWheel.position.set(1.3, 0.62, 0);
+      bikeGroup.add(frontWheel);
+
+      // 车架
+      const crankCenter = new THREE.Vector3(0.25, 0.5, 0);
+      const saddlePos = new THREE.Vector3(-0.35, 1.25, 0);
+      const headTop = new THREE.Vector3(0.95, 1.42, 0);
+      const rearHub = new THREE.Vector3(-1.15, 0.62, 0);
+      const frontHub = new THREE.Vector3(1.3, 0.62, 0);
+
+      createBar(bikeGroup, crankCenter, saddlePos, 0.07, 0.07, frameMat);
+      createBar(bikeGroup, saddlePos, headTop, 0.07, 0.07, frameMat);
+      createBar(bikeGroup, headTop, crankCenter, 0.07, 0.07, frameMat);
+      createBar(bikeGroup, crankCenter, rearHub, 0.07, 0.07, frameMat);
+      createBar(bikeGroup, saddlePos, rearHub, 0.07, 0.07, frameMat);
+      createBar(bikeGroup, headTop, frontHub, 0.07, 0.07, frameMat);
+
+      addBox(bikeGroup, 0.12, 0.45, 0.12, frameMat, 0.95, 1.38, 0);
+
+      // 车把与座位
+      addBox(bikeGroup, 0.06, 0.3, 0.06, grayMat, 0.95, 1.52, 0);
+      addBox(bikeGroup, 0.08, 0.08, 0.72, grayMat, 0.95, 1.68, 0);
+
+      addBox(bikeGroup, 0.08, 0.18, 0.08, grayMat, -0.35, 1.12, 0);
+      addBox(bikeGroup, 0.4, 0.1, 0.42, blackMat, -0.35, 1.3, 0);
+
+      // 曲柄与脚踏
+      const CRANK_R = 0.35;
+      const crank = new THREE.Group();
+      crank.position.set(0.25, 0.5, 0);
+      bikeGroup.add(crank);
+
+      addBox(crank, 0.1, 0.1, 0.1, grayMat, 0, 0, 0);
+      addBox(crank, 0.06, CRANK_R, 0.06, grayMat, 0, CRANK_R / 2, 0.14);
+      addBox(crank, 0.06, CRANK_R, 0.06, grayMat, 0, -CRANK_R / 2, -0.14);
+      addBox(crank, 0.28, 0.06, 0.2, pedalMat, 0, CRANK_R, 0.14);
+      addBox(crank, 0.28, 0.06, 0.2, pedalMat, 0, -CRANK_R, -0.14);
+
+      // 鹈鹕身体
+      addBox(pelican, 0.95, 0.62, 0.7, whiteMat, -0.05, 1.62, 0);
+      addBox(pelican, 0.5, 0.32, 0.5, wingMat, -0.68, 1.58, 0);
+
+      addBox(pelican, 0.3, 0.5, 0.32, whiteMat, 0.3, 1.95, 0);
+      addBox(pelican, 0.28, 0.42, 0.3, whiteMat, 0.45, 2.32, 0);
+      addBox(pelican, 0.55, 0.46, 0.55, whiteMat, 0.45, 2.58, 0);
+
+      // 头盔
+      addBox(pelican, 0.5, 0.14, 0.55, redMat, 0.42, 2.87, 0);
+
+      // 大嘴与喉囊
+      addBox(pelican, 1.0, 0.14, 0.26, orangeMat, 1.18, 2.58, 0);
+      addBox(pelican, 1.0, 0.3, 0.3, pouchMat, 1.16, 2.38, 0);
+      addBox(pelican, 0.12, 0.2, 0.24, orangeMat, 1.7, 2.55, 0);
+      addBox(pelican, 0.08, 0.18, 0.24, orangeMat, 1.72, 2.38, 0);
+
+      // 眼睛
+      addBox(pelican, 0.1, 0.1, 0.05, blackMat, 0.58, 2.72, 0.29);
+      addBox(pelican, 0.1, 0.1, 0.05, blackMat, 0.58, 2.72, -0.29);
+
+      // 翅膀抓住车把
+      createBar(
+        pelican,
+        new THREE.Vector3(-0.05, 1.85, 0.36),
+        new THREE.Vector3(0.95, 1.68, 0.3),
+        0.12, 0.35, wingMat
+      );
+
+      createBar(
+        pelican,
+        new THREE.Vector3(-0.05, 1.85, -0.36),
+        new THREE.Vector3(0.95, 1.68, -0.3),
+        0.12, 0.35, wingMat
+      );
+
+      // 腿与脚踏联动
+      const hip1 = new THREE.Vector3(-0.05, 1.42, 0.22);
+      const hip2 = new THREE.Vector3(-0.05, 1.42, -0.22);
+
+      function getPedalPos(theta, side) {
+        if (side === 1) {
+          return new THREE.Vector3(
+            0.25 - CRANK_R * Math.sin(theta),
+            0.5 + CRANK_R * Math.cos(theta),
+            0.14
+          );
+        }
+        return new THREE.Vector3(
+          0.25 + CRANK_R * Math.sin(theta),
+          0.5 - CRANK_R * Math.cos(theta),
+          -0.14
+        );
+      }
+
+      const leg1 = createBar(pelican, hip1, getPedalPos(0, 1), 0.09, 0.09, orangeMat);
+      const leg2 = createBar(pelican, hip2, getPedalPos(0, -1), 0.09, 0.09, orangeMat);
+
+      // 响应窗口变化
+      function onResize() {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        const aspect = w / h;
+
+        renderer.setSize(w, h);
+        camera.aspect = aspect;
+
+        if (aspect < 0.7) {
+          camera.position.set(7, 5, 16);
+        } else if (aspect < 1) {
+          camera.position.set(7, 4.8, 13);
+        } else {
+          camera.position.set(6.5, 4.5, 10);
+        }
+
+        camera.lookAt(0, 1.6, 0);
+        camera.updateProjectionMatrix();
+      }
+
+      window.addEventListener('resize', onResize);
+      onResize();
+
+      // 天气更新
+      const weatherNameEl = document.getElementById('weatherName');
+      const weatherNextEl = document.getElementById('weatherNext');
+
+      function updateWeather(dt, elapsed) {
+        const idx = Math.floor(elapsed / 5) % 3;
+        const target = weatherPresets[idx];
+        const k = 1 - Math.exp(-3 * dt);
+
+        weatherCurrent.sky.lerp(target.sky, k);
+        weatherCurrent.fog.lerp(target.fog, k);
+        weatherCurrent.cloudColor.lerp(target.cloudColor, k);
+        weatherCurrent.sunOpacity += (target.sunOpacity - weatherCurrent.sunOpacity) * k;
+        weatherCurrent.cloudOpacity += (target.cloudOpacity - weatherCurrent.cloudOpacity) * k;
+        weatherCurrent.rainOpacity += (target.rainOpacity - weatherCurrent.rainOpacity) * k;
+        weatherCurrent.light += (target.light - weatherCurrent.light) * k;
+        weatherCurrent.ambient += (target.ambient - weatherCurrent.ambient) * k;
+
+        scene.background.copy(weatherCurrent.sky);
+        scene.fog.color.copy(weatherCurrent.fog);
+
+        cloudMat.color.copy(weatherCurrent.cloudColor);
+        cloudMat.opacity = weatherCurrent.cloudOpacity;
+        sunMat.opacity = weatherCurrent.sunOpacity;
+        rainMat.opacity = weatherCurrent.rainOpacity;
+
+        dirLight.intensity = weatherCurrent.light;
+        hemiLight.intensity = weatherCurrent.ambient;
+
+        sunGroup.visible = weatherCurrent.sunOpacity > 0.02;
+        cloudGroup.visible = weatherCurrent.cloudOpacity > 0.02;
+
+        const nextIdx = (idx + 1) % 3;
+        const remain = Math.max(1, Math.ceil(5 - (elapsed % 5)));
+        weatherNameEl.textContent = '天气：' + target.name;
+        weatherNextEl.textContent = '下一种天气：' + weatherPresets[nextIdx].name + ' · ' + remain + '秒';
+      }
+
+      // 雨滴更新
+      function updateRain(dt) {
+        rainMat.opacity = weatherCurrent.rainOpacity;
+        rainLines.visible = weatherCurrent.rainOpacity > 0.02;
+
+        if (!rainLines.visible) return;
+
+        const arr = rainGeo.attributes.position.array;
+
+        for (let i = 0; i < RAIN_COUNT; i++) {
+          const d = rainDrops[i];
+          d.y -= d.speed * dt * (0.3 + weatherCurrent.rainOpacity);
+
+          if (d.y < -0.2) {
+            d.y = 9 + Math.random() * 6;
+            d.x = (Math.random() - 0.5) * 28;
+            d.z = (Math.random() - 0.5) * 22 - 2;
+          }
+
+          const j = i * 6;
+          arr[j] = d.x;
+          arr[j + 1] = d.y;
+          arr[j + 2] = d.z;
+          arr[j + 3] = d.x;
+          arr[j + 4] = d.y - 0.35;
+          arr[j + 5] = d.z;
+        }
+
+        rainGeo.attributes.position.needsUpdate = true;
+      }
+
+      // 主循环
+      const clock = new THREE.Clock();
+      let elapsed = 0;
+
+      function animate() {
+        requestAnimationFrame(animate);
+
+        const dt = Math.min(clock.getDelta(), 0.05);
+        elapsed += dt;
+        const t = elapsed;
+
+        updateWeather(dt, elapsed);
+        updateRain(dt);
+
+        const wheelSpeed = 3;
+        rearWheel.rotation.z -= dt * wheelSpeed;
+        frontWheel.rotation.z -= dt * wheelSpeed;
+        crank.rotation.z -= dt * wheelSpeed * 0.9;
+
+        // 腿跟随脚踏
+        const theta = crank.rotation.z;
+        updateBar(leg1, hip1, getPedalPos(theta, 1));
+        updateBar(leg2, hip2, getPedalPos(theta, -1));
+
+        // 轻微骑车颠簸
+        vehicle.position.y = Math.abs(Math.sin(t * 8)) * 0.015;
+
+        // 云缓慢漂移
+        cloudGroup.position.x = Math.sin(t * 0.04) * 2;
+
+        renderer.render(scene, camera);
+      }
+
+      animate();
+    })();
+  </script>
+</body>
+</html>

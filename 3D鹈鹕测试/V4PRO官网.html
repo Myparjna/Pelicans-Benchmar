@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>体素鹈鹕骑自行车 - 天气切换</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            overflow: hidden;
+            background: #000;
+            touch-action: none;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        canvas {
+            display: block;
+        }
+        #weather-label {
+            position: fixed;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            font-size: clamp(14px, 3vw, 22px);
+            font-weight: bold;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+            pointer-events: none;
+            z-index: 10;
+            letter-spacing: 2px;
+            transition: color 0.4s ease;
+            background: rgba(0, 0, 0, 0.35);
+            padding: 6px 20px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
+        }
+        #weather-label.sunny {
+            color: #FFD54F;
+        }
+        #weather-label.cloudy {
+            color: #B0BEC5;
+        }
+        #weather-label.rainy {
+            color: #4FC3F7;
+        }
+        #timer-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: clamp(80px, 20vw, 140px);
+            height: 6px;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 3px;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 10;
+            backdrop-filter: blur(4px);
+        }
+        #timer-indicator .fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.1s linear, background-color 0.4s ease;
+            width: 0%;
+        }
+        .fill.sunny {
+            background: #FFD54F;
+        }
+        .fill.cloudy {
+            background: #90A4AE;
+        }
+        .fill.rainy {
+            background: #4FC3F7;
+        }
+    </style>
+</head>
+<body>
+    <div id="weather-label">☀️ 晴天</div>
+    <div id="timer-indicator"><div class="fill sunny" id="timer-fill"></div></div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        // ==================== 场景初始化 ====================
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 200);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.0;
+        document.body.appendChild(renderer.domElement);
+
+        // ==================== 灯光 ====================
+        const ambientLight = new THREE.AmbientLight(0xffeedd, 0.6);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
+        directionalLight.position.set(8, 15, 6);
+        directionalLight.castShadow = true;
+        directionalLight.shadow.mapSize.width = 1024;
+        directionalLight.shadow.mapSize.height = 1024;
+        directionalLight.shadow.camera.near = 0.5;
+        directionalLight.shadow.camera.far = 60;
+        directionalLight.shadow.camera.left = -20;
+        directionalLight.shadow.camera.right = 20;
+        directionalLight.shadow.camera.top = 20;
+        directionalLight.shadow.camera.bottom = -20;
+        directionalLight.shadow.bias = -0.0005;
+        scene.add(directionalLight);
+
+        const fillLight = new THREE.DirectionalLight(0xccddff, 0.4);
+        fillLight.position.set(-5, 6, -4);
+        scene.add(fillLight);
+
+        // ==================== 材质辅助 ====================
+        function voxelMat(color, opts = {}) {
+            return new THREE.MeshStandardMaterial({
+                color: color,
+                roughness: opts.roughness ?? 0.7,
+                metalness: opts.metalness ?? 0.05,
+                flatShading: true,
+                ...opts
+            });
+        }
+
+        // ==================== 创建体素块 ====================
+        function createVoxel(w, h, d, color, opts = {}) {
+            const geo = new THREE.BoxGeometry(w, h, d);
+            const mat = voxelMat(color, opts);
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.castShadow = opts.castShadow ?? true;
+            mesh.receiveShadow = opts.receiveShadow ?? true;
+            return mesh;
+        }
+
+        function createVoxelGroup(parts) {
+            const group = new THREE.Group();
+            parts.forEach(p => {
+                const mesh = createVoxel(p.w, p.h, p.d, p.color, p.opts || {});
+                mesh.position.set(p.x, p.y, p.z);
+                if (p.rotX) mesh.rotation.x = p.rotX;
+                if (p.rotY) mesh.rotation.y = p.rotY;
+                if (p.rotZ) mesh.rotation.z = p.rotZ;
+                group.add(mesh);
+            });
+            return group;
+        }
+
+        // ==================== 地面 ====================
+        const groundGroup = new THREE.Group();
+
+        const groundBase = createVoxel(24, 0.4, 16, 0x7cb342, { roughness: 0.9, metalness: 0 });
+        groundBase.position.set(0, -0.2, 0);
+        groundBase.receiveShadow = true;
+        groundBase.castShadow = false;
+        groundGroup.add(groundBase);
+
+        const groundTop = createVoxel(23.5, 0.3, 15.5, 0x8bc34a, { roughness: 0.95, metalness: 0 });
+        groundTop.position.set(0, 0.05, 0);
+        groundTop.receiveShadow = true;
+        groundTop.castShadow = false;
+        groundGroup.add(groundTop);
+
+        for (let i = 0; i < 80; i++) {
+            const grassTuft = createVoxel(0.15 + Math.random() * 0.2, 0.12 + Math.random() * 0.2, 0.15 + Math.random() * 0.2,
+                0x66bb6a, { roughness: 1, metalness: 0 });
+            grassTuft.position.set(
+                (Math.random() - 0.5) * 20,
+                0.25 + Math.random() * 0.15,
+                (Math.random() - 0.5) * 13
+            );
+            grassTuft.castShadow = false;
+            grassTuft.receiveShadow = true;
+            groundGroup.add(grassTuft);
+        }
+
+        for (let i = 0; i < 12; i++) {
+            const stone = createVoxel(0.3 + Math.random() * 0.4, 0.2 + Math.random() * 0.25, 0.3 + Math.random() * 0.4,
+                0x9e9e9e, { roughness: 0.95, metalness: 0 });
+            stone.position.set(
+                (Math.random() - 0.5) * 18,
+                0.3,
+                (Math.random() - 0.5) * 11
+            );
+            stone.castShadow = true;
+            stone.receiveShadow = true;
+            groundGroup.add(stone);
+        }
+        scene.add(groundGroup);
+
+        // ==================== 体素树 ====================
+        function createVoxelTree(x, z, scale = 1.0) {
+            const tree = new THREE.Group();
+            const trunkColor = 0x795548;
+            const leafColor = 0x43a047;
+
+            const trunk = createVoxel(0.5 * scale, 1.8 * scale, 0.5 * scale, trunkColor, { roughness: 0.85 });
+            trunk.position.set(0, 0.9 * scale, 0);
+            trunk.castShadow = true;
+            trunk.receiveShadow = true;
+            tree.add(trunk);
+
+            const leaf1 = createVoxel(1.8 * scale, 0.8 * scale, 1.8 * scale, leafColor, { roughness: 0.9 });
+            leaf1.position.set(0, 2.0 * scale, 0);
+            leaf1.castShadow = true;
+            leaf1.receiveShadow = true;
+            tree.add(leaf1);
+
+            const leaf2 = createVoxel(1.4 * scale, 0.7 * scale, 1.4 * scale, 0x4caf50, { roughness: 0.9 });
+            leaf2.position.set(0, 2.7 * scale, 0);
+            leaf2.castShadow = true;
+            leaf2.receiveShadow = true;
+            tree.add(leaf2);
+
+            const leaf3 = createVoxel(0.9 * scale, 0.6 * scale, 0.9 * scale, 0x66bb6a, { roughness: 0.9 });
+            leaf3.position.set(0, 3.3 * scale, 0);
+            leaf3.castShadow = true;
+            leaf3.receiveShadow = true;
+            tree.add(leaf3);
+
+            tree.position.set(x, 0.3, z);
+            return tree;
+        }
+
+        const treesGroup = new THREE.Group();
+        const treePositions = [
+            [-5.5, -3.5, 1.1],
+            [6.2, -2.8, 1.3],
+            [-4.5, 4.2, 0.9],
+            [5.8, 3.5, 1.0],
+            [-7.0, 0.5, 1.15],
+            [7.2, -1.0, 0.95],
+            [-3.2, -5.5, 1.2],
+            [3.8, 5.8, 1.05],
+            [-8.5, -2.0, 0.85],
+            [8.8, 2.5, 1.0],
+            [-6.0, 6.0, 0.9],
+            [6.5, -5.5, 1.05],
+        ];
+        treePositions.forEach(([tx, tz, ts]) => {
+            treesGroup.add(createVoxelTree(tx, tz, ts));
+        });
+        scene.add(treesGroup);
+
+        // ==================== 云朵 ====================
+        function createVoxelCloud(cx, cy, cz, scale, color) {
+            const cloud = new THREE.Group();
+            const parts = [
+                { w: 2.0 * scale, h: 0.7 * scale, d: 1.2 * scale, x: 0, y: 0, z: 0 },
+                { w: 1.4 * scale, h: 0.6 * scale, d: 1.0 * scale, x: -1.1 * scale, y: 0.15 * scale, z: 0 },
+                { w: 1.4 * scale, h: 0.6 * scale, d: 1.0 * scale, x: 1.1 * scale, y: 0.15 * scale, z: 0 },
+                { w: 1.0 * scale, h: 0.5 * scale, d: 0.9 * scale, x: -0.4 * scale, y: 0.5 * scale, z: 0 },
+                { w: 1.0 * scale, h: 0.5 * scale, d: 0.9 * scale, x: 0.4 * scale, y: 0.5 * scale, z: 0 },
+                { w: 0.7 * scale, h: 0.4 * scale, d: 0.7 * scale, x: 0, y: 0.75 * scale, z: 0 },
+            ];
+            parts.forEach(p => {
+                const m = createVoxel(p.w, p.h, p.d, color, { roughness: 1, metalness: 0 });
+                m.position.set(p.x, p.y, p.z);
+                m.castShadow = false;
+                m.receiveShadow = false;
+                cloud.add(m);
+            });
+            cloud.position.set(cx, cy, cz);
+            cloud.userData = { baseX: cx, baseY: cy, baseZ: cz, speed: 0.15 + Math.random() * 0.2, phase: Math.random() *
+                    Math.PI * 2 };
+            return cloud;
+        }
+
+        const cloudsGroup = new THREE.Group();
+        const cloudConfigs = [
+            { x: -6, y: 8, z: -6, s: 1.4, color: 0xffffff },
+            { x: 4, y: 9, z: -5, s: 1.1, color: 0xf5f5f5 },
+            { x: -2, y: 10, z: -7, s: 1.6, color: 0xffffff },
+            { x: 8, y: 7.5, z: -6, s: 1.0, color: 0xeeeeee },
+            { x: -8, y: 8.5, z: -5, s: 1.2, color: 0xfafafa },
+            { x: 1, y: 11, z: -6, s: 0.9, color: 0xffffff },
+        ];
+        cloudConfigs.forEach(cfg => {
+            cloudsGroup.add(createVoxelCloud(cfg.x, cfg.y, cfg.z, cfg.s, cfg.color));
+        });
+
+        const darkCloudConfigs = [
+            { x: -5, y: 7.5, z: -6, s: 1.5, color: 0x78909c },
+            { x: 3, y: 8.5, z: -5, s: 1.3, color: 0x90a4ae },
+            { x: -1, y: 9.5, z: -7, s: 1.7, color: 0x78909c },
+            { x: 7, y: 7, z: -6, s: 1.2, color: 0x90a4ae },
+            { x: -7, y: 8, z: -5, s: 1.4, color: 0x78909c },
+            { x: 0, y: 10.5, z: -6, s: 1.1, color: 0x90a4ae },
+            { x: -3, y: 6.5, z: -6, s: 1.0, color: 0x78909c },
+            { x: 5, y: 9, z: -5, s: 1.3, color: 0x90a4ae },
+        ];
+        const darkCloudsGroup = new THREE.Group();
+        darkCloudConfigs.forEach(cfg => {
+            darkCloudsGroup.add(createVoxelCloud(cfg.x, cfg.y, cfg.z, cfg.s, cfg.color));
+        });
+        darkCloudsGroup.visible = false;
+        scene.add(cloudsGroup);
+        scene.add(darkCloudsGroup);
+
+        // ==================== 太阳 ====================
+        const sunGroup = new THREE.Group();
+        const sunCore = createVoxel(2.0, 2.0, 2.0, 0xFFD54F, { roughness: 0.3, metalness: 0, emissive: 0xFFC107,
+            emissiveIntensity: 0.6 });
+        sunCore.castShadow = false;
+        sunCore.receiveShadow = false;
+        sunGroup.add(sunCore);
+        const sunGlow1 = createVoxel(2.6, 0.5, 0.5, 0xFFE082, { roughness: 0.3, metalness: 0, emissive: 0xFFC107,
+            emissiveIntensity: 0.3 });
+        sunGlow1.position.set(0, 0, 1.3);
+        sunGlow1.castShadow = false;
+        sunGlow1.receiveShadow = false;
+        sunGroup.add(sunGlow1);
+        const sunGlow2 = createVoxel(2.6, 0.5, 0.5, 0xFFE082, { roughness: 0.3, metalness: 0, emissive: 0xFFC107,
+            emissiveIntensity: 0.3 });
+        sunGlow2.position.set(0, 0, -1.3);
+        sunGlow2.castShadow = false;
+        sunGlow2.receiveShadow = false;
+        sunGroup.add(sunGlow2);
+        const sunGlow3 = createVoxel(0.5, 2.6, 0.5, 0xFFE082, { roughness: 0.3, metalness: 0, emissive: 0xFFC107,
+            emissiveIntensity: 0.3 });
+        sunGlow3.position.set(1.3, 0, 0);
+        sunGlow3.castShadow = false;
+        sunGlow3.receiveShadow = false;
+        sunGroup.add(sunGlow3);
+        const sunGlow4 = createVoxel(0.5, 2.6, 0.5, 0xFFE082, { roughness: 0.3, metalness: 0, emissive: 0xFFC107,
+            emissiveIntensity: 0.3 });
+        sunGlow4.position.set(-1.3, 0, 0);
+        sunGlow4.castShadow = false;
+        sunGlow4.receiveShadow = false;
+        sunGroup.add(sunGlow4);
+        sunGroup.position.set(7, 11, -8);
+        sunGroup.visible = true;
+        scene.add(sunGroup);
+
+        // ==================== 雨滴 ====================
+        const raindropsGroup = new THREE.Group();
+        const numRaindrops = 180;
+        const raindropMeshes = [];
+        const raindropGeo = new THREE.BoxGeometry(0.08, 0.45, 0.08);
+        const raindropMat = new THREE.MeshStandardMaterial({
+            color: 0x64B5F6,
+            roughness: 0.2,
+            metalness: 0,
+            transparent: true,
+            opacity: 0.7,
+            flatShading: true,
+        });
+
+        for (let i = 0; i < numRaindrops; i++) {
+            const drop = new THREE.Mesh(raindropGeo, raindropMat);
+            drop.castShadow = false;
+            drop.receiveShadow = false;
+            drop.position.set(
+                (Math.random() - 0.5) * 18,
+                Math.random() * 10 + 2,
+                (Math.random() - 0.5) * 12
+            );
+            drop.userData = {
+                speed: 6 + Math.random() * 8,
+                offsetX: (Math.random() - 0.5) * 0.3,
+                offsetZ: (Math.random() - 0.5) * 0.3,
+            };
+            raindropMeshes.push(drop);
+            raindropsGroup.add(drop);
+        }
+        raindropsGroup.visible = false;
+        scene.add(raindropsGroup);
+
+        // ==================== 鹈鹕模型 ====================
+        const pelicanGroup = new THREE.Group();
+
+        const pelicanParts = [
+            // 身体主体
+            { w: 1.8, h: 1.5, d: 1.2, x: -0.2, y: 0, z: 0, color: 0xf5f5f5 },
+            // 胸部
+            { w: 1.2, h: 1.3, d: 1.1, x: 0.6, y: -0.1, z: 0, color: 0xffffff },
+            // 背部
+            { w: 1.4, h: 0.5, d: 1.0, x: -0.4, y: 0.7, z: 0, color: 0xe8e8e8 },
+            // 尾巴
+            { w: 0.7, h: 0.5, d: 0.5, x: -1.3, y: 0.1, z: 0, color: 0xe0e0e0 },
+            // 脖子
+            { w: 0.55, h: 0.65, d: 0.55, x: 0.9, y: 0.75, z: 0, color: 0xfafafa },
+            // 头
+            { w: 0.85, h: 0.8, d: 0.8, x: 1.2, y: 1.35, z: 0, color: 0xfafafa },
+            // 头顶
+            { w: 0.5, h: 0.25, d: 0.5, x: 1.25, y: 1.85, z: 0, color: 0xf0f0f0 },
+            // 上嘴
+            { w: 1.0, h: 0.14, d: 0.28, x: 1.95, y: 1.4, z: 0, color: 0xFF8F00, opts: { roughness: 0.5 } },
+            // 上嘴前端
+            { w: 0.35, h: 0.1, d: 0.2, x: 2.55, y: 1.38, z: 0, color: 0xFFA000, opts: { roughness: 0.5 } },
+            // 下嘴/喉囊
+            { w: 0.9, h: 0.45, d: 0.38, x: 1.9, y: 1.05, z: 0, color: 0xFFA726, opts: { roughness: 0.55 } },
+            // 喉囊下部
+            { w: 0.7, h: 0.3, d: 0.35, x: 1.85, y: 0.68, z: 0, color: 0xFFB74D, opts: { roughness: 0.6 } },
+            // 喉囊前端
+            { w: 0.25, h: 0.35, d: 0.25, x: 2.3, y: 1.0, z: 0, color: 0xFFA726, opts: { roughness: 0.55 } },
+            // 左眼
+            { w: 0.14, h: 0.14, d: 0.05, x: 1.42, y: 1.55, z: 0.42, color: 0x212121, opts: { roughness: 0.3 } },
+            // 右眼
+            { w: 0.14, h: 0.14, d: 0.05, x: 1.42, y: 1.55, z: -0.42, color: 0x212121, opts: { roughness: 0.3 } },
+            // 左翅膀
+            { w: 1.1, h: 0.45, d: 0.7, x: -0.25, y: 0.15, z: 0.75, color: 0xd5d5d5 },
+            // 右翅膀
+            { w: 1.1, h: 0.45, d: 0.7, x: -0.25, y: 0.15, z: -0.75, color: 0xd5d5d5 },
+            // 左翅膀末端
+            { w: 0.5, h: 0.3, d: 0.5, x: -0.65, y: 0.05, z: 0.8, color: 0xcccccc },
+            // 右翅膀末端
+            { w: 0.5, h: 0.3, d: 0.5, x: -0.65, y: 0.05, z: -0.8, color: 0xcccccc },
+        ];
+
+        pelicanParts.forEach(p => {
+            const mesh = createVoxel(p.w, p.h, p.d, p.color, p.opts || {});
+            mesh.position.set(p.x, p.y, p.z);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            pelicanGroup.add(mesh);
+        });
+
+        // 鹈鹕腿（用于蹬踏动画）
+        const leftLegGroup = new THREE.Group();
+        const leftLegUpper = createVoxel(0.22, 0.6, 0.22, 0xFF8F00, { roughness: 0.55 });
+        leftLegUpper.position.set(0, -0.3, 0);
+        leftLegUpper.castShadow = true;
+        leftLegUpper.receiveShadow = true;
+        leftLegGroup.add(leftLegUpper);
+        const leftLegLower = createVoxel(0.18, 0.5, 0.18, 0xFFA000, { roughness: 0.55 });
+        leftLegLower.position.set(0, -0.75, 0);
+        leftLegLower.castShadow = true;
+        leftLegLower.receiveShadow = true;
+        leftLegGroup.add(leftLegLower);
+        const leftFoot = createVoxel(0.3, 0.1, 0.2, 0xFFB74D, { roughness: 0.6 });
+        leftFoot.position.set(0.05, -1.0, 0);
+        leftFoot.castShadow = true;
+        leftFoot.receiveShadow = true;
+        leftLegGroup.add(leftFoot);
+        leftLegGroup.position.set(0.1, 0.5, 0.25);
+        pelicanGroup.add(leftLegGroup);
+
+        const rightLegGroup = new THREE.Group();
+        const rightLegUpper = createVoxel(0.22, 0.6, 0.22, 0xFF8F00, { roughness: 0.55 });
+        rightLegUpper.position.set(0, -0.3, 0);
+        rightLegUpper.castShadow = true;
+        rightLegUpper.receiveShadow = true;
+        rightLegGroup.add(rightLegUpper);
+        const rightLegLower = createVoxel(0.18, 0.5, 0.18, 0xFFA000, { roughness: 0.55 });
+        rightLegLower.position.set(0, -0.75, 0);
+        rightLegLower.castShadow = true;
+        rightLegLower.receiveShadow = true;
+        rightLegGroup.add(rightLegLower);
+        const rightFoot = createVoxel(0.3, 0.1, 0.2, 0xFFB74D, { roughness: 0.6 });
+        rightFoot.position.set(0.05, -1.0, 0);
+        rightFoot.castShadow = true;
+        rightFoot.receiveShadow = true;
+        rightLegGroup.add(rightFoot);
+        rightLegGroup.position.set(0.1, 0.5, -0.25);
+        pelicanGroup.add(rightLegGroup);
+
+        pelicanGroup.position.set(0, 2.05, 0);
+        pelicanGroup.rotation.z = 0.06;
+        scene.add(pelicanGroup);
+
+        // ==================== 自行车模型 ====================
+        const bicycleGroup = new THREE.Group();
+
+        function createVoxelWheel(radius, wheelX, wheelY, wheelZ, color) {
+            const wheelGroup = new THREE.Group();
+            const numSegments = 22;
+            const segmentSize = 0.22;
+            const spokeColor = 0x757575;
+
+            for (let i = 0; i < numSegments; i++) {
+                const angle = (i / numSegments) * Math.PI * 2;
+                const px = Math.cos(angle) * radius;
+                const py = Math.sin(angle) * radius;
+                const seg = createVoxel(segmentSize, segmentSize * 0.7, segmentSize * 0.6, color, { roughness: 0.4,
+                    metalness: 0.3 });
+                seg.position.set(px, py, 0);
+                seg.rotation.z = angle;
+                seg.castShadow = true;
+                seg.receiveShadow = true;
+                wheelGroup.add(seg);
+            }
+
+            // 辐条
+            for (let i = 0; i < 6; i++) {
+                const angle = (i / 6) * Math.PI * 2;
+                const spoke = createVoxel(radius * 1.7, 0.1, 0.15, spokeColor, { roughness: 0.5, metalness: 0.4 });
+                spoke.position.set(Math.cos(angle) * radius * 0.5, Math.sin(angle) * radius * 0.5, 0);
+                spoke.rotation.z = angle;
+                spoke.castShadow = true;
+                spoke.receiveShadow = true;
+                wheelGroup.add(spoke);
+            }
+
+            // 中心轴
+            const hub = createVoxel(0.35, 0.35, 0.35, 0x616161, { roughness: 0.35, metalness: 0.5 });
+            hub.castShadow = true;
+            hub.receiveShadow = true;
+            wheelGroup.add(hub);
+
+            wheelGroup.position.set(wheelX, wheelY, wheelZ);
+            return wheelGroup;
+        }
+
+        const wheelRadius = 1.5;
+        const rearWheel = createVoxelWheel(wheelRadius, -1.5, wheelRadius, 0, 0x424242);
+        const frontWheel = createVoxelWheel(wheelRadius, 1.5, wheelRadius, 0, 0x424242);
+        bicycleGroup.add(rearWheel);
+        bicycleGroup.add(frontWheel);
+
+        // 车架
+        const frameParts = [
+            // 后下叉
+            { w: 1.8, h: 0.18, d: 0.18, x: -1.2, y: 1.5, z: 0, color: 0xE53935, opts: { roughness: 0.4,
+                metalness: 0.35 } },
+            // 前下叉
+            { w: 1.5, h: 0.18, d: 0.18, x: 0.6, y: 1.5, z: 0, color: 0xE53935, opts: { roughness: 0.4,
+                metalness: 0.35 } },
+            // 后上叉
+            { w: 1.5, h: 0.16, d: 0.16, x: -0.5, y: 2.0, z: 0, color: 0xD32F2F, opts: { roughness: 0.4,
+                metalness: 0.35 } },
+            // 座管
+            { w: 0.16, h: 1.2, d: 0.16, x: -0.3, y: 2.15, z: 0, color: 0xE53935, opts: { roughness: 0.4,
+                metalness: 0.35 } },
+            // 上管
+            { w: 1.4, h: 0.16, d: 0.16, x: 0.5, y: 2.8, z: 0, color: 0xE53935, opts: { roughness: 0.4,
+                metalness: 0.35 } },
+            // 前管
+            { w: 0.16, h: 0.8, d: 0.16, x: 1.4, y: 2.35, z: 0, color: 0xD32F2F, opts: { roughness: 0.4,
+                metalness: 0.35 } },
+            // 下管
+            { w: 1.5, h: 0.16, d: 0.16, x: 0.2, y: 1.85, z: 0, color: 0xE53935, opts: { roughness: 0.4,
+                metalness: 0.35 } },
+            // 前叉
+            { w: 0.16, h: 1.2, d: 0.16, x: 1.5, y: 1.8, z: 0, color: 0xB71C1C, opts: { roughness: 0.4,
+                metalness: 0.35 } },
+            // 后叉上
+            { w: 1.4, h: 0.14, d: 0.14, x: -0.9, y: 2.15, z: 0, color: 0xD32F2F, opts: { roughness: 0.4,
+                metalness: 0.35 } },
+            // 后叉下
+            { w: 1.2, h: 0.14, d: 0.14, x: -0.6, y: 1.6, z: 0, color: 0xD32F2F, opts: { roughness: 0.4,
+                metalness: 0.35 } },
+        ];
+
+        frameParts.forEach(p => {
+            const mesh = createVoxel(p.w, p.h, p.d, p.color, p.opts || {});
+            mesh.position.set(p.x, p.y, p.z);
+            if (p.rotZ) mesh.rotation.z = p.rotZ;
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            bicycleGroup.add(mesh);
+        });
+
+        // 座椅
+        const seat = createVoxel(0.55, 0.18, 0.4, 0x37474F, { roughness: 0.6, metalness: 0.1 });
+        seat.position.set(-0.3, 2.85, 0);
+        seat.castShadow = true;
+        seat.receiveShadow = true;
+        bicycleGroup.add(seat);
+
+        // 座椅后部
+        const seatBack = createVoxel(0.25, 0.2, 0.35, 0x455A64, { roughness: 0.6, metalness: 0.1 });
+        seatBack.position.set(-0.55, 2.82, 0);
+        seatBack.castShadow = true;
+        seatBack.receiveShadow = true;
+        bicycleGroup.add(seatBack);
+
+        // 把手
+        const handlebar = createVoxel(0.5, 0.14, 0.14, 0x37474F, { roughness: 0.5, metalness: 0.2 });
+        handlebar.position.set(1.55, 2.9, 0);
+        handlebar.castShadow = true;
+        handlebar.receiveShadow = true;
+        bicycleGroup.add(handlebar);
+
+        const handleGripL = createVoxel(0.14, 0.18, 0.14, 0x212121, { roughness: 0.6, metalness: 0.1 });
+        handleGripL.position.set(1.62, 2.88, 0.16);
+        handleGripL.castShadow = true;
+        handleGripL.receiveShadow = true;
+        bicycleGroup.add(handleGripL);
+
+        const handleGripR = createVoxel(0.14, 0.18, 0.14, 0x212121, { roughness: 0.6, metalness: 0.1 });
+        handleGripR.position.set(1.62, 2.88, -0.16);
+        handleGripR.castShadow = true;
+        handleGripR.receiveShadow = true;
+        bicycleGroup.add(handleGripR);
+
+        // 曲柄和踏板
+        const crankGroup = new THREE.Group();
+        const crankLeft = createVoxel(0.14, 0.5, 0.14, 0x616161, { roughness: 0.4, metalness: 0.45 });
+        crankLeft.position.set(0, -0.25, 0);
+        crankLeft.castShadow = true;
+        crankLeft.receiveShadow = true;
+        crankGroup.add(crankLeft);
+        const crankRight = createVoxel(0.14, 0.5, 0.14, 0x616161, { roughness: 0.4, metalness: 0.45 });
+        crankRight.position.set(0, 0.25, 0);
+        crankRight.castShadow = true;
+        crankRight.receiveShadow = true;
+        crankGroup.add(crankRight);
+        const pedalLeft = createVoxel(0.32, 0.1, 0.26, 0x424242, { roughness: 0.5, metalness: 0.35 });
+        pedalLeft.position.set(0, -0.5, 0.0);
+        pedalLeft.castShadow = true;
+        pedalLeft.receiveShadow = true;
+        crankGroup.add(pedalLeft);
+        const pedalRight = createVoxel(0.32, 0.1, 0.26, 0x424242, { roughness: 0.5, metalness: 0.35 });
+        pedalRight.position.set(0, 0.5, 0.0);
+        pedalRight.castShadow = true;
+        pedalRight.receiveShadow = true;
+        crankGroup.add(pedalRight);
+        crankGroup.position.set(0, 1.45, 0);
+        bicycleGroup.add(crankGroup);
+
+        // 链条装饰
+        const chain = createVoxel(0.9, 0.08, 0.1, 0x616161, { roughness: 0.3, metalness: 0.5 });
+        chain.position.set(-0.4, 1.3, 0.1);
+        chain.castShadow = true;
+        chain.receiveShadow = true;
+        bicycleGroup.add(chain);
+
+        bicycleGroup.position.set(0, 0.35, 0);
+        scene.add(bicycleGroup);
+
+        // ==================== 天气系统 ====================
+        const weatherStates = [
+            { name: 'sunny', label: '☀️ 晴天', skyColor: 0x87CEEB, ambientIntensity: 0.7, dirIntensity: 1.3,
+                sunVisible: true, darkCloudsVisible: false, rainVisible: false, groundColor: 0x8bc34a },
+            { name: 'cloudy', label: '☁️ 阴天', skyColor: 0x78909C, ambientIntensity: 0.55, dirIntensity: 0.8,
+                sunVisible: false, darkCloudsVisible: true, rainVisible: false, groundColor: 0x7cb342 },
+            { name: 'rainy', label: '🌧️ 雨天', skyColor: 0x546E7A, ambientIntensity: 0.45, dirIntensity: 0.6,
+                sunVisible: false, darkCloudsVisible: true, rainVisible: true, groundColor: 0x689f38 },
+        ];
+
+        let currentWeatherIndex = 0;
+        let weatherTimer = 0;
+        const WEATHER_INTERVAL = 5.0;
+
+        const weatherLabelEl = document.getElementById('weather-label');
+        const timerFillEl = document.getElementById('timer-fill');
+
+        function applyWeather(index) {
+            const w = weatherStates[index];
+            scene.background = new THREE.Color(w.skyColor);
+            ambientLight.intensity = w.ambientIntensity;
+            directionalLight.intensity = w.dirIntensity;
+            sunGroup.visible = w.sunVisible;
+            darkCloudsGroup.visible = w.darkCloudsVisible;
+            cloudsGroup.visible = !w.darkCloudsVisible;
+            raindropsGroup.visible = w.rainVisible;
+
+            // 更新标签
+            weatherLabelEl.textContent = w.label;
+            weatherLabelEl.className = w.name;
+            timerFillEl.className = 'fill ' + w.name;
+
+            // 地面微调颜色
+            groundTop.material.color.set(w.groundColor);
+            groundTop.material.needsUpdate = true;
+
+            // 调整曝光
+            renderer.toneMappingExposure = w.name === 'sunny' ? 1.0 : w.name === 'cloudy' ? 0.8 : 0.65;
+        }
+
+        applyWeather(0);
+
+        // ==================== 响应式相机 ====================
+        function updateCamera() {
+            const aspect = window.innerWidth / window.innerHeight;
+            const isPortrait = window.innerHeight > window.innerWidth;
+
+            if (isPortrait) {
+                camera.fov = 55;
+                camera.position.set(0, 4.5, 13.5);
+            } else {
+                camera.fov = 48;
+                camera.position.set(0, 4.2, 11.5);
+            }
+            camera.aspect = aspect;
+            camera.updateProjectionMatrix();
+            camera.lookAt(0, 2.2, 0);
+        }
+
+        updateCamera();
+        window.addEventListener('resize', () => {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            updateCamera();
+        });
+
+        // ==================== 动画循环 ====================
+        const clock = new THREE.Clock();
+        let elapsedTime = 0;
+
+        function animate() {
+            const delta = clock.getDelta();
+            elapsedTime += delta;
+
+            // 天气切换计时
+            weatherTimer += delta;
+            const timerProgress = (weatherTimer % WEATHER_INTERVAL) / WEATHER_INTERVAL;
+            timerFillEl.style.width = (timerProgress * 100) + '%';
+
+            if (weatherTimer >= WEATHER_INTERVAL) {
+                weatherTimer = 0;
+                currentWeatherIndex = (currentWeatherIndex + 1) % weatherStates.length;
+                applyWeather(currentWeatherIndex);
+            }
+
+            // 轮子旋转
+            const wheelRotationSpeed = 2.5;
+            rearWheel.rotation.z -= wheelRotationSpeed * delta;
+            frontWheel.rotation.z -= wheelRotationSpeed * delta;
+
+            // 曲柄旋转（蹬踏动画）
+            const crankRotationSpeed = 3.0;
+            crankGroup.rotation.z += crankRotationSpeed * delta;
+
+            // 鹈鹕腿动画
+            const pedalAngle = crankGroup.rotation.z;
+            const legLift = Math.sin(pedalAngle) * 0.45;
+            const legLift2 = Math.sin(pedalAngle + Math.PI) * 0.45;
+
+            leftLegGroup.position.y = 0.5 + legLift;
+            rightLegGroup.position.y = 0.5 + legLift2;
+
+            // 鹈鹕身体轻微上下起伏
+            const bodyBob = Math.abs(Math.sin(pedalAngle)) * 0.08;
+            pelicanGroup.position.y = 2.05 + bodyBob * 0.5;
+
+            // 云朵飘动
+            cloudsGroup.children.forEach(cloud => {
+                const ud = cloud.userData;
+                cloud.position.x = ud.baseX + Math.sin(elapsedTime * ud.speed + ud.phase) * 1.5;
+                cloud.position.z = ud.baseZ + Math.cos(elapsedTime * ud.speed * 0.7 + ud.phase) * 0.8;
+            });
+            darkCloudsGroup.children.forEach(cloud => {
+                const ud = cloud.userData;
+                cloud.position.x = ud.baseX + Math.sin(elapsedTime * ud.speed + ud.phase) * 2.0;
+                cloud.position.z = ud.baseZ + Math.cos(elapsedTime * ud.speed * 0.6 + ud.phase) * 1.0;
+            });
+
+            // 雨滴动画
+            if (raindropsGroup.visible) {
+                raindropMeshes.forEach(drop => {
+                    drop.position.y -= drop.userData.speed * delta;
+                    drop.position.x += drop.userData.offsetX * delta;
+                    drop.position.z += drop.userData.offsetZ * delta;
+                    if (drop.position.y < 0.15) {
+                        drop.position.y = 8 + Math.random() * 4;
+                        drop.position.x = (Math.random() - 0.5) * 18;
+                        drop.position.z = (Math.random() - 0.5) * 12;
+                    }
+                });
+            }
+
+            // 太阳轻微脉动
+            if (sunGroup.visible) {
+                const pulse = 1 + Math.sin(elapsedTime * 1.5) * 0.03;
+                sunGroup.scale.setScalar(pulse);
+            }
+
+            // 鹈鹕头部轻微摆动
+            pelicanGroup.rotation.z = 0.06 + Math.sin(elapsedTime * 1.2) * 0.015;
+
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // ==================== 键盘调试 ====================
+        window.addEventListener('keydown', (e) => {
+            if (e.key === '1') {
+                currentWeatherIndex = 0;
+                weatherTimer = 0;
+                applyWeather(0);
+            } else if (e.key === '2') {
+                currentWeatherIndex = 1;
+                weatherTimer = 0;
+                applyWeather(1);
+            } else if (e.key === '3') {
+                currentWeatherIndex = 2;
+                weatherTimer = 0;
+                applyWeather(2);
+            }
+        });
+
+        console.log('🎨 体素鹈鹕骑自行车场景已加载！');
+        console.log('📱 支持手机竖屏与电脑横屏');
+        console.log('🌤️ 天气自动切换：晴天 → 阴天 → 雨天 → 晴天 (每5秒)');
+        console.log('⌨️ 快捷键：1=晴天 2=阴天 3=雨天');
+    </script>
+</body>
+</html>

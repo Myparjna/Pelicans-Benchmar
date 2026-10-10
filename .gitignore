@@ -1,0 +1,17 @@
+# 调试缓存与临时产物（体积较大，不纳入版本管理）
+02-TempFiles/
+TempFiles/
+99-Trash/
+Trash/
+
+# 工具缓存与本地运行时
+.wrangler/
+.firecrawl/
+.workbuddy/
+node_modules/
+dist/
+
+# 打包与系统文件
+*.zip
+.DS_Store
+Thumbs.db
