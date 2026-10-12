@@ -538,5 +538,17 @@ window.SITES = [
     "params": "—",
     "cutoff": "—",
     "released": 1791192473
+  },
+  {
+    "file": "step5preview-10月12日-2259-鹈鹕白天骑自行车动画.html",
+    "slug": "step5preview-1012",
+    "category": "Step-5 Preview · 10月12日",
+    "model": "Step-5 Preview · 10月12日",
+    "channel": "官网",
+    "thumb": "thumbs/step5preview-1012.png",
+    "src": "sites/step5preview-1012.html",
+    "params": "600B(A27B)",
+    "cutoff": "—",
+    "released": 1791817140
   }
 ];

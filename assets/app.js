@@ -62,6 +62,7 @@
     'grok-4-7': 4,
     'seed-2-1-pro-0915': 7,
     'step-5-preview': 7,
+    'step5preview-1012': 6,
     'hy4-preview': 8,
     'spacebunny': 7,
     'kimi-k2-8': 6,
@@ -254,12 +255,13 @@
     }
 
     // 分类并列组合（按用户指定顺序，数据数组顺序即展示顺序）：
-    // 智谱+腾讯、Kimi+Grok、豆包+阶跃、MiniMax+小米 合并成 band，其余分类独立成组
+    // 智谱+腾讯、Kimi+Grok、豆包+阶跃、MiniMax+小米、Step新条目+Space Bunny 合并成 band，其余分类独立成组
     const CATEGORY_BANDS = [
       ['智谱 · GLM', '腾讯 · 混元'],
       ['月之暗面 · Kimi', 'Grok'],
       ['字节 · 豆包', '阶跃星辰 · Step'],
       ['MiniMax', '小米 · MiMo'],
+      ['Space Bunny', 'Step-5 Preview · 10月12日'],
     ];
     const bandOf = new Map();
     for (const [a, b] of CATEGORY_BANDS) { bandOf.set(a, b); bandOf.set(b, a); }
