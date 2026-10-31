@@ -1,8 +1,17 @@
 /* 展厅逻辑：按厂商分组渲染卡片、分类筛选、搜索、1-10 打分(localStorage)、一键按评分排序、iframe 查看器 */
 (function () {
-  const sites = window.SITES || [];
-  const siteBySlug = {};
-  sites.forEach(s => { siteBySlug[s.slug] = s; });
+  const DATASETS = {
+    '2d': window.SITES || [],
+    '3d': window.SITES_3D || [],
+  };
+  let mode = '2d';
+  let sites = DATASETS[mode];
+  let siteBySlug = {};
+  function reindex() {
+    siteBySlug = {};
+    sites.forEach(s => { siteBySlug[s.slug] = s; });
+  }
+  reindex();
 
   const root = document.getElementById('galleryRoot');
   const searchInput = document.getElementById('searchInput');
@@ -124,8 +133,8 @@
   }
 
   function exportRatings() {
-    // 收集所有 32 个 slug 当前评分（含默认分基线 + 用户手动覆盖）
-    const site = window.SITES || [];
+    // 收集当前模式下所有条目的评分（含默认分基线 + 用户手动覆盖）
+    const site = sites;
     const ratingsOut = {};
     for (const s of site) {
       const v = ratings[s.slug];
@@ -562,6 +571,57 @@
       .replace(/'/g, '&#39;');
   }
 
+  /* ---------- 2D / 3D 展示模式切换 ---------- */
+  const modeSwitch = document.getElementById('modeSwitch');
+  const subtitleEl = document.querySelector('.subtitle');
+  const promptLineEl = document.getElementById('promptLine');
+  const promptTip1El = document.getElementById('promptTip1');
+  const promptTip2El = document.getElementById('promptTip2');
+  const MODE_META = {
+    '2d': {
+      subtitle: '鹈鹕自行车测试 · ' + DATASETS['2d'].length + ' 个模型/版本生成效果对比',
+      line: '生成一个鹈鹕白天骑自行车的网页动画，单个html文件给我，要求能自适应网页宽度，兼容手机竖屏与电脑横屏显示。每过5秒进行晴天-阴天-雨天-晴天的天气自动切换。不使用任何skills。',
+      tip1: '生成一个鹈鹕白天骑自行车的网页动画，单个html文件给我，要求能自适应网页宽度，兼容手机竖屏与电脑横屏显示。',
+      tip2: '每过5秒进行晴天-阴天-雨天-晴天的天气自动切换。不使用任何skills。',
+    },
+    '3d': {
+      subtitle: '鹈鹕自行车测试 · ' + DATASETS['3d'].length + ' 个体素版本生成效果对比',
+      line: '使用体素建模。生成一个鹈鹕白天骑自行车的网页场景，要求兼容手机竖屏与电脑横屏显示。而且每过5秒进行晴天-阴天-雨天-晴天的天气自动切换。不使用任何skills。给我html',
+      tip1: '使用体素建模。生成一个鹈鹕白天骑自行车的网页场景，要求兼容手机竖屏与电脑横屏显示。',
+      tip2: '而且每过5秒进行晴天-阴天-雨天-晴天的天气自动切换。不使用任何skills。给我html',
+    },
+  };
+
+  function applyMode(next) {
+    if (!DATASETS[next] || next === mode) return;
+    mode = next;
+    sites = DATASETS[mode];
+    reindex();
+    activeCategory = '全部';
+    sortByRating = false;
+    searchTerm = '';
+    searchInput.value = '';
+    updateSortToggle();
+    modeSwitch.querySelectorAll('.mode-btn').forEach(btn => {
+      const on = btn.dataset.mode === mode;
+      btn.classList.toggle('is-active', on);
+      btn.setAttribute('aria-pressed', String(on));
+    });
+    const meta = MODE_META[mode];
+    subtitleEl.textContent = meta.subtitle;
+    promptLineEl.textContent = meta.line;
+    promptTip1El.textContent = meta.tip1;
+    promptTip2El.textContent = meta.tip2;
+    PROMPT_TEXT = meta.line;
+    renderChips();
+    applyFilters();
+  }
+
+  modeSwitch.addEventListener('click', e => {
+    const btn = e.target.closest('.mode-btn');
+    if (btn) applyMode(btn.dataset.mode);
+  });
+
   sortToggle.addEventListener('click', () => {
     sortByRating = !sortByRating;
     if (sortByRating) activeCategory = '全部'; // 排序即为全量榜单
@@ -612,7 +672,7 @@
   applyFilters();
 
   /* ---------- 顶部提示词：点击复制（大厅 + 查看器两处） ---------- */
-  const PROMPT_TEXT = '生成一个鹈鹕白天骑自行车的网页动画，单个html文件给我，要求能自适应网页宽度，兼容手机竖屏与电脑横屏显示。每过5秒进行晴天-阴天-雨天-晴天的天气自动切换。不使用任何skills。';
+  let PROMPT_TEXT = MODE_META[mode].line;
 
   function bindPromptCopy(box, iconId) {
     const icon = document.getElementById(iconId);

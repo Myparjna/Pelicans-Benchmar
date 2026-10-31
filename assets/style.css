@@ -560,6 +560,38 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
+.mode-switch {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 999px;
+}
+
+.mode-btn {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.mode-btn:hover {
+  color: var(--text);
+}
+
+.mode-btn.is-active {
+  background: linear-gradient(135deg, var(--primary), #0ea5e9);
+  color: #fff;
+}
+
 .sort-toggle.active {
   background: linear-gradient(135deg, var(--primary), #0ea5e9);
   border-color: transparent;

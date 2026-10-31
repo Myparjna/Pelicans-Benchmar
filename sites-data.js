@@ -576,3 +576,150 @@ window.SITES = [
     "released": 1791817140
   }
 ];
+
+window.SITES_3D = [
+  {
+    "file": "models/3d/GLM5.3-3D鹈鹕.html",
+    "slug": "3d-glm-5-3",
+    "category": "智谱 · GLM",
+    "model": "智谱 GLM 5.3",
+    "channel": "—",
+    "thumb": "thumbs/3d-glm-5-3.png",
+    "src": "sites/3d-glm-5-3.html",
+    "params": "753B",
+    "cutoff": "—",
+    "released": 1788940260
+  },
+  {
+    "file": "models/3d/HY40909-1145-体素鹈鹕骑行场景.html",
+    "slug": "3d-hy4",
+    "category": "腾讯 · 混元",
+    "model": "混元 HY4 Preview",
+    "channel": "—",
+    "thumb": "thumbs/3d-hy4.png",
+    "src": "sites/3d-hy4.html",
+    "params": "770B(A49B)",
+    "cutoff": "—",
+    "released": 1788926335
+  },
+  {
+    "file": "models/3d/KIMI-K3体素鹈鹕.html",
+    "slug": "3d-kimi-k3",
+    "category": "月之暗面 · Kimi",
+    "model": "Kimi K3",
+    "channel": "—",
+    "thumb": "thumbs/3d-kimi-k3.png",
+    "src": "sites/3d-kimi-k3.html",
+    "params": "2780B",
+    "cutoff": "—",
+    "released": 1788936244
+  },
+  {
+    "file": "models/3d/V4FLASH官网.html",
+    "slug": "3d-deepseek-v4-flash",
+    "category": "DeepSeek",
+    "model": "DeepSeek V4 Flash",
+    "channel": "官网",
+    "thumb": "thumbs/3d-deepseek-v4-flash.png",
+    "src": "sites/3d-deepseek-v4-flash.html",
+    "params": "—",
+    "cutoff": "—",
+    "released": 1788938458
+  },
+  {
+    "file": "models/3d/V4PRO官网.html",
+    "slug": "3d-deepseek-v4-pro",
+    "category": "DeepSeek",
+    "model": "DeepSeek V4 Pro",
+    "channel": "官网",
+    "thumb": "thumbs/3d-deepseek-v4-pro.png",
+    "src": "sites/3d-deepseek-v4-pro.html",
+    "params": "685B",
+    "cutoff": "2025-05",
+    "released": 1788938949
+  },
+  {
+    "file": "models/3d/deepseekv4.1flash.html",
+    "slug": "3d-deepseek-v4-1-flash",
+    "category": "DeepSeek",
+    "model": "DeepSeek V4.1 Flash",
+    "channel": "—",
+    "thumb": "thumbs/3d-deepseek-v4-1-flash.png",
+    "src": "sites/3d-deepseek-v4-1-flash.html",
+    "params": "552B(A8B)",
+    "cutoff": "—",
+    "released": 1789024317
+  },
+  {
+    "file": "models/3d/gpt6·鹈鹕漫游·体素骑行.html",
+    "slug": "3d-gpt-6",
+    "category": "GPT",
+    "model": "GPT-6 Astra",
+    "channel": "—",
+    "thumb": "thumbs/3d-gpt-6.png",
+    "src": "sites/3d-gpt-6.html",
+    "params": "—",
+    "cutoff": "2026-04",
+    "released": 1788940375
+  },
+  {
+    "file": "models/3d/体素鹈鹕骑自行车-天气循环场景-qwen3.8max.html",
+    "slug": "3d-qwen-3-8-max",
+    "category": "阿里 · 通义千问",
+    "model": "通义千问 Qwen 3.8 Max",
+    "channel": "—",
+    "thumb": "thumbs/3d-qwen-3-8-max.png",
+    "src": "sites/3d-qwen-3-8-max.html",
+    "params": "2450B",
+    "cutoff": "2026-04",
+    "released": 1788939135
+  },
+  {
+    "file": "models/3d/体素鹈鹕骑自行车V4FLASH VISION EXP.html",
+    "slug": "3d-deepseek-v4-flash-vision",
+    "category": "DeepSeek",
+    "model": "DeepSeek V4 Flash Vision",
+    "channel": "官网",
+    "thumb": "thumbs/3d-deepseek-v4-flash-vision.png",
+    "src": "sites/3d-deepseek-v4-flash-vision.html",
+    "params": "—",
+    "cutoff": "—",
+    "released": 1788941059
+  },
+  {
+    "file": "models/3d/模型鹈鹕-gpt5.6sol.html",
+    "slug": "3d-gpt-5-6-sol",
+    "category": "GPT",
+    "model": "GPT-5.6 Codex",
+    "channel": "—",
+    "thumb": "thumbs/3d-gpt-5-6-sol.png",
+    "src": "sites/3d-gpt-5-6-sol.html",
+    "params": "~3000B",
+    "cutoff": "2026-02",
+    "released": 1788939376
+  },
+  {
+    "file": "models/3d/鹈鹕gpt5.6luna.html",
+    "slug": "3d-gpt-5-6-luna",
+    "category": "GPT",
+    "model": "GPT-5.6 Luna Codex",
+    "channel": "—",
+    "thumb": "thumbs/3d-gpt-5-6-luna.png",
+    "src": "sites/3d-gpt-5-6-luna.html",
+    "params": "—",
+    "cutoff": "2026-02",
+    "released": 1788940112
+  },
+  {
+    "file": "models/3d/鹈鹕白天骑自行车-体素场景-GLM5.3.html",
+    "slug": "3d-glm-5-3-scene",
+    "category": "智谱 · GLM",
+    "model": "智谱 GLM 5.3",
+    "channel": "—",
+    "thumb": "thumbs/3d-glm-5-3-scene.png",
+    "src": "sites/3d-glm-5-3-scene.html",
+    "params": "753B",
+    "cutoff": "—",
+    "released": 1788937873
+  }
+];

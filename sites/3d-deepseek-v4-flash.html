@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>体素鹈鹕骑自行车 · 天气切换</title>
+    <style>
+        /* 全局重置 */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #1a1a2e;
+            overflow: hidden;
+            font-family: system-ui, -apple-system, sans-serif;
+            touch-action: none;
+            /* 防止触摸滚动 */;
+        }
+
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+            display: block;
+            position: relative;
+        }
+
+        /* 天气指示器 - 悬浮UI */
+        #weather-indicator {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 8px 24px;
+            border-radius: 40px;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 100;
+            pointer-events: none;
+            user-select: none;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: background 0.6s ease;
+        }
+        #weather-indicator .icon {
+            font-size: 22px;
+            line-height: 1;
+        }
+        #weather-indicator .label {
+            font-size: 15px;
+            opacity: 0.9;
+        }
+        #weather-indicator .timer {
+            font-size: 13px;
+            opacity: 0.6;
+            margin-left: 6px;
+            font-weight: 400;
+        }
+
+        /* 底部操作提示 */
+        #hint {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.35);
+            font-size: 12px;
+            letter-spacing: 0.3px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 6px 18px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            z-index: 100;
+            pointer-events: none;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 480px) {
+            #weather-indicator {
+                top: 12px;
+                padding: 6px 16px;
+                font-size: 13px;
+                gap: 6px;
+                border-radius: 30px;
+            }
+            #weather-indicator .icon {
+                font-size: 18px;
+            }
+            #weather-indicator .label {
+                font-size: 12px;
+            }
+            #weather-indicator .timer {
+                font-size: 11px;
+            }
+            #hint {
+                bottom: 16px;
+                font-size: 10px;
+                padding: 4px 14px;
+            }
+        }
+        @media (orientation: landscape) and (max-height: 500px) {
+            #weather-indicator {
+                top: 8px;
+                padding: 4px 14px;
+                font-size: 12px;
+            }
+            #weather-indicator .icon {
+                font-size: 16px;
+            }
+            #hint {
+                bottom: 10px;
+                font-size: 10px;
+                padding: 3px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 容器 -->
+    <div id="canvas-container"></div>
+
+    <!-- 天气指示器 -->
+    <div id="weather-indicator">
+        <span class="icon" id="weather-icon">☀️</span>
+        <span class="label" id="weather-label">晴天</span>
+        <span class="timer" id="weather-timer">⏱ 5s</span>
+    </div>
+
+    <div id="hint">👆 拖拽旋转 · 滚轮缩放</div>
+
+    <!-- ============ Three.js 使用 import map ============ -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.157.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.157.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <!-- ============ 主程序 ============ -->
+    <script type="module">
+        // ----- 导入 -----
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
+        // ----- DOM 引用 -----
+        const container = document.getElementById('canvas-container');
+        const weatherIcon = document.getElementById('weather-icon');
+        const weatherLabel = document.getElementById('weather-label');
+        const weatherTimer = document.getElementById('weather-timer');
+
+        // ============================================================
+        //  1. 场景 / 相机 / 渲染器
+        // ============================================================
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x87CEEB); // 晴天初始
+
+        // ----- 主渲染器 (WebGL) -----
+        const renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            alpha: false,
+        });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.2;
+        container.appendChild(renderer.domElement);
+
+        // ----- 辅助 CSS2D 渲染器 (用于简单标签，这里不用) -----
+        // 只保留 WebGL
+
+        // ----- 相机 -----
+        const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 100);
+        camera.position.set(6, 4.5, 8);
+        camera.lookAt(0.5, 1.2, 0);
+
+        // ----- 轨道控制器 -----
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.target.set(0.5, 1.2, 0);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.08;
+        controls.minDistance = 2.5;
+        controls.maxDistance = 20;
+        controls.maxPolarAngle = Math.PI / 2.1;
+        controls.autoRotate = false;
+        controls.update();
+
+        // ============================================================
+        //  2. 光照
+        // ============================================================
+        // 环境光
+        const ambientLight = new THREE.AmbientLight(0x404060, 0.45);
+        scene.add(ambientLight);
+
+        // 半球光
+        const hemiLight = new THREE.HemisphereLight(0x87CEEB, 0x3a7d44, 0.6);
+        scene.add(hemiLight);
+
+        // 主平行光 (带阴影)
+        const sunLight = new THREE.DirectionalLight(0xffeedd, 1.6);
+        sunLight.position.set(8, 12, 4);
+        sunLight.castShadow = true;
+        sunLight.shadow.mapSize.width = 1024;
+        sunLight.shadow.mapSize.height = 1024;
+        sunLight.shadow.camera.near = 0.5;
+        sunLight.shadow.camera.far = 30;
+        sunLight.shadow.camera.left = -10;
+        sunLight.shadow.camera.right = 10;
+        sunLight.shadow.camera.top = 10;
+        sunLight.shadow.camera.bottom = -10;
+        scene.add(sunLight);
+
+        // 补光
+        const fillLight = new THREE.DirectionalLight(0x8888ff, 0.35);
+        fillLight.position.set(-4, 3, -6);
+        scene.add(fillLight);
+
+        // 存储光照引用以便天气切换
+        const lights = { ambientLight, hemiLight, sunLight, fillLight };
+
+        // ============================================================
+        //  3. 体素工具函数
+        // ============================================================
+        const VOXEL_SIZE = 0.45;
+        const GAP = 0.02; // 微小间隙增强体素感
+
+        // 创建单个体素 (带边框)
+        function createVoxel(x, y, z, color, size = VOXEL_SIZE) {
+            const group = new THREE.Group();
+
+            // 主立方体
+            const geo = new THREE.BoxGeometry(size - GAP, size - GAP, size - GAP);
+            const mat = new THREE.MeshStandardMaterial({
+                color: color,
+                roughness: 0.4,
+                metalness: 0.05,
+                emissive: new THREE.Color(color).multiplyScalar(0.04),
+            });
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            group.add(mesh);
+
+            // 边框
+            const edgeGeo = new THREE.EdgesGeometry(new THREE.BoxGeometry(size - GAP, size - GAP, size - GAP));
+            const edgeMat = new THREE.LineBasicMaterial({
+                color: 0x000000,
+                transparent: true,
+                opacity: 0.20,
+            });
+            const edge = new THREE.LineSegments(edgeGeo, edgeMat);
+            group.add(edge);
+
+            group.position.set(x, y, z);
+            return group;
+        }
+
+        // 批量创建体素
+        function buildVoxelModel(voxels) {
+            const group = new THREE.Group();
+            for (const v of voxels) {
+                const vox = createVoxel(v.x, v.y, v.z, v.color);
+                group.add(vox);
+            }
+            return group;
+        }
+
+        // ============================================================
+        //  4. 定义体素数据
+        // ============================================================
+
+        // ----- 颜色常量 -----
+        const COLORS = {
+            white: 0xf0eee9,
+            whiteDark: 0xd8d4cd,
+            yellow: 0xf5c842,
+            yellowDark: 0xd9a830,
+            black: 0x222222,
+            darkGray: 0x444444,
+            gray: 0x888888,
+            lightGray: 0xbbbbbb,
+            orange: 0xe8853a,
+            orangeDark: 0xcc7028,
+            brown: 0x8b6b4a,
+            wheel: 0x2a2a2a,
+            frame: 0x4a4a5a,
+            seat: 0x6d4c2a,
+            pedal: 0x555555,
+            handle: 0x3a3a4a,
+            ground: 0x8aaa7a,
+            groundDark: 0x6d8a5a,
+        };
+
+        // ----- 鹈鹕体素 (面向 +X 方向) -----
+        function buildPelican() {
+            const voxels = [];
+            const s = VOXEL_SIZE;
+
+            // 身体 (白色)  中心约 (0.8, 1.6, 0)
+            const bodyPositions = [
+                // 下层 y=0.8~1.2
+                [0.2, 0.8, -0.8],
+                [0.2, 0.8, -0.4],
+                [0.2, 0.8, 0],
+                [0.2, 0.8, 0.4],
+                [0.2, 0.8, 0.8],
+                [0.8, 0.8, -0.8],
+                [0.8, 0.8, -0.4],
+                [0.8, 0.8, 0],
+                [0.8, 0.8, 0.4],
+                [0.8, 0.8, 0.8],
+                [1.4, 0.8, -0.8],
+                [1.4, 0.8, -0.4],
+                [1.4, 0.8, 0],
+                [1.4, 0.8, 0.4],
+                [1.4, 0.8, 0.8],
+                // 中层 y=1.3~1.7
+                [0.2, 1.3, -0.8],
+                [0.2, 1.3, -0.4],
+                [0.2, 1.3, 0],
+                [0.2, 1.3, 0.4],
+                [0.2, 1.3, 0.8],
+                [0.8, 1.3, -0.8],
+                [0.8, 1.3, -0.4],
+                [0.8, 1.3, 0],
+                [0.8, 1.3, 0.4],
+                [0.8, 1.3, 0.8],
+                [1.4, 1.3, -0.8],
+                [1.4, 1.3, -0.4],
+                [1.4, 1.3, 0],
+                [1.4, 1.3, 0.4],
+                [1.4, 1.3, 0.8],
+                // 上层 y=1.8~2.2
+                [0.2, 1.8, -0.4],
+                [0.2, 1.8, 0],
+                [0.2, 1.8, 0.4],
+                [0.8, 1.8, -0.4],
+                [0.8, 1.8, 0],
+                [0.8, 1.8, 0.4],
+                [1.4, 1.8, -0.4],
+                [1.4, 1.8, 0],
+                [1.4, 1.8, 0.4],
+            ];
+            for (const p of bodyPositions) {
+                voxels.push({ x: p[0], y: p[1], z: p[2], color: COLORS.white });
+            }
+
+            // 脖子/胸部过渡 (白色)
+            const neckPos = [
+                [1.8, 2.0, -0.4],
+                [1.8, 2.0, 0],
+                [1.8, 2.0, 0.4],
+                [2.0, 2.2, -0.4],
+                [2.0, 2.2, 0],
+                [2.0, 2.2, 0.4],
+                [2.2, 2.4, -0.2],
+                [2.2, 2.4, 0],
+                [2.2, 2.4, 0.2],
+            ];
+            for (const p of neckPos) {
+                voxels.push({ x: p[0], y: p[1], z: p[2], color: COLORS.white });
+            }
+
+            // 头部 (白色) 中心约 (2.6, 2.7, 0)
+            const headPos = [
+                [2.4, 2.6, -0.6],
+                [2.4, 2.6, -0.2],
+                [2.4, 2.6, 0.2],
+                [2.4, 2.6, 0.6],
+                [2.8, 2.6, -0.6],
+                [2.8, 2.6, -0.2],
+                [2.8, 2.6, 0.2],
+                [2.8, 2.6, 0.6],
+                [2.4, 3.0, -0.4],
+                [2.4, 3.0, 0],
+                [2.4, 3.0, 0.4],
+                [2.8, 3.0, -0.4],
+                [2.8, 3.0, 0],
+                [2.8, 3.0, 0.4],
+                [2.6, 3.4, -0.2],
+                [2.6, 3.4, 0],
+                [2.6, 3.4, 0.2],
+            ];
+            for (const p of headPos) {
+                voxels.push({ x: p[0], y: p[1], z: p[2], color: COLORS.white });
+            }
+
+            // 喙 (黄色) 长而宽
+            const beakPos = [
+                [3.2, 2.7, -0.3],
+                [3.2, 2.7, 0],
+                [3.2, 2.7, 0.3],
+                [3.6, 2.7, -0.3],
+                [3.6, 2.7, 0],
+                [3.6, 2.7, 0.3],
+                [4.0, 2.7, -0.2],
+                [4.0, 2.7, 0],
+                [4.0, 2.7, 0.2],
+                [4.4, 2.7, -0.15],
+                [4.4, 2.7, 0],
+                [4.4, 2.7, 0.15],
+                [3.2, 3.0, -0.2],
+                [3.2, 3.0, 0],
+                [3.2, 3.0, 0.2],
+                [3.6, 3.0, -0.2],
+                [3.6, 3.0, 0],
+                [3.6, 3.0, 0.2],
+                [4.0, 3.0, -0.15],
+                [4.0, 3.0, 0],
+                [4.0, 3.0, 0.15],
+            ];
+            for (const p of beakPos) {
+                voxels.push({ x: p[0], y: p[1], z: p[2], color: COLORS.yellow });
+            }
+            // 喙尖一点深色
+            voxels.push({ x: 4.6, y: 2.7, z: 0, color: COLORS.yellowDark });
+
+            // 眼睛 (黑色)
+            voxels.push({ x: 3.0, y: 3.2, z: 0.7, color: COLORS.black });
+            voxels.push({ x: 3.0, y: 3.2, z: -0.7, color: COLORS.black });
+            // 眼睛高光 (小白点) - 简化
+
+            // 翅膀 (浅灰) 在身体两侧
+            const wingPos = [
+                // 左翅膀 (z正方向)
+                [-0.2, 1.3, 1.0],
+                [-0.2, 1.3, 1.4],
+                [0.4, 1.3, 1.0],
+                [0.4, 1.3, 1.4],
+                [1.0, 1.3, 1.0],
+                [1.0, 1.3, 1.4],
+                [-0.2, 1.8, 1.0],
+                [-0.2, 1.8, 1.4],
+                [0.4, 1.8, 1.0],
+                [0.4, 1.8, 1.4],
+                [1.0, 1.8, 1.0],
+                [1.0, 1.8, 1.4],
+                // 右翅膀 (z负方向)
+                [-0.2, 1.3, -1.0],
+                [-0.2, 1.3, -1.4],
+                [0.4, 1.3, -1.0],
+                [0.4, 1.3, -1.4],
+                [1.0, 1.3, -1.0],
+                [1.0, 1.3, -1.4],
+                [-0.2, 1.8, -1.0],
+                [-0.2, 1.8, -1.4],
+                [0.4, 1.8, -1.0],
+                [0.4, 1.8, -1.4],
+                [1.0, 1.8, -1.0],
+                [1.0, 1.8, -1.4],
+            ];
+            for (const p of wingPos) {
+                voxels.push({ x: p[0], y: p[1], z: p[2], color: COLORS.lightGray });
+            }
+
+            // 腿 (橙色) 在身体下方
+            voxels.push({ x: 0.6, y: 0.3, z: -0.5, color: COLORS.orange });
+            voxels.push({ x: 0.6, y: 0.3, z: 0.5, color: COLORS.orange });
+            voxels.push({ x: 1.0, y: 0.3, z: -0.5, color: COLORS.orange });
+            voxels.push({ x: 1.0, y: 0.3, z: 0.5, color: COLORS.orange });
+            // 脚掌
+            voxels.push({ x: 0.6, y: 0.05, z: -0.8, color: COLORS.orangeDark });
+            voxels.push({ x: 0.6, y: 0.05, z: 0.8, color: COLORS.orangeDark });
+            voxels.push({ x: 1.0, y: 0.05, z: -0.8, color: COLORS.orangeDark });
+            voxels.push({ x: 1.0, y: 0.05, z: 0.8, color: COLORS.orangeDark });
+
+            // 尾巴 (小)
+            voxels.push({ x: -0.4, y: 1.5, z: -0.2, color: COLORS.whiteDark });
+            voxels.push({ x: -0.4, y: 1.5, z: 0.2, color: COLORS.whiteDark });
+            voxels.push({ x: -0.6, y: 1.3, z: -0.2, color: COLORS.whiteDark });
+            voxels.push({ x: -0.6, y: 1.3, z: 0.2, color: COLORS.whiteDark });
+
+            return buildVoxelModel(voxels);
+        }
+
+        // ----- 自行车体素 -----
+        function buildBicycle() {
+            const voxels = [];
+            const s = VOXEL_SIZE;
+
+            // 辅助: 生成圆形车轮
+            function addWheel(cx, cy, cz, radius, color) {
+                const steps = 10;
+                for (let i = 0; i < steps; i++) {
+                    const angle = (i / steps) * Math.PI * 2;
+                    const x = cx + radius * Math.cos(angle);
+                    const z = cz + radius * Math.sin(angle);
+                    voxels.push({ x, y: cy, z, color });
+                    // 轮辐 (内侧)
+                    if (i % 2 === 0) {
+                        const r2 = radius * 0.55;
+                        const x2 = cx + r2 * Math.cos(angle);
+                        const z2 = cz + r2 * Math.sin(angle);
+                        voxels.push({ x: x2, y: cy, z: z2, color: 0x555555 });
+                    }
+                }
+                // 轮毂
+                voxels.push({ x: cx, y: cy, z: cz, color: 0x666666 });
+                // 外圈加固
+                for (let i = 0; i < 6; i++) {
+                    const angle = (i / 6) * Math.PI * 2 + 0.15;
+                    const x = cx + (radius + 0.15) * Math.cos(angle);
+                    const z = cz + (radius + 0.15) * Math.sin(angle);
+                    voxels.push({ x, y: cy, z, color: 0x333333 });
+                }
+            }
+
+            // 前轮 中心 (2.8, 0.45, 0)
+            addWheel(2.8, 0.45, 0, 0.75, COLORS.wheel);
+            // 后轮 中心 (-1.8, 0.45, 0)
+            addWheel(-1.8, 0.45, 0, 0.75, COLORS.wheel);
+
+            // ---- 车架 ----
+            // 主梁 (后轮 -> 前轮)
+            const frameColor = COLORS.frame;
+            // 下管
+            for (let t = 0; t <= 1; t += 0.33) {
+                const x = -1.8 + t * 4.6;
+                const y = 0.45 + t * 0.9;
+                voxels.push({ x, y, z: 0, color: frameColor });
+                voxels.push({ x, y, z: 0.2, color: frameColor });
+                voxels.push({ x, y, z: -0.2, color: frameColor });
+            }
+            // 上管 (后轮上方 -> 车把)
+            for (let t = 0; t <= 1; t += 0.3) {
+                const x = -1.6 + t * 4.0;
+                const y = 1.1 + t * 0.5;
+                voxels.push({ x, y, z: 0, color: frameColor });
+                voxels.push({ x, y, z: 0.15, color: frameColor });
+                voxels.push({ x, y, z: -0.15, color: frameColor });
+            }
+            // 后上叉
+            voxels.push({ x: -1.6, y: 1.1, z: 0.4, color: frameColor });
+            voxels.push({ x: -1.6, y: 1.1, z: -0.4, color: frameColor });
+            voxels.push({ x: -1.9, y: 0.6, z: 0.4, color: frameColor });
+            voxels.push({ x: -1.9, y: 0.6, z: -0.4, color: frameColor });
+            // 后下叉
+            voxels.push({ x: -1.6, y: 0.8, z: 0.5, color: frameColor });
+            voxels.push({ x: -1.6, y: 0.8, z: -0.5, color: frameColor });
+            voxels.push({ x: -1.9, y: 0.45, z: 0.5, color: frameColor });
+            voxels.push({ x: -1.9, y: 0.45, z: -0.5, color: frameColor });
+            // 前叉
+            voxels.push({ x: 2.8, y: 0.9, z: 0.3, color: frameColor });
+            voxels.push({ x: 2.8, y: 0.9, z: -0.3, color: frameColor });
+            voxels.push({ x: 2.8, y: 0.6, z: 0.3, color: frameColor });
+            voxels.push({ x: 2.8, y: 0.6, z: -0.3, color: frameColor });
+
+            // ---- 车把 ----
+            const handleColor = COLORS.handle;
+            voxels.push({ x: 2.9, y: 1.5, z: 0.5, color: handleColor });
+            voxels.push({ x: 2.9, y: 1.5, z: -0.5, color: handleColor });
+            voxels.push({ x: 2.9, y: 1.5, z: 0, color: handleColor });
+            voxels.push({ x: 3.2, y: 1.4, z: 0.5, color: handleColor });
+            voxels.push({ x: 3.2, y: 1.4, z: -0.5, color: handleColor });
+            // 把立
+            voxels.push({ x: 2.8, y: 1.3, z: 0, color: handleColor });
+
+            // ---- 车座 ----
+            const seatColor = COLORS.seat;
+            voxels.push({ x: -1.2, y: 1.6, z: 0, color: seatColor });
+            voxels.push({ x: -1.2, y: 1.6, z: 0.35, color: seatColor });
+            voxels.push({ x: -1.2, y: 1.6, z: -0.35, color: seatColor });
+            voxels.push({ x: -1.0, y: 1.6, z: 0, color: seatColor });
+            voxels.push({ x: -1.0, y: 1.6, z: 0.35, color: seatColor });
+            voxels.push({ x: -1.0, y: 1.6, z: -0.35, color: seatColor });
+            // 座杆
+            voxels.push({ x: -1.3, y: 1.3, z: 0, color: frameColor });
+
+            // ---- 脚踏 ----
+            const pedalColor = COLORS.pedal;
+            // 左脚踏 (z正)
+            voxels.push({ x: 0.0, y: 0.3, z: 0.9, color: pedalColor });
+            voxels.push({ x: 0.0, y: 0.3, z: 1.1, color: pedalColor });
+            // 右脚踏 (z负)
+            voxels.push({ x: 0.0, y: 0.3, z: -0.9, color: pedalColor });
+            voxels.push({ x: 0.0, y: 0.3, z: -1.1, color: pedalColor });
+            // 曲柄
+            voxels.push({ x: 0.0, y: 0.5, z: 0.9, color: frameColor });
+            voxels.push({ x: 0.0, y: 0.5, z: -0.9, color: frameColor });
+            // 中轴
+            voxels.push({ x: 0.0, y: 0.5, z: 0, color: 0x666666 });
+            voxels.push({ x: 0.0, y: 0.5, z: 0.2, color: 0x666666 });
+            voxels.push({ x: 0.0, y: 0.5, z: -0.2, color: 0x666666 });
+
+            return buildVoxelModel(voxels);
+        }
+
+        // ----- 地面 (体素风格) -----
+        function buildGround() {
+            const group = new THREE.Group();
+            const size = 0.5;
+            const gap = 0.03;
+            const half = 8;
+            const colors = [COLORS.ground, COLORS.groundDark];
+
+            for (let x = -half; x < half; x++) {
+                for (let z = -half; z < half; z++) {
+                    const ci = (Math.floor(x / 0.7) + Math.floor(z / 0.7)) % 2 === 0 ? 0 : 1;
+                    const color = colors[ci];
+                    const geo = new THREE.BoxGeometry(size - gap, 0.15, size - gap);
+                    const mat = new THREE.MeshStandardMaterial({
+                        color: color,
+                        roughness: 0.9,
+                        metalness: 0.0,
+                    });
+                    const mesh = new THREE.Mesh(geo, mat);
+                    mesh.position.set(x * size + size / 2, -0.05, z * size + size / 2);
+                    mesh.receiveShadow = true;
+                    mesh.castShadow = false;
+                    group.add(mesh);
+
+                    // 边框
+                    const edgeGeo = new THREE.EdgesGeometry(new THREE.BoxGeometry(size - gap, 0.15, size - gap));
+                    const edgeMat = new THREE.LineBasicMaterial({
+                        color: 0x000000,
+                        transparent: true,
+                        opacity: 0.08,
+                    });
+                    const edge = new THREE.LineSegments(edgeGeo, edgeMat);
+                    edge.position.copy(mesh.position);
+                    group.add(edge);
+                }
+            }
+            return group;
+        }
+
+        // ----- 云朵 (体素风格, 装饰) -----
+        function buildCloud(cx, cy, cz, scale = 1) {
+            const group = new THREE.Group();
+            const color = 0xf0f0f5;
+            const offsets = [
+                [-0.8, 0, 0],
+                [-0.4, 0.3, 0],
+                [0, 0.5, 0],
+                [0.4, 0.3, 0],
+                [0.8, 0, 0],
+                [-0.5, -0.2, 0.3],
+                [0, -0.2, 0.3],
+                [0.5, -0.2, 0.3],
+                [-0.5, -0.2, -0.3],
+                [0, -0.2, -0.3],
+                [0.5, -0.2, -0.3],
+            ];
+            const s = 0.4 * scale;
+            for (const off of offsets) {
+                const v = createVoxel(cx + off[0] * s * 2, cy + off[1] * s * 2, cz + off[2] * s * 2, color, s);
+                group.add(v);
+            }
+            return group;
+        }
+
+        // ============================================================
+        //  5. 构建场景
+        // ============================================================
+
+        // 地面
+        const ground = buildGround();
+        scene.add(ground);
+
+        // 自行车 (放在地面)
+        const bicycle = buildBicycle();
+        bicycle.position.set(0, 0, 0);
+        scene.add(bicycle);
+
+        // 鹈鹕 (骑在自行车上)
+        const pelican = buildPelican();
+        pelican.position.set(-0.1, 0.6, 0);
+        // 稍微旋转让鹈鹕自然
+        pelican.rotation.y = 0.04;
+        scene.add(pelican);
+
+        // ---- 装饰云朵 ----
+        const cloud1 = buildCloud(-3.5, 3.8, 2.0, 1.2);
+        const cloud2 = buildCloud(4.0, 4.2, -1.5, 1.0);
+        const cloud3 = buildCloud(-2.0, 4.5, -3.0, 0.8);
+        const cloud4 = buildCloud(5.0, 3.5, 2.5, 0.9);
+        scene.add(cloud1);
+        scene.add(cloud2);
+        scene.add(cloud3);
+        scene.add(cloud4);
+        // 存储云朵引用用于天气切换
+        const clouds = [cloud1, cloud2, cloud3, cloud4];
+
+        // ---- 太阳 (体素风格) ----
+        const sunGroup = new THREE.Group();
+        const sunColor = 0xffdd44;
+        for (let i = 0; i < 8; i++) {
+            const angle = (i / 8) * Math.PI * 2;
+            const r = 0.5;
+            const v = createVoxel(
+                Math.cos(angle) * r,
+                Math.sin(angle) * r + 0.3,
+                0,
+                sunColor,
+                0.3
+            );
+            sunGroup.add(v);
+        }
+        sunGroup.position.set(4.5, 5.0, -3.0);
+        scene.add(sunGroup);
+
+        // ---- 小树 (体素风格装饰) ----
+        function buildTree(tx, tz) {
+            const g = new THREE.Group();
+            // 树干
+            for (let y = 0; y < 0.8; y += 0.25) {
+                const v = createVoxel(tx, y, tz, 0x6d4c2a, 0.3);
+                g.add(v);
+            }
+            // 树冠
+            const leafColor = 0x4a8a3a;
+            const crown = [
+                [-0.3, 0.8, -0.3],
+                [-0.3, 0.8, 0],
+                [-0.3, 0.8, 0.3],
+                [0, 0.8, -0.3],
+                [0, 0.8, 0],
+                [0, 0.8, 0.3],
+                [0.3, 0.8, -0.3],
+                [0.3, 0.8, 0],
+                [0.3, 0.8, 0.3],
+                [-0.2, 1.1, -0.2],
+                [-0.2, 1.1, 0],
+                [-0.2, 1.1, 0.2],
+                [0, 1.1, -0.2],
+                [0, 1.1, 0],
+                [0, 1.1, 0.2],
+                [0.2, 1.1, -0.2],
+                [0.2, 1.1, 0],
+                [0.2, 1.1, 0.2],
+                [0, 1.4, 0],
+            ];
+            for (const p of crown) {
+                const v = createVoxel(tx + p[0], 0.8 + p[1], tz + p[2], leafColor, 0.3);
+                g.add(v);
+            }
+            return g;
+        }
+
+        const tree1 = buildTree(-4.5, -3.0);
+        const tree2 = buildTree(-4.0, 3.5);
+        const tree3 = buildTree(5.5, -2.5);
+        scene.add(tree1);
+        scene.add(tree2);
+        scene.add(tree3);
+
+        // ============================================================
+        //  6. 天气系统
+        // ============================================================
+
+        // 天气状态
+        const WEATHERS = ['sunny', 'cloudy', 'rainy'];
+        let currentWeatherIndex = 0;
+        let weatherTimerValue = 5; // 秒
+        let timeSinceLastSwitch = 0;
+        let isWeatherTransitioning = false;
+
+        // 雨滴粒子系统
+        let rainParticles = null;
+        let rainGroup = new THREE.Group();
+        scene.add(rainGroup);
+
+        function createRain() {
+            const count = 2000;
+            const positions = new Float32Array(count * 3);
+            const velocities = new Float32Array(count);
+            const area = 18;
+            const height = 8;
+
+            for (let i = 0; i < count; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * area;
+                positions[i * 3 + 1] = Math.random() * height + 1;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * area;
+                velocities[i] = 4 + Math.random() * 3;
+            }
+
+            const geo = new THREE.BufferGeometry();
+            geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geo.setAttribute('velocity', new THREE.BufferAttribute(velocities, 1));
+
+            const mat = new THREE.PointsMaterial({
+                color: 0xaaccff,
+                size: 0.06,
+                transparent: true,
+                opacity: 0.7,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false,
+                sizeAttenuation: true,
+            });
+
+            const points = new THREE.Points(geo, mat);
+            points.frustumCulled = false;
+            return points;
+        }
+
+        // 初始化雨
+        rainParticles = createRain();
+        rainGroup.add(rainParticles);
+        rainGroup.visible = false;
+
+        // 存储雨滴数据以便更新
+        let rainPositions = rainParticles.geometry.attributes.position.array;
+        let rainVelocities = rainParticles.geometry.attributes.velocity.array;
+
+        // 天气切换函数
+        function setWeather(index) {
+            const weather = WEATHERS[index];
+            currentWeatherIndex = index;
+
+            // 更新UI
+            const icons = { sunny: '☀️', cloudy: '☁️', rainy: '🌧️' };
+            const labels = { sunny: '晴天', cloudy: '阴天', rainy: '雨天' };
+            weatherIcon.textContent = icons[weather];
+            weatherLabel.textContent = labels[weather];
+
+            // 重置计时器
+            weatherTimerValue = 5;
+            timeSinceLastSwitch = 0;
+
+            // 应用天气效果
+            applyWeather(weather);
+
+            // 更新指示器背景色
+            const bgColors = {
+                sunny: 'rgba(0,0,0,0.4)',
+                cloudy: 'rgba(30,30,50,0.6)',
+                rainy: 'rgba(10,10,30,0.7)'
+            };
+            document.getElementById('weather-indicator').style.background = bgColors[weather];
+        }
+
+        function applyWeather(weather) {
+            // 背景色
+            const bgColors = {
+                sunny: 0x87CEEB,
+                cloudy: 0x9aa9b5,
+                rainy: 0x6a7a8a,
+            };
+            scene.background = new THREE.Color(bgColors[weather]);
+
+            // 光照
+            const exposures = {
+                sunny: 1.2,
+                cloudy: 0.7,
+                rainy: 0.55,
+            };
+            renderer.toneMappingExposure = exposures[weather];
+
+            const sunIntensity = {
+                sunny: 1.6,
+                cloudy: 0.6,
+                rainy: 0.35,
+            };
+            lights.sunLight.intensity = sunIntensity[weather];
+
+            const ambientIntensity = {
+                sunny: 0.45,
+                cloudy: 0.55,
+                rainy: 0.5,
+            };
+            lights.ambientLight.intensity = ambientIntensity[weather];
+
+            // 太阳颜色
+            const sunColors = {
+                sunny: 0xffeedd,
+                cloudy: 0xccccdd,
+                rainy: 0xaaaabc,
+            };
+            lights.sunLight.color.setHex(sunColors[weather]);
+
+            // 云朵透明度/颜色
+            const cloudOpacity = {
+                sunny: 0.4,
+                cloudy: 1.0,
+                rainy: 1.0,
+            };
+            const cloudColor = {
+                sunny: 0xf0f0f5,
+                cloudy: 0xc8c8d0,
+                rainy: 0x888898,
+            };
+            clouds.forEach(cloud => {
+                cloud.traverse(child => {
+                    if (child.isMesh) {
+                        child.material.opacity = cloudOpacity[weather];
+                        child.material.transparent = cloudOpacity[weather] < 0.99;
+                        child.material.color.setHex(cloudColor[weather]);
+                    }
+                });
+            });
+
+            // 太阳可见性
+            sunGroup.visible = (weather === 'sunny');
+
+            // 雨
+            rainGroup.visible = (weather === 'rainy');
+
+            // 地面颜色微调
+            const groundColor = {
+                sunny: 0x8aaa7a,
+                cloudy: 0x7a9a6a,
+                rainy: 0x6a8a5a,
+            };
+            ground.traverse(child => {
+                if (child.isMesh) {
+                    const base = child.material.color;
+                    const c = new THREE.Color(groundColor[weather]);
+                    // 只改变亮度，保留纹理变化
+                    const lum = base.getHSL({}).l;
+                    const hsl = { h: 0.28, s: 0.25, l: 0.35 + lum * 0.3 };
+                    if (weather === 'sunny') hsl.l = Math.min(hsl.l + 0.15, 0.7);
+                    if (weather === 'rainy') hsl.l = Math.max(hsl.l - 0.15, 0.25);
+                    child.material.color.setHSL(0.28, 0.2, hsl.l);
+                }
+            });
+
+            // 树的颜色微调
+            const trees = [tree1, tree2, tree3];
+            const treeColors = {
+                sunny: 0x4a8a3a,
+                cloudy: 0x3a7a2a,
+                rainy: 0x2a6a1a,
+            };
+            trees.forEach(tree => {
+                tree.traverse(child => {
+                    if (child.isMesh) {
+                        const c = child.material.color;
+                        const hsl = c.getHSL({});
+                        const base = new THREE.Color(treeColors[weather]);
+                        const baseHsl = base.getHSL({});
+                        c.setHSL(baseHsl.h, baseHsl.s * 0.8 + hsl.s * 0.2, baseHsl.l * 0.7 + hsl.l * 0.3);
+                    }
+                });
+            });
+        }
+
+        // ----- 更新雨滴动画 -----
+        function updateRain(delta) {
+            if (!rainParticles || !rainGroup.visible) return;
+
+            const positions = rainParticles.geometry.attributes.position.array;
+            const velocities = rainParticles.geometry.attributes.velocity.array;
+            const count = positions.length / 3;
+            const area = 18;
+            const height = 8;
+
+            for (let i = 0; i < count; i++) {
+                positions[i * 3 + 1] -= velocities[i] * delta * 1.2;
+                positions[i * 3] += (Math.random() - 0.5) * delta * 0.3;
+
+                if (positions[i * 3 + 1] < -0.5) {
+                    positions[i * 3 + 1] = height + Math.random() * 2;
+                    positions[i * 3] = (Math.random() - 0.5) * area;
+                    positions[i * 3 + 2] = (Math.random() - 0.5) * area;
+                    velocities[i] = 4 + Math.random() * 3;
+                }
+            }
+            rainParticles.geometry.attributes.position.needsUpdate = true;
+        }
+
+        // ============================================================
+        //  7. 响应式
+        // ============================================================
+
+        function onResize() {
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            const aspect = width / height;
+
+            camera.aspect = aspect;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(width, height);
+
+            // 在手机上调整相机位置
+            if (width < 600) {
+                // 竖屏手机
+                if (height > width) {
+                    camera.position.set(5, 4.0, 7);
+                    controls.target.set(0.5, 1.0, 0);
+                } else {
+                    // 横屏手机
+                    camera.position.set(6, 4.2, 7.5);
+                    controls.target.set(0.5, 1.2, 0);
+                }
+            } else {
+                // 电脑
+                camera.position.set(6, 4.5, 8);
+                controls.target.set(0.5, 1.2, 0);
+            }
+            controls.update();
+        }
+
+        window.addEventListener('resize', onResize);
+        // 初始适应
+        setTimeout(onResize, 100);
+
+        // ============================================================
+        //  8. 动画循环
+        // ============================================================
+
+        const clock = new THREE.Clock();
+
+        function animate() {
+            const delta = clock.getDelta();
+            const elapsed = clock.getElapsedTime();
+
+            // ---- 天气计时 ----
+            timeSinceLastSwitch += delta;
+            if (timeSinceLastSwitch >= weatherTimerValue) {
+                // 切换到下一个天气
+                const nextIndex = (currentWeatherIndex + 1) % WEATHERS.length;
+                setWeather(nextIndex);
+                // 重置计时器 (setWeather内部已重置)
+                timeSinceLastSwitch = 0;
+            }
+
+            // 更新计时器显示
+            const remaining = Math.max(0, weatherTimerValue - timeSinceLastSwitch);
+            weatherTimer.textContent = `⏱ ${Math.ceil(remaining)}s`;
+
+            // ---- 雨滴更新 ----
+            updateRain(delta);
+
+            // ---- 轻微动画: 车轮旋转 ----
+            // 由于车轮是体素构成的，整体旋转车轮组会比较复杂
+            // 我们做一个小动画: 鹈鹕轻微上下起伏 (骑行感)
+            pelican.position.y = 0.6 + Math.sin(elapsed * 1.6) * 0.04;
+            // 鹈鹕身体微微晃动
+            pelican.rotation.z = Math.sin(elapsed * 1.2) * 0.008;
+            pelican.rotation.x = Math.sin(elapsed * 0.9 + 0.5) * 0.006;
+
+            // ---- 云朵缓慢飘动 ----
+            clouds.forEach((cloud, i) => {
+                const speed = 0.03 + i * 0.008;
+                const offset = i * 2.1;
+                cloud.position.x += Math.sin(elapsed * speed + offset) * delta * 0.01;
+                cloud.position.z += Math.cos(elapsed * speed * 0.7 + offset) * delta * 0.008;
+            });
+
+            // ---- 太阳微微闪烁 ----
+            if (sunGroup.visible) {
+                const pulse = 0.9 + Math.sin(elapsed * 0.5) * 0.1;
+                sunGroup.scale.set(pulse, pulse, pulse);
+            }
+
+            // ---- 更新控制器 ----
+            controls.update();
+
+            // ---- 渲染 ----
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+
+        // ============================================================
+        //  9. 启动
+        // ============================================================
+
+        // 初始天气: 晴天
+        setWeather(0);
+
+        // 启动动画
+        animate();
+
+        // 额外: 点击/触摸指示器可以手动切换 (方便测试)
+        document.getElementById('weather-indicator').addEventListener('click', () => {
+            const next = (currentWeatherIndex + 1) % WEATHERS.length;
+            setWeather(next);
+            timeSinceLastSwitch = 0;
+        });
+        document.getElementById('weather-indicator').style.cursor = 'pointer';
+
+        // 控制台提示
+        console.log('🌤 体素鹈鹕骑自行车 | 点击天气指示器可手动切换天气');
+        console.log('📱 兼容手机竖屏与电脑横屏');
+
+        // ============================================================
+        //  10. 额外的性能/兼容处理
+        // ============================================================
+
+        // 处理移动端触摸事件防止页面滚动
+        renderer.domElement.addEventListener('touchstart', (e) => {
+            if (e.target === renderer.domElement) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        console.log('✅ 场景加载完成');
+    </script>
+</body>
+</html>
