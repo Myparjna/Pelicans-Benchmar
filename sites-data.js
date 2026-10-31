@@ -24,6 +24,18 @@ window.SITES = [
     "released": 1791193889
   },
   {
+    "file": "1031-1523-鹈鹕白天骑自行车天气动画-gpt61terra.html",
+    "slug": "gpt-6-1-terra",
+    "category": "GPT",
+    "model": "GPT 6.1 Terra",
+    "channel": "—",
+    "thumb": "thumbs/gpt-6-1-terra.png",
+    "src": "sites/gpt-6-1-terra.html",
+    "params": "未公开",
+    "cutoff": "2026-04",
+    "released": 1793431380
+  },
+  {
     "file": "1031-1502-鹈鹕白天骑自行车天气动画-gpt6sol.html",
     "slug": "gpt-6-sol",
     "category": "GPT",
