@@ -80,7 +80,7 @@ console.log(s.length, s.filter(x=>!fs.existsSync(x.src)||!fs.existsSync(x.thumb)
 - [ ] 打开任一查看器：能加载、翻页正常、Esc 关闭、红色按钮在位
 - [ ] 打分 → 关闭 → 卡片同步；刷新页面评分仍在
 - [ ] 移动端视口（390×844）无横向溢出
-- [ ] 部署：`bash OpsDev/deploy-pages.sh` 成功
+- [ ] 部署：`bash 04-OpsDev/deploy-pages.sh` 成功
 - [ ] 线上校验：首页计数、`sites-data.js` 条数、`thumbs/*.webp` 的 `content-type`
 - [ ] 回滚预案：记住上一个正常部署 ID（控制台 Rollback）
 - [ ] `git commit` 涉及文件

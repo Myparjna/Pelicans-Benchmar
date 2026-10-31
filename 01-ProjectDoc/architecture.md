@@ -35,16 +35,15 @@ flowchart LR
 ├─ assets/
 │  ├─ style.css            # 浅色主题、卡片网格、查看器、移动端断点 720px
 │  └─ app.js               # 渲染、筛选搜索、评分、排序、band 合并、查看器预加载
-├─ sites/                  # 45 个 ASCII 命名干净副本（部署用，查看器 iframe 直接加载）
-├─ thumbs/                 # 90 个缩略图：每个 slug 一份 png（静态）+ 一份 webp（8 帧动画）
-├─ OpsDev/deploy-pages.sh  # 构建 02-TempFiles/dist 并 wrangler 部署到 Cloudflare Pages
+├─ sites/                  # 48 个 ASCII 命名干净副本（部署用，查看器 iframe 直接加载）
+├─ thumbs/                 # 96 个缩略图：每个 slug 一份 png（静态）+ 一份 webp（8 帧动画）
+├─ models/                 # 各模型原始产出原件（禁止修改，仅作对比源与副本来源），按 slug 命名
+│  └─ 3d/                  # 3D 版本鹈鹕动画原件
+├─ 04-04-OpsDev/deploy-pages.sh  # 构建 02-TempFiles/dist 并 wrangler 部署到 Cloudflare Pages
 ├─ 03-TempScr/             # 维护脚本：缩略图生成、元数据回填、重排、CDP 交互校验
 ├─ 02-TempFiles/           # 临时产物：dist 部署包、校验截图、Chrome 调试 profile、数据备份
-├─ 01-ProjectDoc/          # 需求排期与验证记录（各模型产出的需求文档）
-├─ ProjectDoc/             # 本交接文档集（legacy/ 为旧版单文件备份）
-├─ TempScr/ TempFiles/     # 早期遗留临时目录（旧脚本与旧截图）
-├─ Trash/                  # 下架条目的备份（可恢复）
-└─ 根目录中文名 HTML        # 各模型原始产出原件（禁止修改，仅作对比源与副本来源）
+├─ 01-ProjectDoc/          # 本交接文档集（legacy/ 为旧版单文件备份）与各模型需求排期记录
+└─ 99-Trash/               # 下架条目与旧打包的备份（不纳入版本管理）
 ```
 
 > `02-TempFiles/` 下的 `chrome-profile-*` 是 Chrome 调试用的 user data dir（体积大、含浏览器缓存），不是项目内容，清理时可直接删。
@@ -117,7 +116,7 @@ flowchart TD
 | 评分 | 1-10 分读写、默认基线、导出导入、按分排序 | `assets/app.js`（`RATINGS_KEY`=app.js:48，`DEFAULT_RATINGS`=app.js:51） | 卡片/查看器 | `localStorage` | 键 `peilika_ratings_v1` | `03-TempScr/10月5日-2110-展厅查看器交互校验.js` |
 | 查看器 | iframe 全屏查看、翻页、预加载、键盘 | `assets/app.js` `openViewer/loadCurrent/warmNeighbors` | 卡片点击 | `sites/*.html` | 三帧 `viewerIframe/Prev/Next` | `03-TempScr/10月5日-2120-查看器二次打开复测.js` |
 | 缩略图生成 | 无头 Chrome 截图 + Pillow 合成动画 WebP | `03-TempScr/10月5日-1815-生成展厅缩略图.py` | `sites/*.html` | `thumbs/*.png|.webp` | 1280×900、8 帧、每帧 260ms | 脚本已生成 45 组，产物人工抽查 |
-| 部署 | 构建 dist + wrangler 推送 | `OpsDev/deploy-pages.sh` | 工作区文件 | Cloudflare Pages | `--project-name peilika` | 每次部署后 curl 校验 |
+| 部署 | 构建 dist + wrangler 推送 | `04-OpsDev/deploy-pages.sh` | 工作区文件 | Cloudflare Pages | `--project-name peilika` | 每次部署后 curl 校验 |
 
 ## 关键调用链
 
@@ -125,7 +124,7 @@ flowchart TD
 2. 打开页面：点击卡片 → `openViewer(slug)` → `loadCurrent()` → iframe `src = s.src` + `warmNeighbors()` 预加载前后页
 3. 打分同步：星星点击 → `applyRating/saveRating` → 写 `localStorage` → `refreshCardRating()` 更新卡片 → 查看器内 `updateViewerRating()`
 4. 翻页：`prev()/next()` → 若目标页已在预加载帧则切 class `is-current`（瞬时），否则 `loadCurrent()` 重新加载并再次预热
-5. 部署：`OpsDev/deploy-pages.sh` → 复制 index/sites-data/assets/sites/thumbs(png+webp) 到 `02-TempFiles/dist` → `wrangler pages deploy --project-name peilika`
+5. 部署：`04-OpsDev/deploy-pages.sh` → 复制 index/sites-data/assets/sites/thumbs(png+webp) 到 `02-TempFiles/dist` → `wrangler pages deploy --project-name peilika`
 
 ## 共享状态与数据边界
 

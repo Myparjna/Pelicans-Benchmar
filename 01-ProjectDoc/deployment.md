@@ -8,16 +8,16 @@ client_level: developer
 
 ## 部署方式
 
-**Cloudflare Pages + wrangler CLI（本机手动部署，无 CI/CD）**。项目 `peilika`，生产域名 `https://peilika.pages.dev`，由 `OpsDev/deploy-pages.sh` 一键完成「构建 dist → wrangler 推送」。
+**Cloudflare Pages + wrangler CLI（本机手动部署，无 CI/CD）**。项目 `peilika`，生产域名 `https://peilika.pages.dev`，由 `04-OpsDev/deploy-pages.sh` 一键完成「构建 dist → wrangler 推送」。
 
 仓库内没有 GitHub Actions / GitLab CI / Jenkins 配置，也没有 Docker、K8s、Vercel、Netlify 或 VPS 痕迹。
 
 ```bash
 # 日常部署（在项目根目录，git bash 中执行）
-bash OpsDev/deploy-pages.sh
+bash 04-OpsDev/deploy-pages.sh
 ```
 
-脚本内容要点（`OpsDev/deploy-pages.sh`）：
+脚本内容要点（`04-OpsDev/deploy-pages.sh`）：
 1. `rm -rf $ROOT/02-TempFiles/dist` 后重建 `assets/`、`sites/`、`thumbs/` 三个子目录。
 2. 复制 `index.html`、`sites-data.js`、`favicon.webp`、`assets/app.js`、`assets/style.css`、`sites/*.html`、`thumbs/*.png`、**`thumbs/*.webp`**（webp 这一行是修线上动图裂图时补的，别删）。
 3. `export PATH="/c/Users/mypra/AppData/Roaming/npm:$PATH"` 后执行 `wrangler pages deploy "$DIST" --project-name peilika --commit-dirty=true`。
@@ -34,7 +34,7 @@ bash OpsDev/deploy-pages.sh
 5. 准备 Chrome：截图/校验依赖 `C:\Program Files\Google\Chrome\Application\chrome.exe`。
 6. 准备缩略图环境：`uv pip install --python <venv> pillow`（仅重生成缩略图时需要）。
 7. 起本地服务验证：`python -m http.server 8137 --bind 127.0.0.1`，打开 `http://127.0.0.1:8137/index.html` 确认 45 张卡片、无裂图。
-8. 部署：`bash OpsDev/deploy-pages.sh`。
+8. 部署：`bash 04-OpsDev/deploy-pages.sh`。
 9. 线上验收（**必须校验 content-type，不能只看状态码**）：
    ```bash
    curl -s -o /dev/null -w "%{http_code} %{content_type}\n" -L https://peilika.pages.dev/

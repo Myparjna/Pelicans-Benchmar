@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>鹈鹕骑车记</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    /* 场景主容器 */
+    .scene {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      transition: background 1.5s ease;
+    }
+
+    /* 天气状态样式 */
+    .scene.sunny {
+      background: linear-gradient(180deg, #70c5ff 0%, #d4f0ff 65%, #a4e062 65%, #569124 100%);
+    }
+
+    .scene.cloudy {
+      background: linear-gradient(180deg, #8c9fae 0%, #c5d3de 65%, #88a36d 65%, #496332 100%);
+    }
+
+    .scene.rainy {
+      background: linear-gradient(180deg, #4f5d68 0%, #7d8e9a 65%, #5a6e4a 65%, #304022 100%);
+    }
+
+    /* 太阳 */
+    .sun {
+      position: absolute;
+      top: 10%;
+      right: 15%;
+      width: 70px;
+      height: 70px;
+      background: #ffce00;
+      border-radius: 50%;
+      box-shadow: 0 0 35px #ffa100;
+      transition: opacity 1.5s ease, transform 1.5s ease;
+      opacity: 1;
+    }
+    .cloudy .sun, .rainy .sun {
+      opacity: 0.1;
+      transform: scale(0.85);
+    }
+
+    /* 云朵 */
+    .cloud-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 50%;
+      pointer-events: none;
+    }
+
+    .cloud {
+      position: absolute;
+      background: #ffffff;
+      border-radius: 50px;
+      opacity: 0.8;
+      animation: floatCloud 24s linear infinite;
+    }
+    .cloud::after, .cloud::before {
+      content: '';
+      position: absolute;
+      background: inherit;
+      border-radius: 50%;
+    }
+    .cloud-1 {
+      width: 130px;
+      height: 42px;
+      top: 15%;
+      left: -150px;
+    }
+    .cloud-1::after {
+      width: 50px;
+      height: 50px;
+      top: -24px;
+      left: 20px;
+    }
+    .cloud-1::before {
+      width: 65px;
+      height: 65px;
+      top: -32px;
+      left: 55px;
+    }
+
+    .cloud-2 {
+      width: 170px;
+      height: 52px;
+      top: 28%;
+      left: -200px;
+      animation-delay: -10s;
+      animation-duration: 32s;
+    }
+    .cloud-2::after {
+      width: 65px;
+      height: 65px;
+      top: -30px;
+      left: 30px;
+    }
+    .cloud-2::before {
+      width: 80px;
+      height: 80px;
+      top: -40px;
+      left: 75px;
+    }
+
+    .cloudy .cloud, .rainy .cloud {
+      background: #aab6be;
+      opacity: 0.95;
+    }
+
+    @keyframes floatCloud {
+      from { transform: translateX(-10vw); }
+      to { transform: translateX(115vw); }
+    }
+
+    /* 雨水效果 */
+    .rain {
+      position: absolute;
+      width: 100%;
+      height: 65%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 1s ease;
+      background-image: radial-gradient(2px 8px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+                        radial-gradient(1.5px 12px at 70px 90px, #b2d8ff, rgba(0,0,0,0)),
+                        radial-gradient(2px 10px at 140px 40px, #cee7ff, rgba(0,0,0,0));
+      background-size: 160px 120px;
+      animation: rainFall 0.4s linear infinite;
+    }
+    .rainy .rain {
+      opacity: 0.85;
+    }
+
+    @keyframes rainFall {
+      from { background-position: 0 0; }
+      to { background-position: -40px 120px; }
+    }
+
+    /* 道路与地面装饰 */
+    .ground {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 35%;
+    }
+
+    .road {
+      position: absolute;
+      top: 15%;
+      width: 100%;
+      height: 85px;
+      background: #474a4f;
+      border-top: 5px solid #6c737c;
+      overflow: hidden;
+    }
+
+    .road-line {
+      position: absolute;
+      top: 50%;
+      width: 200%;
+      height: 6px;
+      background: repeating-linear-gradient(90deg, #fff 0, #fff 40px, transparent 40px, transparent 80px);
+      transform: translateY(-50%);
+      animation: roadMove 0.8s linear infinite;
+    }
+
+    @keyframes roadMove {
+      from { transform: translate(0, -50%); }
+      to { transform: translate(-80px, -50%); }
+    }
+
+    /* 核心舞台（SVG 动态缩放适配） */
+    .stage {
+      position: absolute;
+      left: 50%;
+      bottom: 12%;
+      transform: translateX(-50%);
+      width: min(85vw, 420px);
+      height: auto;
+      pointer-events: none;
+    }
+
+    /* 动画配置 */
+    .spin {
+      transform-origin: center;
+      animation: wheelRotate 1s linear infinite;
+    }
+    .bobbing {
+      animation: pelicanBounce 0.5s ease-in-out infinite alternate;
+      transform-origin: 190px 190px;
+    }
+    .pedal-spin {
+      transform-origin: 190px 190px;
+      animation: wheelRotate 1s linear infinite;
+    }
+    .leg-l {
+      animation: pedalLeft 1s linear infinite;
+    }
+    .leg-r {
+      animation: pedalRight 1s linear infinite;
+    }
+
+    @keyframes wheelRotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes pelicanBounce {
+      0% { transform: translateY(0px) rotate(0deg); }
+      100% { transform: translateY(-4px) rotate(-1.5deg); }
+    }
+
+    @keyframes pedalLeft {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes pedalRight {
+      0%, 100% { transform: translateY(-10px); }
+      50% { transform: translateY(0); }
+    }
+
+    /* 天气状态指示标签 */
+    .weather-indicator {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      padding: 7px 16px;
+      background: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 20px;
+      font-weight: 600;
+      color: #24292e;
+      font-size: 0.95rem;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="scene sunny" id="scene">
+    <div class="weather-indicator" id="weatherText">☀️ 晴天</div>
+    <div class="sun"></div>
+    
+    <div class="cloud-layer">
+      <div class="cloud cloud-1"></div>
+      <div class="cloud cloud-2"></div>
+    </div>
+
+    <div class="rain"></div>
+
+    <div class="ground">
+      <div class="road">
+        <div class="road-line"></div>
+      </div>
+    </div>
+
+    <svg class="stage" viewBox="0 0 320 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+      
+      <g transform="translate(70, 190)">
+        <circle r="36" stroke="#2c3e50" stroke-width="6" fill="none" />
+        <circle r="36" stroke="#adb5bd" stroke-width="1.5" stroke-dasharray="7 7" class="spin" />
+        <circle r="6" fill="#6c757d" />
+      </g>
+
+      <g transform="translate(250, 190)">
+        <circle r="36" stroke="#2c3e50" stroke-width="6" fill="none" />
+        <circle r="36" stroke="#adb5bd" stroke-width="1.5" stroke-dasharray="7 7" class="spin" />
+        <circle r="6" fill="#6c757d" />
+      </g>
+
+      <path d="M 70 190 L 135 190 L 215 135 L 125 135 Z" stroke="#e63946" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="M 135 190 L 120 105" stroke="#e63946" stroke-width="6" stroke-linecap="round"/>
+      <path d="M 250 190 L 210 95" stroke="#e63946" stroke-width="6" stroke-linecap="round"/>
+      
+      <path d="M 105 105 L 138 105" stroke="#2b2d42" stroke-width="7" stroke-linecap="round"/>
+      <path d="M 200 95 L 215 95 L 225 110" stroke="#2b2d42" stroke-width="5" fill="none" stroke-linecap="round"/>
+
+      <circle cx="135" cy="190" r="13" fill="#8d99ae" />
+      <g class="pedal-spin" style="transform-origin: 135px 190px;">
+        <line x1="135" y1="175" x2="135" y2="205" stroke="#2b2d42" stroke-width="4" stroke-linecap="round" />
+        <circle cx="135" cy="175" r="4" fill="#111" />
+        <circle cx="135" cy="205" r="4" fill="#111" />
+      </g>
+
+      <g class="bobbing">
+        <path d="M 95 105 C 80 102 72 95 80 88 C 95 90 105 95 115 105 Z" fill="#ced4da" />
+        
+        <ellipse cx="140" cy="100" rx="38" ry="28" fill="#f8f9fa" stroke="#e9ecef" stroke-width="1.5" />
+
+        <path d="M 125 90 C 145 90 160 105 145 118 C 130 118 118 105 125 90 Z" fill="#dee2e6" />
+
+        <path d="M 160 100 C 172 90 178 72 178 52 C 178 38 190 30 202 34 C 215 38 214 55 204 68 C 195 80 185 105 168 112 Z" fill="#f8f9fa" />
+        
+        <circle cx="198" cy="42" r="3.5" fill="#212529" />
+        <circle cx="199.5" cy="40.5" r="1" fill="#fff" />
+
+        <path d="M 206 37 L 270 54 C 270 54 265 82 220 85 C 196 86 186 70 196 60 Z" fill="#f4a261" />
+        <path d="M 206 37 L 275 53 C 265 62 235 63 204 57 Z" fill="#e76f51" />
+
+        <path d="M 192 38 Q 200 34 208 41 Q 202 48 194 45 Z" fill="#1d3557" />
+        <line x1="190" y1="41" x2="194" y2="41" stroke="#1d3557" stroke-width="2" />
+
+        <path d="M 152 104 Q 185 106 212 98" stroke="#f8f9fa" stroke-width="8" stroke-linecap="round" fill="none" />
+
+        <g class="leg-l">
+          <polyline points="135,115 130,150 135,175" stroke="#f4a261" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+          <polygon points="128,175 142,175 138,181 125,181" fill="#e76f51" />
+        </g>
+        <g class="leg-r">
+          <polyline points="142,115 145,160 135,205" stroke="#e76f51" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+          <polygon points="128,205 142,205 138,211 125,211" fill="#d95d39" />
+        </g>
+      </g>
+
+    </svg>
+  </div>
+
+  <script>
+    const weatherStates = [
+      { name: 'sunny', label: '☀️ 晴天' },
+      { name: 'cloudy', label: '⛅ 阴天' },
+      { name: 'rainy', label: '🌧️ 雨天' }
+    ];
+
+    let currentIndex = 0;
+    const sceneElement = document.getElementById('scene');
+    const labelElement = document.getElementById('weatherText');
+
+    // 状态切换函数：晴天 -> 阴天 -> 雨天 -> 晴天 循环
+    function advanceWeather() {
+      const current = weatherStates[currentIndex];
+      sceneElement.classList.remove(current.name);
+
+      currentIndex = (currentIndex + 1) % weatherStates.length;
+      
+      const next = weatherStates[currentIndex];
+      sceneElement.classList.add(next.name);
+      labelElement.textContent = next.label;
+    }
+
+    // 每 5 秒轮换一次
+    setInterval(advanceWeather, 5000);
+  </script>
+</body>
+</html>

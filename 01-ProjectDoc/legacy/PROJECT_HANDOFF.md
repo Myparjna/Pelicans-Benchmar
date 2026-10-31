@@ -93,7 +93,7 @@ python -m http.server 4173 --bind 127.0.0.1
 # 浏览器打开 http://127.0.0.1:4173/index.html
 ```
 
-**构建部署包 + 部署**（也可直接跑 `OpsDev/deploy-pages.sh`）：
+**构建部署包 + 部署**（也可直接跑 `04-OpsDev/deploy-pages.sh`）：
 ```bash
 cd 鹈鹕自行车测试
 rm -rf TempFiles/dist && mkdir -p TempFiles/dist/assets TempFiles/dist/sites TempFiles/dist/thumbs

@@ -44,15 +44,15 @@ Cloudflare Pages 无 CLI 回滚命令使用记录；用控制台回退：
 1. Cloudflare Dashboard → Workers & Pages → `peilika` → Deployments
 2. 找到上一个正常版本 → 右侧菜单 → **Rollback to this deployment**
 
-替代方案（等价且更快，本机有仓库时）：`git checkout <上一个 commit>` 后重跑 `bash OpsDev/deploy-pages.sh`（最近一次提交见 known-issues.md 的变更记录）。
+替代方案（等价且更快，本机有仓库时）：`git checkout <上一个 commit>` 后重跑 `bash 04-OpsDev/deploy-pages.sh`（最近一次提交见 known-issues.md 的变更记录）。
 
 ## 常见故障处置
 
 | 症状 | 可能原因 | 处置步骤 |
 |---|---|---|
-| 线上动图/缩略图裂开 | `thumbs/` 下文件未部署或本身损坏 | `curl -s -o /dev/null -w "%{content_type}" -L https://peilika.pages.dev/thumbs/<slug>.webp`；非 `image/webp` 说明文件没传上去 → 确认 `OpsDev/deploy-pages.sh` 里 `*.webp` 复制行存在 → 重新部署 |
+| 线上动图/缩略图裂开 | `thumbs/` 下文件未部署或本身损坏 | `curl -s -o /dev/null -w "%{content_type}" -L https://peilika.pages.dev/thumbs/<slug>.webp`；非 `image/webp` 说明文件没传上去 → 确认 `04-OpsDev/deploy-pages.sh` 里 `*.webp` 复制行存在 → 重新部署 |
 | 改了 js/css 线上没变 | Pages 边缘缓存 / 浏览器缓存 | 用部署专属域名 `https://<deployment-id>.peilika.pages.dev/assets/app.js` 验证；用户侧 Ctrl+F5 |
-| `wrangler pages deploy` 报 `fetch failed` | 本机网络瞬断 | 直接重试 `bash OpsDev/deploy-pages.sh`（历史多次重试即成功，不是配置问题） |
+| `wrangler pages deploy` 报 `fetch failed` | 本机网络瞬断 | 直接重试 `bash 04-OpsDev/deploy-pages.sh`（历史多次重试即成功，不是配置问题） |
 | `wrangler: command not found` | PATH 未包含全局 npm | 部署脚本第 21 行已处理；手动执行时先 `export PATH="/c/Users/mypra/AppData/Roaming/npm:$PATH"` |
 | 本地页面 0 张卡片 | 静态服务已挂（临时 server 随终端退出） | `curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8137/index.html`；非 200 就重启服务，端口被占用换一个 |
 | 卡片数对不上/少了条目 | `sites-data.js` 被改坏或某条 `src`/`thumb` 文件缺失 | `node --check sites-data.js`；核对缺失文件；从 `02-TempFiles/sites-data.backup*.js` 或 git 恢复 |

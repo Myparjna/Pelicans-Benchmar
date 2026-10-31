@@ -1,0 +1,53 @@
+{
+  "project_root": "C:\\Users\\mypra\\Desktop\\VibeCoding指南\\skills测评项目\\03-鹈鹕自行车测试",
+  "documents": [
+    {
+      "name": "ai-services.md",
+      "action": "generate"
+    },
+    {
+      "name": "api.md",
+      "action": "skip"
+    },
+    {
+      "name": "architecture.md",
+      "action": "generate"
+    },
+    {
+      "name": "database.md",
+      "action": "skip"
+    },
+    {
+      "name": "deployment.md",
+      "action": "generate"
+    },
+    {
+      "name": "desktop.md",
+      "action": "skip"
+    },
+    {
+      "name": "environment.md",
+      "action": "generate"
+    },
+    {
+      "name": "known-issues.md",
+      "action": "generate"
+    },
+    {
+      "name": "operations.md",
+      "action": "generate"
+    },
+    {
+      "name": "readme.md",
+      "action": "generate"
+    },
+    {
+      "name": "regression-test.md",
+      "action": "generate"
+    },
+    {
+      "name": "usage.md",
+      "action": "generate"
+    }
+  ]
+}

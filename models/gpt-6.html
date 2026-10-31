@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#eaf4ed">
+<title>鹈鹕的晴雨骑行 · Pelican on wheels</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;min-height:100%;font-family:"Segoe UI","Microsoft YaHei",sans-serif;color:#233f3d}body{background:#eaf4ed}main{position:relative;min-height:640px;height:100svh;overflow:hidden;background:#eaf4ed}canvas{position:absolute;inset:0;width:100%;height:100%;display:block}.masthead{position:absolute;top:clamp(26px,5.2vh,60px);left:clamp(24px,5.4vw,88px);right:clamp(24px,5.4vw,88px);display:flex;justify-content:space-between;align-items:center}.brand{font-size:12px;letter-spacing:3px;font-weight:700}.issue{font-size:11px;letter-spacing:2px;opacity:.6}.intro{position:absolute;top:clamp(92px,15vh,170px);left:clamp(24px,5.4vw,88px);pointer-events:none}.eyebrow{font-size:11px;letter-spacing:3px;color:#527975;margin:0 0 15px}h1{font-size:clamp(36px,4.6vw,68px);line-height:1.2;letter-spacing:-2px;font-weight:500;margin:0 0 17px}h1 span{display:block} .description{font-size:13px;line-height:1.9;color:#5c7773;margin:0}.weather-note{position:absolute;right:5.4vw;top:21vh;text-align:right}.weather-note b{font-size:11px;letter-spacing:2px;font-weight:500;opacity:.65}.weather-note p{font-size:24px;margin:10px 0 5px}.weather-note small{font-size:11px;opacity:.65}.bottom{position:absolute;bottom:max(27px,env(safe-area-inset-bottom));left:5.4vw;right:5.4vw;display:flex;align-items:flex-end;justify-content:space-between;gap:20px}.caption{font-size:11px;line-height:1.9;letter-spacing:1px;color:#4e6c65}.caption strong{font-weight:500;font-size:13px;color:#25493f}.controls{padding:15px 18px 12px;border:1px solid #ffffffc9;border-radius:19px;background:#ffffffa8;backdrop-filter:blur(14px);box-shadow:0 8px 30px #41665308;width:330px}.control-top{display:flex;justify-content:space-between;font-size:10px;letter-spacing:1px;margin-bottom:12px;color:#55716b}.options{display:flex;gap:5px}button{font:inherit;cursor:pointer;border:0}button:focus-visible{outline:3px solid #b87e36;outline-offset:3px}.weather-button{flex:1;background:transparent;border-radius:8px;padding:8px 5px;color:#56736c;font-size:12px;transition:background .25s,color .25s}.weather-button[aria-pressed="true"]{background:#294d43;color:#fff}.pause{background:transparent;color:#294d43;width:30px;font-weight:700;letter-spacing:2px}.progress{height:2px;background:#294d431a;margin-top:12px;overflow:hidden;border-radius:3px}.progress span{display:block;width:100%;height:100%;background:#789e78;transform:scaleX(0);transform-origin:left}.footnote{position:absolute;right:5.4vw;bottom:146px;font-size:10px;letter-spacing:2px;color:#506f657d}
+@media(max-width:650px){main{min-height:650px}.masthead{top:28px}.issue{font-size:9px;letter-spacing:1px}.brand{font-size:10px;letter-spacing:2px}.intro{top:88px}h1{font-size:39px;letter-spacing:-1px}h1 span{display:block}.description{max-width:250px;font-size:12px}.eyebrow{font-size:9px;margin-bottom:12px}.weather-note{top:230px;right:25px}.weather-note p{font-size:19px}.weather-note b{font-size:9px}.bottom{left:24px;right:24px;bottom:max(24px,env(safe-area-inset-bottom));flex-direction:column;align-items:stretch;gap:16px}.caption{font-size:10px}.caption br{display:none}.caption strong{margin-right:8px;font-size:12px}.controls{width:100%;padding:13px 15px 11px}.footnote{display:none}}
+@media(max-height:700px) and (min-width:651px){.intro{top:100px}h1{font-size:42px}.weather-note{top:120px}.bottom{bottom:22px}.description{font-size:12px}}
+</style>
+</head>
+<body>
+<main aria-label="鹈鹕白天骑自行车的动态插画，天气每五秒循环切换">
+<canvas id="scene" role="img" aria-label="一只戴绿色帽子、背着橙色小包的白鹈鹕，沿海岸骑着绿色自行车，晴天、阴天和雨天循环出现。"></canvas>
+<header class="masthead"><div class="brand">慢游日记 / SLOW DAYS</div><div class="issue">VOL. 01 &nbsp; · &nbsp; 海岸骑行</div></header>
+<section class="intro"><p class="eyebrow">A LITTLE RIDE, A LOVELY DAY</p><h1>天气在变，<span>快乐向前。</span></h1><p class="description">跟着鹈鹕，沿海岸慢慢骑。<br>晴也好，雨也好，都是沿途的风景。</p></section>
+<aside class="weather-note"><b>ON THE COAST / 白日</b><p id="weather-name">晴天 · Sunny</p><small id="weather-copy">把阳光装进口袋</small></aside>
+<div class="footnote">KEEP PEDALING. KEEP EXPLORING.</div>
+<footer class="bottom"><div class="caption"><strong>不赶路，感受路。</strong><br>一只鹈鹕，一辆单车，一整天的好心情。</div><section class="controls" aria-label="天气动画控制"><div class="control-top"><span>沿途天气 · 每 5 秒切换</span><span id="countdown">5.0 s</span></div><div class="options"><button class="weather-button" data-weather="0" aria-pressed="true">晴天</button><button class="weather-button" data-weather="1" aria-pressed="false">阴天</button><button class="weather-button" data-weather="2" aria-pressed="false">雨天</button><button class="pause" id="pause" aria-label="暂停动画" title="暂停动画">Ⅱ</button></div><div class="progress"><span id="progress"></span></div></section></footer>
+</main>
+<script>
+(()=>{'use strict';
+const canvas=document.getElementById('scene'),ctx=canvas.getContext('2d');
+const names=['晴天 · Sunny','阴天 · Cloudy','雨天 · Rainy'],copies=['把阳光装进口袋','云朵也来一起兜风','听雨滴为车轮伴奏'];
+const palettes=[['#eaf4ed','#c8e5d7','#a2cbb5','#8cbdaa'],['#dce6e5','#c4d8d2','#a2bcb0','#87a89c'],['#cedcde','#b8cdca','#92afa8','#769c94']];
+let w=0,h=0,dpr=1,time=0,last=0,cycle=0,weather=0,paused=false,mix=palettes[0].map(hex),rain=0,sun=1;
+const buttons=[...document.querySelectorAll('[data-weather]')],progress=document.getElementById('progress');
+function hex(s){return [1,3,5].map(i=>parseInt(s.slice(i,i+2),16))}function color(a){return `rgb(${a.map(Math.round).join(',')})`}
+function resize(){w=canvas.clientWidth;h=canvas.clientHeight;dpr=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0)}
+function setWeather(n){weather=n;document.getElementById('weather-name').textContent=names[n];document.getElementById('weather-copy').textContent=copies[n];buttons.forEach((b,i)=>b.setAttribute('aria-pressed',i===n?'true':'false'));canvas.dataset.weather=['sunny','cloudy','rainy'][n]}
+buttons.forEach(b=>b.addEventListener('click',()=>{cycle=0;setWeather(+b.dataset.weather)}));
+document.getElementById('pause').addEventListener('click',function(){paused=!paused;this.textContent=paused?'▶':'Ⅱ';this.setAttribute('aria-label',paused?'继续动画':'暂停动画');this.title=paused?'继续动画':'暂停动画';this.setAttribute('aria-pressed',String(paused))});
+function ellipse(x,y,rx,ry,fill,stroke,lw=2){ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.stroke()}}
+function line(points,stroke,lw=2){ctx.beginPath();ctx.moveTo(...points[0]);points.slice(1).forEach(p=>ctx.lineTo(...p));ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke()}
+function path(draw,fill,stroke,lw=2){ctx.beginPath();draw();if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.lineJoin='round';ctx.stroke()}}
+function cloud(x,y,s,opacity){ctx.save();ctx.translate(x,y);ctx.scale(s,s);ctx.globalAlpha=opacity;path(()=>{ctx.moveTo(-65,12);ctx.bezierCurveTo(-80,-10,-58,-31,-34,-23);ctx.bezierCurveTo(-26,-63,29,-62,40,-24);ctx.bezierCurveTo(76,-38,101,5,71,15);ctx.closePath()},'#ffffff');ctx.restore()}
+function wheel(x,y,angle){ellipse(x,y,69,69,'#eaf0dc','#294b43',7);ellipse(x,y,60,60,null,'#ffffff',3);for(let i=0;i<12;i++){let a=angle+i*Math.PI/6;line([[x,y],[x+Math.cos(a)*59,y+Math.sin(a)*59]],'#81988a',1.2)}ellipse(x,y,6,6,'#d8ae67','#294b43',2)}
+function birdBike(x,y,s){ctx.save();ctx.translate(x,y);ctx.scale(s,s);let a=time*3.5,bob=Math.sin(a*2)*2;
+ellipse(1,83,202,15,'#244f4120');wheel(-119,0,a);wheel(136,0,a);
+line([[-119,0],[-56,-107],[13,0],[-119,0],[-24,-76],[104,-76],[13,0]],'#f0f1d9',11);line([[-119,0],[-56,-107],[13,0],[-119,0],[-24,-76],[104,-76],[13,0]],'#4d8c73',7);
+line([[136,0],[101,-108],[98,-133],[124,-145],[143,-145]],'#294b43',6);line([[123,-145],[143,-145]],'#bf8050',8);line([[-56,-107],[-66,-132]],'#294b43',5);line([[-89,-135],[-45,-135]],'#294b43',9);
+ctx.save();ctx.translate(0,bob);
+let px=13+Math.cos(a+Math.PI)*24,py=Math.sin(a+Math.PI)*24;
+line([[-45,-139],[-10,-85],[px,py-8]],'#c08c4a',9);line([[px-6,py-6],[px+15,py-3]],'#d6a255',10);
+path(()=>{ctx.moveTo(-92,-180);ctx.quadraticCurveTo(-128,-185,-146,-215);ctx.quadraticCurveTo(-111,-210,-78,-223);ctx.closePath()},'#f5f1df','#334f45',2.5);
+path(()=>{ctx.moveTo(-91,-228);ctx.bezierCurveTo(-77,-267,-23,-274,22,-239);ctx.bezierCurveTo(31,-265,22,-312,34,-334);ctx.bezierCurveTo(47,-362,91,-359,100,-327);ctx.bezierCurveTo(106,-306,75,-287,80,-256);ctx.bezierCurveTo(92,-196,21,-144,-50,-153);ctx.bezierCurveTo(-94,-157,-109,-193,-91,-228);ctx.closePath()},'#fffdf0','#334f45',3);
+path(()=>{ctx.moveTo(-79,-222);ctx.bezierCurveTo(-31,-237,3,-206,26,-186);ctx.bezierCurveTo(-19,-161,-63,-171,-83,-192)},'#e2e7d4','#a5b9a0',2);
+path(()=>{ctx.moveTo(-72,-204);ctx.quadraticCurveTo(-48,-185,-29,-189);ctx.moveTo(-65,-214);ctx.quadraticCurveTo(-38,-193,-20,-197)},null,'#b6c8af',2);
+path(()=>{ctx.moveTo(81,-328);ctx.lineTo(222,-311);ctx.quadraticCurveTo(161,-258,101,-279);ctx.quadraticCurveTo(82,-288,81,-328)},'#edba63','#334f45',2.5);
+path(()=>{ctx.moveTo(83,-329);ctx.quadraticCurveTo(151,-333,226,-311);ctx.lineTo(89,-306);ctx.closePath()},'#efb755','#334f45',2.5);line([[98,-306],[208,-311]],'#b28240',1.5);
+ellipse(77,-335,4.5,5.5,'#253f39');ellipse(78,-337,1.3,1.3,'#fff');ellipse(65,-316,9,5,'#e9bda3');
+path(()=>{ctx.moveTo(30,-350);ctx.quadraticCurveTo(28,-380,57,-384);ctx.quadraticCurveTo(88,-385,99,-353);ctx.closePath()},'#527e60','#334f45',2.5);path(()=>{ctx.moveTo(29,-351);ctx.quadraticCurveTo(77,-361,119,-350);ctx.quadraticCurveTo(118,-340,79,-344);ctx.lineTo(29,-345);ctx.closePath()},'#3f6b53','#334f45',2);
+path(()=>{ctx.moveTo(33,-282);ctx.quadraticCurveTo(12,-256,-16,-262);ctx.lineTo(-38,-280);ctx.lineTo(-29,-256);ctx.lineTo(-55,-257);ctx.quadraticCurveTo(-6,-231,45,-268);ctx.closePath()},'#da8957');
+ctx.save();ctx.translate(-92,-234);ctx.rotate(-.22);ctx.fillStyle='#c58652';ctx.strokeStyle='#334f45';ctx.lineWidth=2.5;ctx.beginPath();ctx.roundRect(-23,-4,48,59,11);ctx.fill();ctx.stroke();line([[-22,11],[24,11]],'#956442',2);line([[2,9],[2,23]],'#eed8a1',5);ctx.restore();
+path(()=>{ctx.moveTo(14,-231);ctx.quadraticCurveTo(55,-198,106,-151);ctx.quadraticCurveTo(119,-145,124,-151);ctx.quadraticCurveTo(88,-201,51,-246)},'#f4f2df','#334f45',2.5);
+px=13+Math.cos(a)*24;py=Math.sin(a)*24;line([[-27,-150],[12,-92],[px,py-8]],'#d9a04f',10);path(()=>{ctx.moveTo(px-8,py-11);ctx.lineTo(px+19,py-4);ctx.quadraticCurveTo(px+27,py+5,px+12,py+5);ctx.lineTo(px-10,py+1);ctx.closePath()},'#e7b15a','#8b7343',1.5);
+ctx.restore();ellipse(13,0,13,13,'#e3d7b4','#294b43',2);line([[13-Math.cos(a)*24,-Math.sin(a)*24],[13+Math.cos(a)*24,Math.sin(a)*24]],'#324e43',4);for(let sign of [-1,1]){let xp=13+sign*Math.cos(a)*24,yp=sign*Math.sin(a)*24;line([[xp-9,yp],[xp+9,yp]],'#294b43',4)}
+ctx.restore()}
+function render(dt){let k=1-Math.exp(-dt*2.8);mix=mix.map((v,i)=>v.map((n,j)=>n+(hex(palettes[weather][i])[j]-n)*k));rain+=((weather===2?1:0)-rain)*k;sun+=((weather===0?1:0)-sun)*k;
+ctx.clearRect(0,0,w,h);ctx.fillStyle=color(mix[0]);ctx.fillRect(0,0,w,h);const mobile=w<=650,ground=h*(mobile?.76:.79);
+ctx.save();ctx.globalAlpha=sun;let sx=w*(mobile?.78:.73),sy=h*(mobile?.23:.26);ellipse(sx,sy,66,66,'#efd89133');ellipse(sx,sy,47,47,'#f4d881');ctx.restore();
+for(let i=0;i<6;i++){let cx=((i*w/4-time*(6+i%3))+w*3)%(w+240)-120;cloud(cx,h*(.32+(i%3)*.06),mobile?.7:1,.36+(1-sun)*.32)}
+path(()=>{ctx.moveTo(0,ground-108);for(let x=0;x<=w+30;x+=30)ctx.lineTo(x,ground-110+Math.sin(x/w*7+1)*26+Math.sin(x/w*16)*9);ctx.lineTo(w,ground+30);ctx.lineTo(0,ground+30);ctx.closePath()},color(mix[1]));
+ctx.fillStyle=color(mix[2]);ctx.fillRect(0,ground-56,w,75);
+for(let i=0;i<24;i++){let x=(i*107-time*16)%(w+120);if(x<0)x+=w+120;line([[x,ground-40+(i%4)*13],[x+30+(i%3)*15,ground-40+(i%4)*13]],'#f4faf040',1)}
+path(()=>{ctx.moveTo(0,ground-7);ctx.bezierCurveTo(w*.25,ground-42,w*.6,ground+18,w,ground-18);ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath()},'#d7dfbf');
+ctx.fillStyle='#eae5cf';ctx.fillRect(0,ground+18,w,60);ctx.fillStyle='#f7f1de';ctx.fillRect(0,ground+20,w,3);ctx.fillStyle='#c1cfa9';ctx.fillRect(0,ground+78,w,h);
+for(let i=0;i<14;i++){let x=((i*150-time*95)%(w+180)+w+180)%(w+180)-90;line([[x,ground+49],[x+46,ground+49]],'#faf7e9',3);let gx=((i*167-time*125)%(w+180)+w+180)%(w+180)-90;line([[gx,ground+99],[gx-4,ground+91],[gx,ground+96],[gx+6,ground+87]],'#8fa775',1.5)}
+let scale=mobile?Math.min(w/490,h/870):Math.min(w/1130,h/790,1.25);birdBike(w*(mobile?.47:.57),ground+14-79*scale,scale);
+ctx.save();ctx.globalAlpha=rain*.6;for(let i=0;i<110;i++){let x=((i*137.3-time*180)%(w+60)+w+60)%(w+60)-30,y=(i*83.7+time*(480+i%7*20))%(ground+35);line([[x,y],[x-7,y+18]],'#628d98',1.2)}ctx.globalAlpha=rain*.4;for(let i=0;i<9;i++){let x=(i*193+time*12)%w;ellipse(x,ground+28+(i%3)*12,10+(Math.sin(time*6+i)+1)*5,2,null,'#688f91',1)}ctx.restore();
+}
+function frame(now){if(!last)last=now;let dt=Math.min((now-last)/1000,.1);last=now;if(!paused){time+=dt;cycle+=dt;if(cycle>=5){cycle-=5;setWeather((weather+1)%3)}render(dt)}else render(0);progress.style.transform=`scaleX(${cycle/5})`;document.getElementById('countdown').textContent=(5-cycle).toFixed(1)+' s';requestAnimationFrame(frame)}
+window.addEventListener('resize',resize);document.addEventListener('visibilitychange',()=>{last=0});resize();setWeather(0);requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

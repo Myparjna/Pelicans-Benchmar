@@ -11,16 +11,16 @@ client_level: developer
 ## 已知 Bug
 
 - **Cloudflare Pages 会让缺失文件返回 200**（SPA fallback 行为）→ 缩略图/页面 404 时浏览器拿到 HTML 当图片渲染，表现为「裂图」，而 `curl` 状态码是 200。
-  - 影响：曾据此误判部署成功；实际是 `OpsDev/deploy-pages.sh` 只复制了 `*.png`，`*.webp` 从未上传。
+  - 影响：曾据此误判部署成功；实际是 `04-OpsDev/deploy-pages.sh` 只复制了 `*.png`，`*.webp` 从未上传。
   - 绕过：验证一律校验 `content-type`（`image/png` / `image/webp`），不要只看状态码。脚本已补齐 `cp thumbs/*.webp`。
-  - 相关文件：`OpsDev/deploy-pages.sh:17-18`。
+  - 相关文件：`04-OpsDev/deploy-pages.sh:17-18`。
 - **评分在查看器里改了、展厅卡片不更新**（已修）→ 根因是同步函数查询 `.rating`，实际类名是 `.star-rating`，永远查不到；另有一次绑定丢失导致卡片星星刷新后点不动。
   - 影响：表现为「打分没保存」，其实 localStorage 已写入。
   - 已修：统一 `applyRating/saveRating/refreshCardRating` 入口。
   - 相关文件：`assets/app.js`（评分模块）。
 - **`wrangler pages deploy` 偶发 `fetch failed`** → 本机网络瞬断，非配置问题。
   - 影响：部署中断，输出里只有 wrangler 的报错提示，容易误判为凭据失效。
-  - 绕过：直接重跑 `bash OpsDev/deploy-pages.sh`（历史多次重试即成功）。日志在 `~/.wrangler/logs/wrangler-*.log`。
+  - 绕过：直接重跑 `bash 04-OpsDev/deploy-pages.sh`（历史多次重试即成功）。日志在 `~/.wrangler/logs/wrangler-*.log`。
 - **SVG `clip-path` 跟随自身 `transform`**（模型产出页面内的坑，非展厅代码）→ 给滚动组加 `clip-path` 会导致内容整体消失。
   - 绕过：把 `clip` 放到外层无位移的 `<g>` 上。
   - 相关文件：`hy4preview-10月5日-1715-鹈鹕白天骑自行车动画.html`。

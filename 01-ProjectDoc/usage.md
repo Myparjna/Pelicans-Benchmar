@@ -33,7 +33,7 @@ client_level: developer
 
 ### 流程 3：新增一个模型条目（维护者）
 
-- 操作顺序：原 HTML 拷入项目根（保留原名、不动内容）→ `cp 原文件 sites/<ascii-slug>.html` → `sites-data.js` 增加条目（字段见 architecture.md）→ 用 `03-TempScr/10月5日-1815-生成展厅缩略图.py` 生成 `thumbs/<slug>.png` 与 `.webp` → 本地起服务验证 → `bash OpsDev/deploy-pages.sh`。
+- 操作顺序：原 HTML 拷入项目根（保留原名、不动内容）→ `cp 原文件 sites/<ascii-slug>.html` → `sites-data.js` 增加条目（字段见 architecture.md）→ 用 `03-TempScr/10月5日-1815-生成展厅缩略图.py` 生成 `thumbs/<slug>.png` 与 `.webp` → 本地起服务验证 → `bash 04-OpsDev/deploy-pages.sh`。
 - 预期输出：展厅出现新卡片、缩略图可见、查看器能打开。
 - 失败表现：缩略图裂图 → 确认 `thumbs/` 下 png 与 webp 都存在且内容类型为 `image/png` / `image/webp`（Cloudflare 对缺失文件会返回 200 的 HTML，状态码不可信，见 known-issues.md）。
 
@@ -48,7 +48,7 @@ client_level: developer
 | 环境 | 启动 | 访问 | 停止 |
 |---|---|---|---|
 | 本地 | `python -m http.server 8137 --bind 127.0.0.1`（项目根目录） | `http://127.0.0.1:8137/index.html` | 关闭终端 / 结束 python 进程 |
-| 生产 | `bash OpsDev/deploy-pages.sh` | `https://peilika.pages.dev` | 无（静态托管，回滚见 operations.md） |
+| 生产 | `bash 04-OpsDev/deploy-pages.sh` | `https://peilika.pages.dev` | 无（静态托管，回滚见 operations.md） |
 
 - 默认端口惯用 8137（也被其他项目用过 8765、4173）；**启动前先 curl 探活**，被占用就换端口。
 - 健康检查：`curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8137/index.html` 应为 200；线上抽查 `curl -sI https://peilika.pages.dev/thumbs/<slug>.webp` 的 `content-type` 应为 `image/webp`。

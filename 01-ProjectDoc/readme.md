@@ -57,7 +57,7 @@ cd "C:/Users/mypra/Desktop/VibeCoding指南/skills测评项目/03-鹈鹕自行�
 
 无依赖安装步骤；不需要 `.env`（项目不使用环境变量，见 environment.md）。
 
-**可用脚本**: 无 npm scripts。维护脚本集中在 `03-TempScr/`，部署脚本为 `OpsDev/deploy-pages.sh`。
+**可用脚本**: 无 npm scripts。维护脚本集中在 `03-TempScr/`，部署脚本为 `04-OpsDev/deploy-pages.sh`。
 
 ## 速查卡
 
@@ -67,7 +67,7 @@ cd "C:/Users/mypra/Desktop/VibeCoding指南/skills测评项目/03-鹈鹕自行�
 | 生产访问入口 | `https://peilika.pages.dev` | Cloudflare Pages 项目 `peilika` |
 | 源码仓库 | `https://github.com/Myparjna/Pelicans-Benchmar` | GitHub 账号 `Myparjna`，默认分支 `main`，已配置 remote `origin` |
 | 启动一行命令 | `python -m http.server 8137 --bind 127.0.0.1` | 项目根目录 |
-| 部署一行命令 | `bash OpsDev/deploy-pages.sh` | 需 wrangler OAuth 已登录，详见 deployment.md |
+| 部署一行命令 | `bash 04-OpsDev/deploy-pages.sh` | 需 wrangler OAuth 已登录，详见 deployment.md |
 | 回滚一行命令 | Cloudflare Dashboard → Workers & Pages → peilika → Deployments → 选上一版本 Rollback | 无 CLI 回滚记录，详见 operations.md |
 | 日志/监控入口 | Cloudflare Dashboard → Workers & Pages → peilika → Deployments/Analytics | 无自建监控，详见 operations.md |
 | 数据源 | `sites-data.js`（45 条，`window.SITES`） | 唯一数据源 |

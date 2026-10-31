@@ -1,6 +1,6 @@
 window.SITES = [
   {
-    "file": "GPT6鹈鹕的晴雨骑行.html",
+    "file": "models/gpt-6.html",
     "slug": "gpt-6",
     "category": "GPT",
     "model": "GPT-6 Astra",
@@ -12,7 +12,7 @@ window.SITES = [
     "released": 1788552838
   },
   {
-    "file": "gpt6.1sol.html",
+    "file": "models/gpt-6-1-sol.html",
     "slug": "gpt-6-1-sol",
     "category": "GPT",
     "model": "GPT-6.1 Sol",
@@ -24,7 +24,7 @@ window.SITES = [
     "released": 1791193889
   },
   {
-    "file": "1031-1523-鹈鹕白天骑自行车天气动画-gpt61terra.html",
+    "file": "models/gpt-6-1-terra.html",
     "slug": "gpt-6-1-terra",
     "category": "GPT",
     "model": "GPT 6.1 Terra",
@@ -36,7 +36,7 @@ window.SITES = [
     "released": 1793431380
   },
   {
-    "file": "1031-1502-鹈鹕白天骑自行车天气动画-gpt6sol.html",
+    "file": "models/gpt-6-sol.html",
     "slug": "gpt-6-sol",
     "category": "GPT",
     "model": "GPT-6 Sol",
@@ -48,7 +48,7 @@ window.SITES = [
     "released": 1791193923
   },
   {
-    "file": "gpt6-luna.html",
+    "file": "models/gpt-6-luna.html",
     "slug": "gpt-6-luna",
     "category": "GPT",
     "model": "GPT-6 Luna",
@@ -60,7 +60,7 @@ window.SITES = [
     "released": 1791193894
   },
   {
-    "file": "gpt5.6solcodex.html",
+    "file": "models/gpt-5-6-codex.html",
     "slug": "gpt-5-6-codex",
     "category": "GPT",
     "model": "GPT-5.6 Codex",
@@ -72,7 +72,7 @@ window.SITES = [
     "released": 1783590850
   },
   {
-    "file": "gpt5.6luna-codex.html",
+    "file": "models/gpt-5-6-luna-codex.html",
     "slug": "gpt-5-6-luna-codex",
     "category": "GPT",
     "model": "GPT-5.6 Luna Codex",
@@ -84,7 +84,7 @@ window.SITES = [
     "released": 1783590864
   },
   {
-    "file": "官方正版sonnet5.5-10月5日-1500-鹈鹕白天骑自行车动画.html",
+    "file": "models/claude-sonnet-5-5.html",
     "slug": "claude-sonnet-5-5",
     "category": "A/Claude",
     "model": "Claude Sonnet 5.5",
@@ -96,7 +96,7 @@ window.SITES = [
     "released": 1791191191
   },
   {
-    "file": "官方正版opus5.5-zcode.html",
+    "file": "models/claude-opus-5-5-zcode.html",
     "slug": "claude-opus-5-5-zcode",
     "category": "A/Claude",
     "model": "Claude Opus 5.5",
@@ -108,7 +108,7 @@ window.SITES = [
     "released": 1791190272
   },
   {
-    "file": "中转API的opus5.html",
+    "file": "models/opus-5-relay.html",
     "slug": "opus-5-relay",
     "category": "A/Claude",
     "model": "Claude Opus 5",
@@ -120,7 +120,7 @@ window.SITES = [
     "released": 1784912544
   },
   {
-    "file": "deepseekv4.1flash-10月5日-鹈鹕白天骑自行车动画.html",
+    "file": "models/deepseek-v4-1-flash.html",
     "slug": "deepseek-v4-1-flash",
     "category": "DeepSeek",
     "model": "DeepSeek V4.1 Flash",
@@ -132,7 +132,7 @@ window.SITES = [
     "released": 1791200513
   },
   {
-    "file": "v4pro813API.html",
+    "file": "models/deepseek-v4-pro-api-0813.html",
     "slug": "deepseek-v4-pro-api-0813",
     "category": "DeepSeek",
     "model": "DeepSeek V4 Pro (0813)",
@@ -144,7 +144,7 @@ window.SITES = [
     "released": 1786549364
   },
   {
-    "file": "apideepseekv4flash0731.html",
+    "file": "models/deepseek-v4-flash-api-0731.html",
     "slug": "deepseek-v4-flash-api-0731",
     "category": "DeepSeek",
     "model": "DeepSeek V4 Flash (0731)",
@@ -156,7 +156,7 @@ window.SITES = [
     "released": 1785478908
   },
   {
-    "file": "deepseekv4flash0731+dsh+极简模式.html",
+    "file": "models/deepseek-v4-flash-0731-dsh-minimal.html",
     "slug": "deepseek-v4-flash-0731-dsh-minimal",
     "category": "DeepSeek",
     "model": "DeepSeek V4 Flash 极简 (0731)",
@@ -168,7 +168,7 @@ window.SITES = [
     "released": 1785478908
   },
   {
-    "file": "deepseekv4pro0813+dsh+极简模式.html",
+    "file": "models/deepseek-v4-pro-0813-dsh-minimal.html",
     "slug": "deepseek-v4-pro-0813-dsh-minimal",
     "category": "DeepSeek",
     "model": "DeepSeek V4 Pro 极简 (0813)",
@@ -180,7 +180,7 @@ window.SITES = [
     "released": 1777000679
   },
   {
-    "file": "deepseekv4pro-0424-workbuddy.html",
+    "file": "models/deepseek-v4-pro-0424-wb.html",
     "slug": "deepseek-v4-pro-0424-wb",
     "category": "DeepSeek",
     "model": "DeepSeek V4 Pro (0424)",
@@ -192,7 +192,7 @@ window.SITES = [
     "released": 1764594642
   },
   {
-    "file": "deepseekv4flash0424-workbuddy.html",
+    "file": "models/deepseek-v4-flash-0424-wb.html",
     "slug": "deepseek-v4-flash-0424-wb",
     "category": "DeepSeek",
     "model": "DeepSeek V4 Flash (0424)",
@@ -204,7 +204,7 @@ window.SITES = [
     "released": 1755779628
   },
   {
-    "file": "qwen3.8flashAPI.html",
+    "file": "models/qwen-3-8-flash-api.html",
     "slug": "qwen-3-8-flash-api",
     "category": "阿里 · 通义千问",
     "model": "通义千问 Qwen 3.8 Flash",
@@ -216,7 +216,7 @@ window.SITES = [
     "released": 1787773060
   },
   {
-    "file": "qwen3.827b.html",
+    "file": "models/qwen-3-8-27b.html",
     "slug": "qwen-3-8-27b",
     "category": "阿里 · 通义千问",
     "model": "通义千问 Qwen 3.8 27B",
@@ -228,7 +228,7 @@ window.SITES = [
     "released": 1786722910
   },
   {
-    "file": "qwen3.8max.html",
+    "file": "models/qwen-3-8-max.html",
     "slug": "qwen-3-8-max",
     "category": "阿里 · 通义千问",
     "model": "通义千问 Qwen 3.8 Max",
@@ -240,7 +240,7 @@ window.SITES = [
     "released": 1785731612
   },
   {
-    "file": "qwen3.7plus官网.html",
+    "file": "models/qwen-3-7-plus.html",
     "slug": "qwen-3-7-plus",
     "category": "阿里 · 通义千问",
     "model": "通义千问 Qwen 3.7 Plus",
@@ -252,7 +252,7 @@ window.SITES = [
     "released": 1780491783
   },
   {
-    "file": "千问官网3.6flash.html",
+    "file": "models/qianwen-3-6-flash.html",
     "slug": "qianwen-3-6-flash",
     "category": "阿里 · 通义千问",
     "model": "通义千问 Qwen 3.6 Flash",
@@ -264,7 +264,7 @@ window.SITES = [
     "released": 1777261362
   },
   {
-    "file": "qwen3.627b官网.html",
+    "file": "models/qwen-3-6-27b.html",
     "slug": "qwen-3-6-27b",
     "category": "阿里 · 通义千问",
     "model": "通义千问 Qwen 3.6 27B",
@@ -276,7 +276,7 @@ window.SITES = [
     "released": 1777255064
   },
   {
-    "file": "1031-1528-鹈鹕白天骑自行车天气动画-glm53flash.html",
+    "file": "models/glm-5-3-flash-zhipu.html",
     "slug": "glm-5-3-flash-zhipu",
     "category": "智谱 · GLM",
     "model": "智谱 GLM 5.3 Flash",
@@ -288,7 +288,7 @@ window.SITES = [
     "released": 1793431680
   },
   {
-    "file": "GLM5.3.html",
+    "file": "models/glm-5-3-wb.html",
     "slug": "glm-5-3-wb",
     "category": "智谱 · GLM",
     "model": "智谱 GLM 5.3",
@@ -300,7 +300,7 @@ window.SITES = [
     "released": 1787086655
   },
   {
-    "file": "GLM52workbuddy.html",
+    "file": "models/glm-5-2-wb.html",
     "slug": "glm-5-2-wb",
     "category": "智谱 · GLM",
     "model": "智谱 GLM 5.2",
@@ -312,7 +312,7 @@ window.SITES = [
     "released": 1781631930
   },
   {
-    "file": "hy4preview-10月5日-1715-鹈鹕白天骑自行车动画.html",
+    "file": "models/hy4-preview.html",
     "slug": "hy4-preview",
     "category": "腾讯 · 混元",
     "model": "混元 HY4 Preview",
@@ -324,7 +324,7 @@ window.SITES = [
     "released": 1791192923
   },
   {
-    "file": "HY3workbuddy.html",
+    "file": "models/hunyuan-hy3-wb.html",
     "slug": "hunyuan-hy3-wb",
     "category": "腾讯 · 混元",
     "model": "混元 HY3",
@@ -336,7 +336,7 @@ window.SITES = [
     "released": 1751987664
   },
   {
-    "file": "1031-1436-鹈鹕白天骑自行车天气动画-kimik3.1pro.html",
+    "file": "models/kimi-k3-1-pro.html",
     "slug": "kimi-k3-1-pro",
     "category": "月之暗面 · Kimi",
     "model": "Kimi K3.1 Pro",
@@ -348,7 +348,7 @@ window.SITES = [
     "released": 1793428560
   },
   {
-    "file": "kimik2.8-10月5日-1715-鹈鹕白天骑自行车动画.html",
+    "file": "models/kimi-k2-8.html",
     "slug": "kimi-k2-8",
     "category": "月之暗面 · Kimi",
     "model": "Kimi K2.8",
@@ -360,7 +360,7 @@ window.SITES = [
     "released": 1791191905
   },
   {
-    "file": "kimik3.html",
+    "file": "models/kimi-k3-wb.html",
     "slug": "kimi-k3-wb",
     "category": "月之暗面 · Kimi",
     "model": "Kimi K3",
@@ -372,7 +372,7 @@ window.SITES = [
     "released": 1784215858
   },
   {
-    "file": "grok4.7.html",
+    "file": "models/grok-4-7.html",
     "slug": "grok-4-7",
     "category": "Grok",
     "model": "Grok 4.7",
@@ -384,7 +384,7 @@ window.SITES = [
     "released": 1791200129
   },
   {
-    "file": "grok4.6.html",
+    "file": "models/grok-4-6.html",
     "slug": "grok-4-6",
     "category": "Grok",
     "model": "Grok 4.6",
@@ -396,7 +396,7 @@ window.SITES = [
     "released": 1786548957
   },
   {
-    "file": "seed-2.1-pro-0915-20261005.html",
+    "file": "models/seed-2-1-pro-0915.html",
     "slug": "seed-2-1-pro-0915",
     "category": "字节 · 豆包",
     "model": "Seed 2.1 Pro (0915)",
@@ -408,7 +408,7 @@ window.SITES = [
     "released": 1791194184
   },
   {
-    "file": "seed21pro trae.html",
+    "file": "models/seed-2-1-pro-trae.html",
     "slug": "seed-2-1-pro-trae",
     "category": "字节 · 豆包",
     "model": "Seed 2.1 Pro",
@@ -420,7 +420,7 @@ window.SITES = [
     "released": 1786552176
   },
   {
-    "file": "豆包官网专家模式.html",
+    "file": "models/doubao-expert.html",
     "slug": "doubao-expert",
     "category": "字节 · 豆包",
     "model": "豆包 Doubao 0813 (专家模式)",
@@ -432,7 +432,7 @@ window.SITES = [
     "released": 1766504997
   },
   {
-    "file": "step-5-preview-10月5日-鹈鹕白天骑自行车动画.html",
+    "file": "models/step-5-preview.html",
     "slug": "step-5-preview",
     "category": "阶跃星辰 · Step",
     "model": "Step-5 Preview",
@@ -444,7 +444,7 @@ window.SITES = [
     "released": 1791193351
   },
   {
-    "file": "minimax3.1.html",
+    "file": "models/minimax-m3-1.html",
     "slug": "minimax-m3-1",
     "category": "MiniMax",
     "model": "MiniMax M3.1",
@@ -456,7 +456,7 @@ window.SITES = [
     "released": 1791203158
   },
   {
-    "file": "minimax-M3官网.html",
+    "file": "models/minimax-m3-wb.html",
     "slug": "minimax-m3-wb",
     "category": "MiniMax",
     "model": "MiniMax M3",
@@ -468,7 +468,7 @@ window.SITES = [
     "released": 1780245374
   },
   {
-    "file": "mimov2.6.html",
+    "file": "models/mimo-v2-6.html",
     "slug": "mimo-v2-6",
     "category": "小米 · MiMo",
     "model": "小米 MiMo-V2.6",
@@ -480,7 +480,7 @@ window.SITES = [
     "released": 1791203136
   },
   {
-    "file": "mimov2.6pro.html",
+    "file": "models/mimo-v2-6-pro.html",
     "slug": "mimo-v2-6-pro",
     "category": "小米 · MiMo",
     "model": "小米 MiMo-V2.6-Pro",
@@ -492,7 +492,7 @@ window.SITES = [
     "released": 1791203083
   },
   {
-    "file": "1031-1437-鹈鹕白天骑自行车天气动画-gemini4argon.html",
+    "file": "models/gemini-4-argon.html",
     "slug": "gemini-4-argon",
     "category": "Gemini",
     "model": "Gemini 4 Argon",
@@ -504,7 +504,7 @@ window.SITES = [
     "released": 1793428620
   },
   {
-    "file": "gemini-3.8.html",
+    "file": "models/gemini-3-8.html",
     "slug": "gemini-3-8",
     "category": "Gemini",
     "model": "Gemini 3.8 Flash",
@@ -516,7 +516,7 @@ window.SITES = [
     "released": 1788362056
   },
   {
-    "file": "gemini3.7.html",
+    "file": "models/gemini-3-7.html",
     "slug": "gemini-3-7",
     "category": "Gemini",
     "model": "Gemini 3.7 Flash",
@@ -528,7 +528,7 @@ window.SITES = [
     "released": 1786640581
   },
   {
-    "file": "gemini3.6flash官网.html",
+    "file": "models/gemini-3-6-flash.html",
     "slug": "gemini-3-6-flash",
     "category": "Gemini",
     "model": "Gemini 3.6 Flash",
@@ -540,7 +540,7 @@ window.SITES = [
     "released": 1784646733
   },
   {
-    "file": "gemini31pro官网.html",
+    "file": "models/gemini-3-1-pro.html",
     "slug": "gemini-3-1-pro",
     "category": "Gemini",
     "model": "Gemini 3.1 Pro",
@@ -552,7 +552,7 @@ window.SITES = [
     "released": 1771509627
   },
   {
-    "file": "10月5日-1720-spacebunny-鹈鹕白天骑自行车动画.html",
+    "file": "models/spacebunny.html",
     "slug": "spacebunny",
     "category": "MiniMax",
     "model": "MiniMax M3.1 Flash",
@@ -564,7 +564,7 @@ window.SITES = [
     "released": 1791192473
   },
   {
-    "file": "step5preview-10月12日-2259-鹈鹕白天骑自行车动画.html",
+    "file": "models/step5preview-1012.html",
     "slug": "step5preview-1012",
     "category": "Step-5 Preview · 10月12日",
     "model": "Step-5 Preview · 10月12日",
