@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#f4f1e9">
+  <title>鹈鹕的骑行日记</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #243a3d;
+      --muted: #698083;
+      --paper: #f4f1e9;
+      --card: #fffdf8;
+      --accent: #e7744f;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { margin: 0; min-height: 100%; }
+
+    body {
+      min-height: 100svh;
+      overflow-x: hidden;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 0%, rgba(255,255,255,.95), transparent 34rem),
+        var(--paper);
+      font-family: "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button { font: inherit; }
+
+    .page {
+      width: min(1220px, 100%);
+      margin: 0 auto;
+      padding: 24px clamp(14px, 3vw, 34px) 28px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 18px;
+    }
+
+    .heading { min-width: 0; }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 5px;
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .18em;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 18px;
+      height: 2px;
+      border-radius: 2px;
+      background: currentColor;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(25px, 3.2vw, 40px);
+      line-height: 1.18;
+      letter-spacing: -.045em;
+    }
+
+    .subtitle {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: clamp(12px, 1.4vw, 14px);
+      line-height: 1.6;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 0 0 auto;
+    }
+
+    .weather-card {
+      min-width: 142px;
+      padding: 11px 14px 10px;
+      border: 1px solid rgba(48,74,75,.08);
+      border-radius: 16px;
+      background: rgba(255,253,248,.84);
+      box-shadow: 0 6px 24px rgba(47,67,63,.06);
+      backdrop-filter: blur(12px);
+    }
+
+    .weather-line { display: flex; align-items: center; gap: 9px; }
+
+    .weather-mark {
+      position: relative;
+      width: 22px;
+      height: 22px;
+      flex: 0 0 22px;
+      transition: background .5s ease, box-shadow .5s ease;
+    }
+
+    .weather-mark.sunny {
+      width: 15px;
+      height: 15px;
+      flex-basis: 15px;
+      margin: 0 3.5px;
+      border-radius: 50%;
+      background: #f7b843;
+      box-shadow: 0 0 0 4px rgba(247,184,67,.16);
+    }
+
+    .weather-mark.cloudy {
+      width: 20px;
+      height: 10px;
+      margin-top: 6px;
+      border-radius: 10px;
+      background: #829aa3;
+      box-shadow: -6px 2px 0 -1px #829aa3, 5px 3px 0 -1px #829aa3;
+    }
+
+    .weather-mark.cloudy::before {
+      content: "";
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      left: 3px;
+      top: -6px;
+      border-radius: 50%;
+      background: inherit;
+    }
+
+    .weather-mark.rainy {
+      width: 20px;
+      height: 10px;
+      margin-top: 3px;
+      border-radius: 10px;
+      background: #607e91;
+      box-shadow: -6px 2px 0 -1px #607e91, 5px 3px 0 -1px #607e91;
+    }
+
+    .weather-mark.rainy::before {
+      content: "";
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      left: 3px;
+      top: -6px;
+      border-radius: 50%;
+      background: inherit;
+    }
+
+    .weather-mark.rainy::after {
+      content: "";
+      position: absolute;
+      left: 2px;
+      top: 14px;
+      width: 2px;
+      height: 6px;
+      border-radius: 2px;
+      background: #4c9fc4;
+      box-shadow: 7px 2px #4c9fc4, 14px 0 #4c9fc4;
+      transform: rotate(18deg);
+    }
+
+    .weather-name { display: block; font-size: 14px; font-weight: 800; line-height: 1.2; }
+    .weather-note { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; }
+
+    .cycle-track {
+      height: 3px;
+      margin-top: 9px;
+      overflow: hidden;
+      border-radius: 4px;
+      background: #e6e8e2;
+    }
+
+    .cycle-progress {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+
+    .pause-button {
+      position: absolute;
+      top: 24px;
+      right: 26px;
+      z-index: 2;
+      min-width: 66px;
+      height: 42px;
+      padding: 0 14px;
+      border: 1px solid rgba(36,58,61,.12);
+      border-radius: 14px;
+      color: var(--ink);
+      background: rgba(255,253,248,.84);
+      cursor: pointer;
+      transition: transform .18s ease, background .18s ease, box-shadow .18s ease;
+    }
+
+    .pause-button:hover { background: #fff; box-shadow: 0 5px 18px rgba(47,67,63,.08); }
+    .pause-button:active { transform: scale(.96); }
+    .pause-button:focus-visible { outline: 3px solid rgba(231,116,79,.28); outline-offset: 3px; }
+
+    .scene {
+      position: relative;
+      height: min(72svh, 720px);
+      min-height: 490px;
+      overflow: hidden;
+      border: 1px solid rgba(44,66,62,.08);
+      border-radius: clamp(22px, 3vw, 34px);
+      background: #b9e1ed;
+      box-shadow: 0 22px 60px rgba(54,73,65,.13), 0 2px 6px rgba(54,73,65,.05);
+      isolation: isolate;
+    }
+
+    canvas { display: block; width: 100%; height: 100%; }
+
+    .scene-caption {
+      position: absolute;
+      left: clamp(17px, 3vw, 32px);
+      bottom: clamp(16px, 3vw, 28px);
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 13px;
+      border: 1px solid rgba(255,255,255,.32);
+      border-radius: 999px;
+      color: #fff;
+      background: rgba(29,54,55,.36);
+      box-shadow: 0 5px 20px rgba(29,54,55,.08);
+      backdrop-filter: blur(8px);
+      font-size: 11px;
+      font-weight: 650;
+      letter-spacing: .04em;
+      pointer-events: none;
+    }
+
+    .scene-caption::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #f7c967;
+      box-shadow: 0 0 0 3px rgba(247,201,103,.18);
+    }
+
+    @media (max-width: 640px) {
+      .page { padding: 17px 12px 18px; }
+      .topbar { align-items: flex-end; gap: 12px; margin-bottom: 13px; }
+      .eyebrow { font-size: 9px; margin-bottom: 4px; }
+      .subtitle { max-width: 210px; margin-top: 5px; font-size: 11px; }
+      .weather-card { min-width: 112px; padding: 9px 11px 8px; border-radius: 14px; }
+      .weather-name { font-size: 12px; }
+      .weather-note { font-size: 9px; }
+      .weather-mark { transform: scale(.85); transform-origin: left center; margin-right: -2px; }
+      .cycle-track { margin-top: 7px; }
+      .pause-button { position: absolute; right: 14px; top: 14px; z-index: 2; min-width: 52px; height: 32px; padding: 0 10px; border: 0; border-radius: 11px; background: rgba(255,255,255,.72); font-size: 11px; backdrop-filter: blur(8px); }
+      .scene { height: calc(100svh - 145px); min-height: 510px; max-height: 780px; border-radius: 24px; }
+      .scene-caption { left: 16px; bottom: 16px; padding: 8px 11px; font-size: 10px; }
+    }
+
+    @media (max-width: 370px) {
+      .weather-note { display: none; }
+      .weather-card { min-width: 90px; }
+      .subtitle { max-width: 175px; }
+    }
+
+    @media (min-width: 1500px) and (min-height: 900px) {
+      .page { padding-top: 32px; }
+      .scene { height: 730px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <div class="heading">
+        <p class="eyebrow">PELICAN ON WHEELS</p>
+        <h1>鹈鹕的骑行日记</h1>
+        <p class="subtitle">沿着海岸慢慢骑，每 5 秒遇见一种天气</p>
+      </div>
+      <div class="top-actions">
+        <div class="weather-card" aria-live="polite">
+          <div class="weather-line">
+            <span id="weatherMark" class="weather-mark sunny" aria-hidden="true"></span>
+            <div>
+              <span id="weatherName" class="weather-name">晴天</span>
+              <span id="weatherNote" class="weather-note">阳光正好</span>
+            </div>
+          </div>
+          <div class="cycle-track" aria-hidden="true"><span id="cycleProgress" class="cycle-progress"></span></div>
+        </div>
+      </div>
+    </header>
+
+    <section id="scene" class="scene" aria-label="鹈鹕白天骑自行车的循环动画">
+      <canvas id="canvas" role="img" aria-label="晴天里，一只鹈鹕正在海边小路上骑自行车"></canvas>
+      <button id="pauseButton" class="pause-button" type="button" aria-pressed="false">暂停</button>
+      <div class="scene-caption">海岸绿道 · 一直向前</div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const canvas = document.getElementById("canvas");
+      const scene = document.getElementById("scene");
+      const ctx = canvas.getContext("2d");
+      const pauseButton = document.getElementById("pauseButton");
+      const weatherMark = document.getElementById("weatherMark");
+      const weatherName = document.getElementById("weatherName");
+      const weatherNote = document.getElementById("weatherNote");
+      const cycleProgress = document.getElementById("cycleProgress");
+
+      const TAU = Math.PI * 2;
+      const WEATHER_DURATION = 5;
+      const TRANSITION_DURATION = 1.1;
+      const weather = [
+        { key: "sunny", name: "晴天", note: "阳光正好", label: "晴天里，一只鹈鹕正在海边小路上骑自行车" },
+        { key: "cloudy", name: "阴天", note: "云朵集合", label: "阴天里，一只鹈鹕正在海边小路上骑自行车" },
+        { key: "rainy", name: "雨天", note: "听雨踩车", label: "雨天里，一只鹈鹕正在海边小路上骑自行车" }
+      ];
+      const palettes = [
+        { top: [112, 198, 229], bottom: [231, 246, 237], hill: [116, 172, 157], far: [157, 195, 183], grass: [112, 161, 112], road: [224, 205, 171], cloud: [255, 255, 249] },
+        { top: [143, 169, 184], bottom: [222, 232, 229], hill: [105, 145, 139], far: [144, 169, 163], grass: [100, 139, 105], road: [197, 188, 168], cloud: [218, 225, 225] },
+        { top: [86, 116, 139], bottom: [177, 199, 204], hill: [78, 119, 119], far: [116, 147, 148], grass: [76, 119, 92], road: [157, 163, 153], cloud: [151, 169, 179] }
+      ];
+
+      let width = 0;
+      let height = 0;
+      let dpr = 1;
+      let elapsed = 0;
+      let lastTime = performance.now();
+      let paused = false;
+      let currentWeather = 0;
+      let previousWeather = 0;
+      let weatherChangedAt = 0;
+
+      const rainDrops = Array.from({ length: 115 }, (_, i) => ({
+        x: ((i * 73) % 117) / 117,
+        y: ((i * 47) % 109) / 109,
+        speed: 360 + (i % 7) * 42,
+        length: 10 + (i % 5) * 3,
+        alpha: .22 + (i % 6) * .075
+      }));
+
+      const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+      const mix = (a, b, t) => a + (b - a) * t;
+      const smooth = t => t * t * (3 - 2 * t);
+      const color = (rgb, alpha = 1) => `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${alpha})`;
+      const mixColor = (a, b, t) => a.map((v, i) => Math.round(mix(v, b[i], t)));
+      const mod = (n, m) => ((n % m) + m) % m;
+
+      function resize() {
+        const rect = scene.getBoundingClientRect();
+        width = Math.max(1, rect.width);
+        height = Math.max(1, rect.height);
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      function roundedLine(x1, y1, x2, y2, stroke, lineWidth) {
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = stroke;
+        ctx.lineWidth = lineWidth;
+        ctx.lineCap = "round";
+        ctx.stroke();
+      }
+
+      function ellipse(x, y, rx, ry, fill, rotation = 0) {
+        ctx.beginPath();
+        ctx.ellipse(x, y, rx, ry, rotation, 0, TAU);
+        ctx.fillStyle = fill;
+        ctx.fill();
+      }
+
+      function drawCloud(x, y, scale, fill, alpha) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.scale(scale, scale);
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = fill;
+        ctx.beginPath();
+        ctx.moveTo(-55, 17);
+        ctx.bezierCurveTo(-68, 17, -70, -3, -55, -8);
+        ctx.bezierCurveTo(-55, -28, -27, -35, -15, -19);
+        ctx.bezierCurveTo(-6, -46, 35, -39, 39, -12);
+        ctx.bezierCurveTo(63, -14, 73, 16, 53, 20);
+        ctx.lineTo(-50, 20);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawSun(paletteMix, cloudiness) {
+        const portrait = width / height < .78;
+        const x = width * (portrait ? .77 : .79);
+        const y = height * (portrait ? .17 : .19);
+        const radius = clamp(Math.min(width, height) * .057, 27, 46);
+        const alpha = (1 - cloudiness) * .98;
+        if (alpha < .01) return;
+
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        const glow = ctx.createRadialGradient(x, y, radius * .2, x, y, radius * 3.3);
+        glow.addColorStop(0, "rgba(255,222,128,.45)");
+        glow.addColorStop(1, "rgba(255,222,128,0)");
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(x, y, radius * 3.3, 0, TAU);
+        ctx.fill();
+
+        ctx.translate(x, y);
+        ctx.rotate(elapsed * .035);
+        ctx.strokeStyle = "rgba(255,211,105,.65)";
+        ctx.lineWidth = 3;
+        ctx.lineCap = "round";
+        for (let i = 0; i < 12; i++) {
+          ctx.rotate(TAU / 12);
+          ctx.beginPath();
+          ctx.moveTo(radius + 10, 0);
+          ctx.lineTo(radius + 19, 0);
+          ctx.stroke();
+        }
+        ctx.rotate(-elapsed * .035);
+        ctx.fillStyle = "#ffd77b";
+        ctx.beginPath();
+        ctx.arc(0, 0, radius, 0, TAU);
+        ctx.fill();
+        ctx.fillStyle = "rgba(255,244,188,.5)";
+        ctx.beginPath();
+        ctx.arc(-radius * .2, -radius * .22, radius * .68, 0, TAU);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawHill(baseY, amplitude, wavelength, offset, fill) {
+        ctx.beginPath();
+        ctx.moveTo(0, height);
+        ctx.lineTo(0, baseY);
+        for (let x = 0; x <= width + 8; x += 8) {
+          const y = baseY - Math.sin((x + offset) / wavelength) * amplitude - Math.sin((x + offset) / (wavelength * .43)) * amplitude * .18;
+          ctx.lineTo(x, y);
+        }
+        ctx.lineTo(width, height);
+        ctx.closePath();
+        ctx.fillStyle = fill;
+        ctx.fill();
+      }
+
+      function drawTree(x, y, scale, palette, tint = 0) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.scale(scale, scale);
+        roundedLine(0, 8, 0, -53, "#766d50", 8);
+        roundedLine(0, -29, -19, -47, "#766d50", 4);
+        roundedLine(0, -35, 20, -57, "#766d50", 4);
+        const dark = mixColor(palette.grass, [58, 102, 82], .42 + tint);
+        const light = mixColor(palette.grass, [150, 185, 115], .23);
+        ellipse(-18, -55, 28, 34, color(dark));
+        ellipse(19, -62, 31, 38, color(dark));
+        ellipse(0, -88, 35, 39, color(light));
+        ellipse(-5, -71, 42, 37, color(light));
+        ellipse(-13, -88, 15, 19, "rgba(210,222,151,.28)");
+        ctx.restore();
+      }
+
+      function drawBackground(palette, cloudiness, raininess) {
+        const sky = ctx.createLinearGradient(0, 0, 0, height * .78);
+        sky.addColorStop(0, color(palette.top));
+        sky.addColorStop(1, color(palette.bottom));
+        ctx.fillStyle = sky;
+        ctx.fillRect(0, 0, width, height);
+
+        drawSun(palette, cloudiness);
+
+        const horizon = height * .565;
+        drawHill(horizon, height * .072, 150, elapsed * 3, color(palette.far));
+        drawHill(horizon + height * .055, height * .065, 105, 90 + elapsed * 7, color(palette.hill));
+
+        const portrait = width / height < .78;
+        const cloudColor = color(palette.cloud);
+        const cloudData = portrait ? [
+          [.08, .15, .72, 9], [.56, .27, .58, 15], [.91, .09, .8, 5], [.24, .36, .44, 19]
+        ] : [
+          [.08, .17, .82, 11], [.43, .10, .58, 17], [.72, .31, .52, 8], [.96, .12, .95, 14], [.27, .32, .46, 21]
+        ];
+        cloudData.forEach((c, i) => {
+          const span = width + 240;
+          const x = mod(c[0] * width + elapsed * c[3] + i * 40, span) - 120;
+          drawCloud(x, height * c[1], c[2] * clamp(width / 800, .72, 1.15), cloudColor, .48 + cloudiness * .45);
+        });
+        if (cloudiness > .15) {
+          drawCloud(width * .22 - elapsed * 2 % 30, height * .055, 1.25, color(mixColor(palette.cloud, [102, 126, 140], cloudiness * .45)), cloudiness * .85);
+          drawCloud(width * .74, height * .075, 1.45, color(mixColor(palette.cloud, [102, 126, 140], cloudiness * .4)), cloudiness * .8);
+        }
+
+        const grassTop = height * .69;
+        ctx.fillStyle = color(palette.grass);
+        ctx.fillRect(0, grassTop, width, height - grassTop);
+
+        const treeSpacing = portrait ? 250 : 330;
+        const treeOffset = mod(elapsed * 20, treeSpacing);
+        for (let i = -1; i < Math.ceil(width / treeSpacing) + 2; i++) {
+          const x = i * treeSpacing - treeOffset + 55;
+          const scale = clamp(height / 700, .7, 1.05) * (i % 2 === 0 ? .86 : 1.04);
+          drawTree(x, grassTop + 16, scale, palette, raininess * .15);
+        }
+
+        ctx.fillStyle = "rgba(239,230,184,.42)";
+        ctx.fillRect(0, grassTop + 10, width, 4);
+
+        const groundY = height * (portrait ? .735 : .77);
+        ctx.beginPath();
+        ctx.moveTo(0, groundY - 20);
+        ctx.quadraticCurveTo(width * .48, groundY - 40, width, groundY - 15);
+        ctx.lineTo(width, height);
+        ctx.lineTo(0, height);
+        ctx.closePath();
+        ctx.fillStyle = color(palette.road);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(0, groundY - 18);
+        ctx.quadraticCurveTo(width * .48, groundY - 38, width, groundY - 13);
+        ctx.strokeStyle = "rgba(255,250,222,.65)";
+        ctx.lineWidth = 4;
+        ctx.stroke();
+
+        const dashY = height * .91;
+        const dashSpacing = portrait ? 112 : 156;
+        const dashOffset = mod(elapsed * 95, dashSpacing);
+        for (let i = -1; i < Math.ceil(width / dashSpacing) + 2; i++) {
+          const x = i * dashSpacing - dashOffset;
+          roundedLine(x, dashY, x + (portrait ? 48 : 70), dashY, "rgba(255,248,218,.62)", 4);
+        }
+
+        drawRoadsideDetails(groundY, palette);
+        return groundY;
+      }
+
+      function drawRoadsideDetails(groundY, palette) {
+        const spacing = 95;
+        const offset = mod(elapsed * 70, spacing);
+        for (let i = -1; i < Math.ceil(width / spacing) + 2; i++) {
+          const x = i * spacing - offset;
+          const base = groundY + 26 + (i % 3) * 7;
+          const green = color(mixColor(palette.grass, [49, 101, 69], .35));
+          roundedLine(x, base, x - 5, base - 15, green, 2);
+          roundedLine(x, base, x + 7, base - 19, green, 2);
+          roundedLine(x, base, x + 1, base - 23, green, 2);
+          if (i % 2 === 0 && raininessValue < .65) {
+            ellipse(x + 10, base - 11, 3.5, 3.5, "#f7d17a");
+            ellipse(x + 14, base - 11, 3.5, 3.5, "#fff4df");
+            ellipse(x + 12, base - 14, 3.5, 3.5, "#fff4df");
+          }
+        }
+      }
+
+      function drawWheel(x, y, radius, rotation) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.fillStyle = "rgba(34,51,54,.06)";
+        ctx.beginPath();
+        ctx.arc(0, 0, radius + 4, 0, TAU);
+        ctx.fill();
+        ctx.fillStyle = "#34474b";
+        ctx.beginPath();
+        ctx.arc(0, 0, radius, 0, TAU);
+        ctx.fill();
+        ctx.fillStyle = "#f7f1df";
+        ctx.beginPath();
+        ctx.arc(0, 0, radius - 8, 0, TAU);
+        ctx.fill();
+        ctx.strokeStyle = "#91a4a3";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(0, 0, radius - 12, 0, TAU);
+        ctx.stroke();
+        ctx.rotate(rotation);
+        ctx.strokeStyle = "rgba(81,106,107,.65)";
+        ctx.lineWidth = 1.25;
+        for (let i = 0; i < 12; i++) {
+          ctx.rotate(TAU / 12);
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.lineTo(radius - 13, 0);
+          ctx.stroke();
+        }
+        ctx.fillStyle = "#e7744f";
+        ctx.beginPath();
+        ctx.arc(0, 0, 6, 0, TAU);
+        ctx.fill();
+        ctx.fillStyle = "#f8d983";
+        ctx.beginPath();
+        ctx.arc(0, 0, 2.5, 0, TAU);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawLeg(hip, foot, back) {
+        const bend = back ? -1 : 1;
+        const knee = {
+          x: (hip.x + foot.x) / 2 + 18 * bend,
+          y: (hip.y + foot.y) / 2 + 8
+        };
+        const orange = back ? "#d9954e" : "#f2ae5d";
+        ctx.beginPath();
+        ctx.moveTo(hip.x, hip.y);
+        ctx.lineTo(knee.x, knee.y);
+        ctx.lineTo(foot.x, foot.y);
+        ctx.strokeStyle = orange;
+        ctx.lineWidth = back ? 10 : 12;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.stroke();
+        roundedLine(foot.x - 2, foot.y, foot.x + 18, foot.y + 1, back ? "#b87943" : "#d98b45", back ? 7 : 8);
+      }
+
+      function drawBicycleAndPelican(groundY, raininess) {
+        const portrait = width / height < .78;
+        const scale = clamp(Math.min(width / 670, height / 610), .66, 1.15);
+        const riderX = width * (portrait ? .49 : .51);
+        const bob = Math.sin(elapsed * 7.2) * 1.8;
+        const rotation = elapsed * 4.1;
+        const pedal = elapsed * 4.1;
+
+        ctx.save();
+        ctx.translate(riderX, groundY - 64 * scale);
+        ctx.scale(scale, scale);
+        ctx.translate(0, bob);
+
+        ellipse(0, 69, 184, 17, `rgba(39,58,53,${.15 + raininess * .06})`);
+        drawWheel(-112, 0, 64, rotation);
+        drawWheel(112, 0, 64, rotation);
+
+        const crank = { x: -5, y: -4 };
+        const backFoot = { x: crank.x + Math.cos(pedal + Math.PI) * 25, y: crank.y + Math.sin(pedal + Math.PI) * 25 };
+        const frontFoot = { x: crank.x + Math.cos(pedal) * 25, y: crank.y + Math.sin(pedal) * 25 };
+        drawLeg({ x: -51, y: -118 }, backFoot, true);
+
+        ctx.strokeStyle = "#df6848";
+        ctx.lineWidth = 8;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.beginPath();
+        ctx.moveTo(-112, 0);
+        ctx.lineTo(-51, -84);
+        ctx.lineTo(-5, -4);
+        ctx.lineTo(-112, 0);
+        ctx.moveTo(-51, -84);
+        ctx.lineTo(70, -83);
+        ctx.lineTo(-5, -4);
+        ctx.moveTo(70, -83);
+        ctx.lineTo(112, 0);
+        ctx.stroke();
+
+        roundedLine(70, -83, 82, -112, "#496466", 7);
+        roundedLine(80, -111, 104, -115, "#496466", 6);
+        roundedLine(102, -115, 108, -105, "#496466", 5);
+        roundedLine(-51, -83, -57, -101, "#526c6b", 7);
+        roundedLine(-79, -102, -39, -102, "#594f45", 11);
+        roundedLine(-111, 0, -5, -4, "rgba(245,196,102,.7)", 2);
+
+        ctx.save();
+        ctx.translate(crank.x, crank.y);
+        ctx.rotate(pedal);
+        roundedLine(-25, 0, 25, 0, "#425b5e", 5);
+        roundedLine(18, 0, 34, 0, "#425b5e", 5);
+        roundedLine(-34, 0, -18, 0, "#425b5e", 5);
+        ctx.restore();
+        ellipse(crank.x, crank.y, 9, 9, "#f1bd5d");
+        ellipse(crank.x, crank.y, 4, 4, "#52696a");
+
+        ctx.save();
+        ctx.translate(-34, -161);
+        ctx.rotate(-.13 + Math.sin(elapsed * 3.6) * .012);
+        ellipse(-43, 22, 37, 17, "#e4e4d7", -.42);
+        ellipse(-56, 29, 33, 12, "#f3f0e3", -.35);
+        ellipse(0, 0, 64, 83, "#fffaf0", -.08);
+        ellipse(18, 12, 43, 65, "#f4f1e5", -.1);
+        ctx.restore();
+
+        drawLeg({ x: -39, y: -119 }, frontFoot, false);
+
+        ctx.beginPath();
+        ctx.moveTo(-37, -204);
+        ctx.bezierCurveTo(-42, -232, -14, -241, -6, -265);
+        ctx.strokeStyle = "#fff9eb";
+        ctx.lineWidth = 41;
+        ctx.lineCap = "round";
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(-47, -203);
+        ctx.bezierCurveTo(-48, -225, -30, -240, -21, -249);
+        ctx.strokeStyle = "rgba(218,220,205,.5)";
+        ctx.lineWidth = 7;
+        ctx.stroke();
+
+        ellipse(4, -273, 44, 42, "#fffaf0", -.08);
+        ellipse(-11, -287, 25, 20, "rgba(255,255,255,.55)", -.15);
+
+        ctx.beginPath();
+        ctx.moveTo(30, -279);
+        ctx.quadraticCurveTo(84, -280, 137, -258);
+        ctx.quadraticCurveTo(91, -248, 35, -252);
+        ctx.closePath();
+        ctx.fillStyle = "#f5aa50";
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(35, -252);
+        ctx.quadraticCurveTo(87, -248, 137, -258);
+        ctx.quadraticCurveTo(107, -217, 57, -226);
+        ctx.quadraticCurveTo(40, -231, 35, -252);
+        ctx.fillStyle = "#edbd72";
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(40, -253);
+        ctx.quadraticCurveTo(88, -254, 132, -258);
+        ctx.strokeStyle = "#c98545";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ellipse(129, -259, 3, 2, "#bd7d43");
+
+        ellipse(18, -283, 7, 8, "#fff");
+        ellipse(20, -283, 4.2, 5.2, "#263e42");
+        ellipse(21.2, -285, 1.4, 1.7, "#fff");
+        roundedLine(10, -295, 24, -293, "#d7d7c8", 2.5);
+        ellipse(30, -267, 7, 4, "rgba(239,143,112,.24)", -.2);
+
+        ctx.beginPath();
+        ctx.arc(-1, -290, 38, Math.PI * 1.03, Math.PI * 1.94);
+        ctx.lineTo(35, -278);
+        ctx.quadraticCurveTo(1, -269, -34, -282);
+        ctx.closePath();
+        ctx.fillStyle = "#4c9696";
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(24, -281);
+        ctx.quadraticCurveTo(47, -282, 55, -273);
+        ctx.quadraticCurveTo(34, -270, 20, -275);
+        ctx.fillStyle = "#387d80";
+        ctx.fill();
+        roundedLine(-9, -318, 7, -319, "#f5cf6b", 4);
+
+        ctx.beginPath();
+        ctx.moveTo(-25, -189);
+        ctx.bezierCurveTo(5, -182, 36, -147, 79, -111);
+        ctx.strokeStyle = "#f7f4e8";
+        ctx.lineWidth = 25;
+        ctx.lineCap = "round";
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(-18, -185);
+        ctx.bezierCurveTo(14, -168, 39, -139, 66, -118);
+        ctx.strokeStyle = "#dcdfd3";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        ellipse(83, -110, 15, 10, "#fff9eb", .4);
+        roundedLine(86, -111, 99, -114, "#e5e4d8", 3);
+
+        ctx.beginPath();
+        ctx.moveTo(-51, -203);
+        ctx.quadraticCurveTo(-84, -198, -113, -218 + Math.sin(elapsed * 5) * 6);
+        ctx.strokeStyle = "#e7744f";
+        ctx.lineWidth = 11;
+        ctx.lineCap = "round";
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(-105, -216 + Math.sin(elapsed * 5) * 6);
+        ctx.lineTo(-131, -207 + Math.sin(elapsed * 5 + 1) * 7);
+        ctx.strokeStyle = "#f19a70";
+        ctx.lineWidth = 7;
+        ctx.stroke();
+
+        ctx.restore();
+      }
+
+      let raininessValue = 0;
+
+      function drawRain(groundY, amount) {
+        if (amount < .01) return;
+        ctx.save();
+        ctx.strokeStyle = "#d9f2fa";
+        ctx.lineWidth = 1.4;
+        ctx.lineCap = "round";
+        rainDrops.forEach(drop => {
+          const x = mod(drop.x * (width + 160) - elapsed * 78, width + 160) - 80;
+          const y = mod(drop.y * height + elapsed * drop.speed, groundY + 65) - 30;
+          ctx.globalAlpha = drop.alpha * amount;
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(x - 5, y + drop.length);
+          ctx.stroke();
+        });
+        for (let i = 0; i < 14; i++) {
+          const x = mod(i * 97 + 31 - elapsed * 55, width + 60) - 30;
+          const phase = mod(elapsed * 2.4 + i * .37, 1);
+          ctx.globalAlpha = (1 - phase) * .35 * amount;
+          ctx.strokeStyle = "#e9f4ed";
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          ctx.ellipse(x, groundY + 25 + (i % 4) * 18, 3 + phase * 11, 1.5 + phase * 3, 0, 0, TAU);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      function render(now) {
+        const delta = Math.min((now - lastTime) / 1000, .05);
+        lastTime = now;
+        if (!paused) elapsed += delta;
+
+        const nextWeather = Math.floor(elapsed / WEATHER_DURATION) % weather.length;
+        if (nextWeather !== currentWeather) {
+          previousWeather = currentWeather;
+          currentWeather = nextWeather;
+          weatherChangedAt = elapsed;
+          const item = weather[currentWeather];
+          weatherMark.className = `weather-mark ${item.key}`;
+          weatherName.textContent = item.name;
+          weatherNote.textContent = item.note;
+          canvas.setAttribute("aria-label", item.label);
+        }
+
+        const transition = smooth(clamp((elapsed - weatherChangedAt) / TRANSITION_DURATION, 0, 1));
+        const from = palettes[previousWeather];
+        const to = palettes[currentWeather];
+        const palette = {};
+        Object.keys(to).forEach(key => { palette[key] = mixColor(from[key], to[key], transition); });
+        const cloudTarget = currentWeather === 0 ? 0 : currentWeather === 1 ? .82 : 1;
+        const cloudPrevious = previousWeather === 0 ? 0 : previousWeather === 1 ? .82 : 1;
+        const cloudiness = mix(cloudPrevious, cloudTarget, transition);
+        const rainTarget = currentWeather === 2 ? 1 : 0;
+        const rainPrevious = previousWeather === 2 ? 1 : 0;
+        raininessValue = mix(rainPrevious, rainTarget, transition);
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, width, height);
+        const groundY = drawBackground(palette, cloudiness, raininessValue);
+        drawBicycleAndPelican(groundY + 18, raininessValue);
+        drawRain(groundY, raininessValue);
+
+        if (raininessValue > .01) {
+          ctx.fillStyle = `rgba(46,74,88,${raininessValue * .07})`;
+          ctx.fillRect(0, 0, width, height);
+        }
+
+        const cycle = (elapsed % WEATHER_DURATION) / WEATHER_DURATION;
+        cycleProgress.style.transform = `scaleX(${cycle})`;
+        requestAnimationFrame(render);
+      }
+
+      pauseButton.addEventListener("click", () => {
+        paused = !paused;
+        pauseButton.textContent = paused ? "继续" : "暂停";
+        pauseButton.setAttribute("aria-pressed", String(paused));
+      });
+
+      document.addEventListener("visibilitychange", () => {
+        lastTime = performance.now();
+      });
+
+      if ("ResizeObserver" in window) {
+        new ResizeObserver(resize).observe(scene);
+      } else {
+        window.addEventListener("resize", resize);
+      }
+      resize();
+      requestAnimationFrame(render);
+    })();
+  </script>
+</body>
+</html>
