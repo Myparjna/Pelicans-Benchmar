@@ -14,7 +14,9 @@ TMP = r"C:\Users\mypra\AppData\Local\Temp\pel-thumbs"
 CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 
 SLUGS = [
-    "step5preview-1012",
+    "kimi-k3-1-pro",
+    "gpt-6-sol",
+    "glm-5-3-flash-zhipu",
 ]
 
 # 虚拟时间点（毫秒），逐帧推进以抓取不同动画时刻

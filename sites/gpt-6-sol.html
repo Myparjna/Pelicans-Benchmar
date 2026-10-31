@@ -3,204 +3,158 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#89c9e8">
-  <title>鹈鹕的晴日骑行</title>
+  <meta name="theme-color" content="#f7f3e9">
+  <title>鹈鹕的骑行日</title>
   <style>
-    :root{font-family:"Trebuchet MS","Microsoft YaHei",sans-serif;color:#234d5b}
-    *{box-sizing:border-box}
-    html,body{width:100%;height:100%;margin:0;overflow:hidden}
-    body{background:#89c9e8}
-    .scene{position:relative;width:100%;height:100%;height:100svh;min-height:440px;isolation:isolate;overflow:hidden;background:#89c9e8;transition:background 1.3s ease}
-    .scene[data-weather="cloudy"]{background:#a8bac3}
-    .scene[data-weather="rainy"]{background:#758fa6}
-    svg{display:block;width:100%;height:100%}
-    .scene-art{position:absolute;inset:0}
-    .sky-wash{fill:#a8dbeb;transition:fill 1.3s ease}
-    .scene[data-weather="cloudy"] .sky-wash{fill:#b9c8cb}
-    .scene[data-weather="rainy"] .sky-wash{fill:#8da9b8}
-    .sun{transform-origin:980px 124px;transition:opacity 1s ease,transform 1.2s ease}
-    .scene[data-weather="cloudy"] .sun{opacity:.18;transform:scale(.9)}
-    .scene[data-weather="rainy"] .sun{opacity:0;transform:scale(.8)}
-    .sun-rays{animation:turn 38s linear infinite;transform-origin:980px 124px}
-    .cloud{animation:cloud-drift 28s ease-in-out infinite alternate}
-    .cloud.two{animation-delay:-9s;animation-duration:34s}
-    .cloud.three{animation-delay:-17s;animation-duration:30s}
-    .weather-clouds{opacity:0;transform:translateY(-18px);transition:opacity 1s ease,transform 1s ease}
-    .scene[data-weather="cloudy"] .weather-clouds,.scene[data-weather="rainy"] .weather-clouds{opacity:1;transform:translateY(0)}
-    .rain-layer{opacity:0;transition:opacity .7s ease}
-    .scene[data-weather="rainy"] .rain-layer{opacity:1}
-    .rain-a,.rain-b{animation:rain-fall .65s linear infinite}
-    .rain-b{animation-delay:-.32s}
-    .far-hill{fill:#9ecba6;transition:fill 1.3s ease}
-    .near-hill{fill:#6aa78f;transition:fill 1.3s ease}
-    .grass{fill:#70b58a;transition:fill 1.3s ease}
-    .scene[data-weather="cloudy"] .far-hill{fill:#a3bba9}
-    .scene[data-weather="cloudy"] .near-hill{fill:#789e92}
-    .scene[data-weather="cloudy"] .grass{fill:#84a895}
-    .scene[data-weather="rainy"] .far-hill{fill:#809ea2}
-    .scene[data-weather="rainy"] .near-hill{fill:#527b83}
-    .scene[data-weather="rainy"] .grass{fill:#5e927e}
-    .road{fill:#e8d9b8;transition:fill 1.3s ease}
-    .scene[data-weather="cloudy"] .road{fill:#d7d4c3}
-    .scene[data-weather="rainy"] .road{fill:#b8c4c4}
-    .road-stripe{animation:road-move 1.25s linear infinite}
-    .tree-line{animation:scenery-move 10s linear infinite}
-    .tree-line.back{animation-duration:18s;opacity:.65}
-    .bike-wheels{animation:bob .32s ease-in-out infinite alternate}
-    .wheel-spin{animation:turn .8s linear infinite;transform-box:fill-box;transform-origin:center}
-    .bike-frame,.rider{animation:bob .32s ease-in-out infinite alternate}
-    .rider{animation-delay:-.16s}
-    .wing{animation:wing 1s ease-in-out infinite alternate;transform-origin:598px 470px}
-    .scarf-tail{animation:scarf 1.1s ease-in-out infinite alternate;transform-origin:579px 396px}
-    .pedal-spin{animation:turn .8s linear infinite;transform-origin:602px 581px}
-    .flower{transform-box:fill-box;transform-origin:center bottom}
-    .puddle{opacity:0;transition:opacity 1s ease}
-    .scene[data-weather="rainy"] .puddle{opacity:1}
-    .masthead{position:absolute;z-index:3;top:clamp(22px,4vw,50px);left:clamp(22px,5vw,72px);pointer-events:none}
-    .eyebrow{margin:0 0 8px;color:#426875;font-size:clamp(10px,.85vw,12px);font-weight:800;letter-spacing:.32em;text-transform:uppercase}
-    h1{margin:0;color:#174553;font-family:Georgia,"Microsoft YaHei",serif;font-size:clamp(27px,3vw,46px);font-weight:700;letter-spacing:.06em;line-height:1.15}
-    .subhead{margin:12px 0 0;color:#426875;font-size:clamp(12px,1.1vw,15px);letter-spacing:.12em}
-    .weather-panel{position:absolute;z-index:3;top:clamp(24px,4vw,48px);right:clamp(20px,5vw,70px);display:flex;align-items:center;gap:13px;min-width:144px;padding:12px 17px;border:1px solid rgba(255,255,255,.72);border-radius:100px;background:rgba(255,255,255,.78);box-shadow:0 10px 34px rgba(41,88,99,.1);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
-    .weather-symbol{font-size:23px;line-height:1;width:27px;text-align:center}
-    .weather-name{font-size:13px;font-weight:800;letter-spacing:.11em}
-    .weather-dots{display:flex;gap:5px;margin-top:5px}
-    .weather-dots span{width:15px;height:3px;border-radius:4px;background:#b6cac8;transition:background .4s,width .4s}
-    .weather-dots span.active{width:24px;background:#e6a650}
-    .footer-note{position:absolute;z-index:3;right:clamp(20px,5vw,70px);bottom:clamp(24px,4vw,44px);color:#35616c;font-size:11px;font-weight:800;letter-spacing:.25em;text-transform:uppercase}
-    @keyframes turn{to{transform:rotate(360deg)}}
-    @keyframes cloud-drift{to{transform:translateX(45px)}}
-    @keyframes rain-fall{to{transform:translate(-26px,70px)}}
-    @keyframes road-move{to{transform:translateX(-170px)}}
-    @keyframes scenery-move{to{transform:translateX(-280px)}}
-    @keyframes bob{to{transform:translateY(3px)}}
-    @keyframes wing{to{transform:rotate(-6deg)}}
-    @keyframes scarf{to{transform:rotate(8deg) translateY(3px)}}
-    @keyframes flower-sway{to{transform:rotate(7deg)}}
-    @media(max-width:700px){
-      .masthead{top:24px;left:22px}.eyebrow{font-size:9px;letter-spacing:.22em;margin-bottom:6px}h1{font-size:25px}.subhead{margin-top:7px;font-size:11px;letter-spacing:.06em}
-      .weather-panel{top:112px;left:22px;right:auto;min-width:126px;padding:10px 13px;gap:9px}
-      .weather-symbol{font-size:20px}.weather-name{font-size:12px}
-      .footer-note{right:20px;bottom:21px;font-size:9px;letter-spacing:.16em}
-      .bike-and-bird{transform:scale(.73);transform-origin:600px 550px}
-    }
-    @media(max-width:360px){.bike-and-bird{transform:scale(.64);transform-origin:600px 550px}}
-    @media(prefers-reduced-motion:reduce){.wheel-spin,.pedal-spin,.bike-wheels,.bike-frame,.rider,.wing,.scarf-tail,.road-stripe,.tree-line,.cloud,.sun-rays,.rain-a,.rain-b,.flower{animation-duration:5s}}
+    :root { color-scheme: light; font-family: "Trebuchet MS", "Microsoft YaHei", sans-serif; }
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+    body { background: #f7f3e9; }
+    .scene { --sky-top:#8cd5ed; --sky-bottom:#e2f7e7; --hill:#8dcda4; --hill-back:#b6ddbd; --cloud:#fffdf6; --cloud-shadow:#dcebef; --road:#708c83; --rain-opacity:0; --sun-opacity:1; position:relative; width:100%; height:100%; height:100dvh; overflow:hidden; isolation:isolate; transition:background-color 1.3s ease; background:#bfe6e8; }
+    .scene[data-weather="cloudy"] { --sky-top:#a8bdc3; --sky-bottom:#d5ded8; --hill:#86b49a; --hill-back:#abc9b1; --cloud:#e5e9e6; --cloud-shadow:#a5b8ba; --road:#6b8580; --sun-opacity:.23; }
+    .scene[data-weather="rainy"] { --sky-top:#708e9d; --sky-bottom:#b4cbd0; --hill:#699b89; --hill-back:#91ada5; --cloud:#b6c7cb; --cloud-shadow:#6f929e; --road:#536f72; --rain-opacity:1; --sun-opacity:0; }
+    svg { display:block; width:100%; height:100%; }
+    .sky-top { stop-color:var(--sky-top); transition:stop-color 1.4s ease; }
+    .sky-bottom { stop-color:var(--sky-bottom); transition:stop-color 1.4s ease; }
+    .hill { fill:var(--hill); transition:fill 1.4s ease; }
+    .hill-back { fill:var(--hill-back); transition:fill 1.4s ease; }
+    .road { fill:var(--road); transition:fill 1.4s ease; }
+    .cloud-main { fill:var(--cloud); transition:fill 1.4s ease; }
+    .cloud-shade { fill:var(--cloud-shadow); transition:fill 1.4s ease; }
+    .sun { opacity:var(--sun-opacity); transition:opacity 1.2s ease; transform-origin:1130px 178px; animation:sun-pulse 5s ease-in-out infinite; }
+    .cloud-a { animation:cloud-drift 18s ease-in-out infinite alternate; }
+    .cloud-b { animation:cloud-drift 23s ease-in-out -7s infinite alternate-reverse; }
+    .cloud-c { animation:cloud-drift 27s ease-in-out -12s infinite alternate; }
+    .rain { opacity:var(--rain-opacity); transition:opacity .8s ease; }
+    #rainPattern line { stroke:#e8f6fa; stroke-width:3; stroke-linecap:round; opacity:.72; animation:rain-fall .72s linear infinite; }
+    #rainPattern line:nth-child(3n) { animation-delay:-.24s; }
+    #rainPattern line:nth-child(3n + 1) { animation-delay:-.48s; }
+    .wet { opacity:var(--rain-opacity); transition:opacity 1s ease; }
+    .scenery { animation:scenery-roll 24s linear infinite; }
+    .road-marks { animation:marks-roll 2s linear infinite; }
+    .bike { animation:bob .7s ease-in-out infinite alternate; }
+    .wheel { transform-box:fill-box; transform-origin:center; animation:wheel-spin 1.5s linear infinite; }
+    .wing { transform-origin:715px 476px; animation:wing-sway .7s ease-in-out infinite alternate; }
+    .tail { transform-origin:635px 488px; animation:tail-sway 1.2s ease-in-out infinite alternate; }
+    .flower { transform-box:fill-box; transform-origin:bottom center; animation:flower-sway 2s ease-in-out infinite alternate; }
+    .flower:nth-child(2n) { animation-delay:-1s; }
+    .weather-badge { position:absolute; top:clamp(20px,4vw,48px); left:clamp(20px,5vw,72px); z-index:2; display:flex; align-items:center; gap:12px; min-width:124px; padding:12px 18px; border:1px solid #ffffff99; border-radius:999px; background:#fffdf6d9; color:#244a52; box-shadow:0 12px 36px #315b4c1c; backdrop-filter:blur(12px); font-size:15px; font-weight:700; letter-spacing:.06em; }
+    .weather-badge .icon { font-size:22px; line-height:1; }
+    .scene[data-weather="rainy"] .weather-badge { color:#315b67; }
+    @keyframes scenery-roll { to { transform:translateX(-720px); } }
+    @keyframes marks-roll { to { transform:translateX(-300px); } }
+    @keyframes wheel-spin { to { transform:rotate(360deg); } }
+    @keyframes bob { to { transform:translateY(-5px); } }
+    @keyframes wing-sway { to { transform:rotate(-4deg); } }
+    @keyframes tail-sway { to { transform:rotate(5deg); } }
+    @keyframes cloud-drift { to { transform:translateX(48px); } }
+    @keyframes sun-pulse { 50% { transform:scale(1.035); } }
+    @keyframes flower-sway { to { transform:rotate(9deg); } }
+    @keyframes rain-fall { from { transform:translate(25px,-32px); } to { transform:translate(-25px,32px); } }
+    @media (max-width:600px) { .weather-badge { top:22px; left:20px; padding:10px 15px; font-size:13px; } }
+    @media (prefers-reduced-motion:reduce) { .scenery,.road-marks,.bike,.wheel,.wing,.tail,.flower,.sun,.cloud-a,.cloud-b,.cloud-c,#rainPattern line { animation-duration:5s; } }
   </style>
 </head>
 <body>
-  <main class="scene" data-weather="sunny" aria-label="白天，鹈鹕骑着自行车穿过乡间，天气自动变化">
-    <svg class="scene-art" viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid slice" role="img" aria-labelledby="scene-title scene-desc">
-      <title id="scene-title">鹈鹕的白天骑行</title>
-      <desc id="scene-desc">一只白色鹈鹕骑着薄荷绿色自行车，沿着开满野花的乡间道路前进。天空每五秒在晴天、阴天和雨天之间切换。</desc>
+  <main class="scene" id="scene" data-weather="sunny">
+    <div class="weather-badge" aria-live="polite"><span class="icon" id="weatherIcon" aria-hidden="true">☀️</span><span id="weatherText">晴天</span></div>
+    <svg id="art" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label="晴朗的白天，一只鹈鹕骑着自行车穿过乡间">
       <defs>
-        <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#d9f3f5"/><stop offset="1" stop-color="#a8dbeb"/></linearGradient>
-        <linearGradient id="bill" x1="0" x2="1"><stop stop-color="#f8bd6d"/><stop offset="1" stop-color="#e89958"/></linearGradient>
-        <linearGradient id="body" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#fffdf3"/><stop offset="1" stop-color="#dce9df"/></linearGradient>
-        <pattern id="rain-pattern" width="82" height="86" patternUnits="userSpaceOnUse" patternTransform="rotate(15)"><path d="M12 0v25 M55 39v22 M80 8v15" stroke="#e9f9ff" stroke-width="2.3" stroke-linecap="round" opacity=".76"/></pattern>
-        <pattern id="road-lines" width="170" height="30" patternUnits="userSpaceOnUse"><path d="M15 15h70" stroke="#fff9e8" stroke-width="6" stroke-linecap="round" opacity=".72"/></pattern>
-        <filter id="shadow" x="-30%" y="-40%" width="160%" height="180%"><feGaussianBlur stdDeviation="8"/></filter>
-        <g id="little-tree"><path d="M0 0v52" stroke="#567d71" stroke-width="8" stroke-linecap="round"/><circle cx="-15" cy="-3" r="24" fill="#7caa8d"/><circle cx="14" cy="-11" r="27" fill="#89b796"/><circle cx="2" cy="-28" r="26" fill="#a0c6a0"/></g>
-        <g id="white-cloud" fill="#fffdf1"><ellipse cx="0" cy="4" rx="56" ry="17"/><circle cx="-31" cy="-4" r="23"/><circle cx="4" cy="-18" r="30"/><circle cx="35" cy="-3" r="21"/></g>
-        <g id="grey-cloud" fill="#eef0e9"><ellipse cx="0" cy="9" rx="100" ry="25"/><circle cx="-51" cy="-8" r="38"/><circle cx="7" cy="-31" r="49"/><circle cx="61" cy="-9" r="36"/></g>
-        <g id="flower-shape"><path d="M0 0v29" stroke="#548c6a" stroke-width="3"/><path d="M0 19q-11-13-17-6 M0 23q9-14 17-10" fill="none" stroke="#548c6a" stroke-width="2.5"/><circle cy="-2" r="6" fill="#f7c1b2"/><circle cy="-2" r="2.5" fill="#f5df78"/></g>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop class="sky-top" offset="0"/><stop class="sky-bottom" offset="1"/></linearGradient>
+        <radialGradient id="glow"><stop offset="0" stop-color="#fffbd8" stop-opacity=".8"/><stop offset="1" stop-color="#fffbd8" stop-opacity="0"/></radialGradient>
+        <linearGradient id="pouch" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#f7b854"/><stop offset="1" stop-color="#e8813d"/></linearGradient>
+        <pattern id="rainPattern" width="130" height="115" patternUnits="userSpaceOnUse"><line x1="10" y1="15" x2="-6" y2="47"/><line x1="75" y1="58" x2="59" y2="90"/><line x1="117" y1="0" x2="101" y2="32"/><line x1="42" y1="94" x2="26" y2="126"/></pattern>
+        <g id="cloud"><ellipse class="cloud-shade" cx="7" cy="22" rx="94" ry="26"/><path class="cloud-main" d="M-91 20c0-26 25-44 50-41 8-30 39-51 71-37 22-32 76-30 97 8 27-2 52 20 52 47 0 22-20 39-46 39H-50C-75 36-91 30-91 20Z"/></g>
+        <g id="tree"><path d="M0 0v-116" stroke="#7e6952" stroke-width="14" stroke-linecap="round"/><circle cx="-21" cy="-116" r="47" fill="#5ca87e"/><circle cx="22" cy="-137" r="54" fill="#70b98a"/><circle cx="42" cy="-102" r="39" fill="#8ac79c"/></g>
+        <g id="flower"><path d="M0 0v-28" stroke="#4d916e" stroke-width="3"/><circle cy="-34" r="7" fill="#f8f2df"/><circle cy="-34" r="3" fill="#eab663"/></g>
+        <g id="wheel"><circle r="91" fill="none" stroke="#183c43" stroke-width="13"/><circle r="75" fill="none" stroke="#f6eee0" stroke-width="3"/><path d="M0-85V85M-85 0H85M-60-60 60 60M60-60-60 60" stroke="#86a6a3" stroke-width="2.4"/><circle r="13" fill="#f3bb63" stroke="#20434a" stroke-width="5"/></g>
       </defs>
-      <rect class="sky-wash" width="1200" height="760"/>
-      <path fill="#d9f1e7" opacity=".52" d="M0 352Q248 300 459 352T930 350T1200 315V650H0Z"/>
-      <g class="sun">
-        <g class="sun-rays" stroke="#ffe5a1" stroke-width="5" stroke-linecap="round" opacity=".75"><path d="M980 33v-19 M980 234v-19 M870 124h-20 M1110 124h-20 M906 50l-15-15 M1069 211l-15-15 M1054 50l15-15 M891 211l15-15"/></g>
-        <circle cx="980" cy="124" r="70" fill="#fff0ba" opacity=".3"/><circle cx="980" cy="124" r="52" fill="#ffe6a1"/><circle cx="980" cy="124" r="42" fill="#fff2bb"/>
+      <rect width="1440" height="900" fill="url(#sky)"/>
+      <g class="sun"><circle cx="1130" cy="178" r="142" fill="url(#glow)"/><circle cx="1130" cy="178" r="73" fill="#ffe9a0"/><circle cx="1130" cy="178" r="59" fill="#fff1ad"/></g>
+      <g class="cloud-a" transform="translate(195 210)"><use href="#cloud" transform="scale(.76)"/></g>
+      <g class="cloud-b" transform="translate(720 120)"><use href="#cloud" transform="scale(.54)"/></g>
+      <g class="cloud-c" transform="translate(1270 272)"><use href="#cloud" transform="scale(.7)"/></g>
+      <path class="hill-back" d="M0 585C185 465 286 515 437 568c169-160 351-133 528-3 171-139 310-123 475-13V900H0Z"/>
+      <path class="hill" d="M0 642c187-100 293-72 474-9 174-111 325-106 485 17 166-107 322-117 481-29v279H0Z"/>
+      <g class="scenery" opacity=".9">
+        <g transform="translate(0 0)"><use href="#tree" x="70" y="659" transform="translate(70 659) scale(.75) translate(-70 -659)"/><use href="#tree" x="380" y="648" transform="translate(380 648) scale(.58) translate(-380 -648)"/><use href="#tree" x="1190" y="653" transform="translate(1190 653) scale(.65) translate(-1190 -653)"/><path d="M220 654h82v-60l-41-32-41 32Z" fill="#f8e8ce"/><path d="m209 594 52-40 52 40" fill="none" stroke="#b56f62" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><rect x="251" y="617" width="19" height="37" rx="9" fill="#8ab6b2"/><use href="#flower" x="120" y="675" class="flower"/><use href="#flower" x="330" y="674" class="flower"/><use href="#flower" x="1030" y="665" class="flower"/></g>
+        <g transform="translate(720 0)"><use href="#tree" x="70" y="659" transform="translate(70 659) scale(.75) translate(-70 -659)"/><use href="#tree" x="380" y="648" transform="translate(380 648) scale(.58) translate(-380 -648)"/><use href="#tree" x="1190" y="653" transform="translate(1190 653) scale(.65) translate(-1190 -653)"/><path d="M220 654h82v-60l-41-32-41 32Z" fill="#f8e8ce"/><path d="m209 594 52-40 52 40" fill="none" stroke="#b56f62" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><rect x="251" y="617" width="19" height="37" rx="9" fill="#8ab6b2"/><use href="#flower" x="120" y="675" class="flower"/><use href="#flower" x="330" y="674" class="flower"/><use href="#flower" x="1030" y="665" class="flower"/></g>
+        <g transform="translate(1440 0)"><use href="#tree" x="70" y="659" transform="translate(70 659) scale(.75) translate(-70 -659)"/><use href="#tree" x="380" y="648" transform="translate(380 648) scale(.58) translate(-380 -648)"/><path d="M220 654h82v-60l-41-32-41 32Z" fill="#f8e8ce"/><path d="m209 594 52-40 52 40" fill="none" stroke="#b56f62" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><rect x="251" y="617" width="19" height="37" rx="9" fill="#8ab6b2"/></g>
       </g>
-      <g class="cloud one" transform="translate(260 153)" opacity=".82"><use href="#white-cloud"/></g>
-      <g class="cloud two" transform="translate(711 102) scale(.7)" opacity=".9"><use href="#white-cloud"/></g>
-      <g class="cloud three" transform="translate(1062 251) scale(.52)" opacity=".85"><use href="#white-cloud"/></g>
-      <g class="weather-clouds"><use href="#grey-cloud" transform="translate(188 128) scale(1.2)"/><use href="#grey-cloud" transform="translate(541 93) scale(.9)"/><use href="#grey-cloud" transform="translate(925 151) scale(1.3)"/><use href="#grey-cloud" transform="translate(1200 82) scale(.75)"/></g>
-      <path class="far-hill" d="M0 426Q154 348 319 403T654 402T966 375T1200 398V635H0Z"/>
-      <path class="near-hill" d="M0 508Q158 426 353 476T713 454T1200 470V660H0Z"/>
-      <path class="grass" d="M0 524Q207 500 391 532T765 516T1200 520V674H0Z"/>
-      <g class="tree-line back"><use href="#little-tree" transform="translate(78 459) scale(.8)"/><use href="#little-tree" transform="translate(315 473) scale(.72)"/><use href="#little-tree" transform="translate(960 468) scale(.9)"/><use href="#little-tree" transform="translate(1195 462) scale(.75)"/></g>
-      <path fill="#e1bd92" d="M0 570Q360 557 600 575T1200 559V760H0Z"/>
-      <path class="road" d="M0 587Q300 582 603 598T1200 583V760H0Z"/>
-      <path fill="#f4e8cb" opacity=".8" d="M0 592Q393 589 600 607T1200 595" stroke="#fff5dc" stroke-width="4"/>
-      <path fill="#b1c895" d="M0 566Q203 555 415 574T807 561T1200 570V592Q895 574 660 595T0 584Z"/>
-      <g class="road-stripe"><rect x="-170" y="692" width="1540" height="30" fill="url(#road-lines)"/></g>
-      <g class="puddle" fill="#e8f3f2" opacity=".65"><ellipse cx="214" cy="642" rx="74" ry="8"/><ellipse cx="939" cy="685" rx="94" ry="10"/><ellipse cx="1091" cy="625" rx="49" ry="5"/></g>
-      <g class="flower f1" transform="translate(73 565)"><use href="#flower-shape"/></g>
-      <g class="flower f2" transform="translate(344 573) scale(.8)"><use href="#flower-shape"/></g>
-      <g class="flower f3" transform="translate(858 571) scale(.9)"><use href="#flower-shape"/></g>
-      <g class="flower f2" transform="translate(1091 568) scale(.75)"><use href="#flower-shape"/></g>
-      <path d="M86 588q6-13 14-10 M116 586q5-10 12-6 M328 589q6-9 13-7 M848 585q7-11 14-5 M1078 587q6-11 13-8" fill="none" stroke="#4f9676" stroke-width="2.5" stroke-linecap="round"/>
-      <g class="bike-and-bird">
-        <ellipse cx="602" cy="651" rx="227" ry="16" fill="#856f63" opacity=".18" filter="url(#shadow)"/>
-        <g class="bike-wheels">
-          <g class="wheel-spin"><circle cx="472" cy="590" r="62" fill="none" stroke="#294e55" stroke-width="10"/><circle cx="472" cy="590" r="54" fill="none" stroke="#f9f1df" stroke-width="3"/><path d="M472 536v108 M418 590h108 M434 552l76 76 M510 552l-76 76" stroke="#94b7b2" stroke-width="2"/><circle cx="472" cy="590" r="8" fill="#f8f5e8" stroke="#294e55" stroke-width="4"/></g>
-          <g class="wheel-spin"><circle cx="728" cy="590" r="62" fill="none" stroke="#294e55" stroke-width="10"/><circle cx="728" cy="590" r="54" fill="none" stroke="#f9f1df" stroke-width="3"/><path d="M728 536v108 M674 590h108 M690 552l76 76 M766 552l-76 76" stroke="#94b7b2" stroke-width="2"/><circle cx="728" cy="590" r="8" fill="#f8f5e8" stroke="#294e55" stroke-width="4"/></g>
-        </g>
-        <g class="bike-frame" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M472 590l80-101 51 92-131 9 93-66 38 57 62-99 63 108" stroke="#3b9b8d" stroke-width="12"/>
-          <path d="M472 590l80-101 51 92-131 9 93-66 38 57 62-99 63 108" stroke="#77c8ac" stroke-width="5"/>
-          <path d="M552 489l-9-24h-27" stroke="#376367" stroke-width="8"/>
-          <path d="M665 482l-9-37 26-7" stroke="#376367" stroke-width="8"/>
-          <path d="M504 465h57" stroke="#294e55" stroke-width="9"/>
-          <path d="M678 438h34" stroke="#294e55" stroke-width="8"/>
-          <circle cx="603" cy="581" r="17" fill="#f2b565" stroke="#376367" stroke-width="5"/>
-          <g class="pedal-spin"><path d="M603 550v62 M582 550h43 M582 612h43" stroke="#376367" stroke-width="6"/></g>
-          <path d="M684 443q50-7 64 18" stroke="#3b9b8d" stroke-width="6"/>
-          <path d="M753 464l16 28" stroke="#3b9b8d" stroke-width="5"/>
-          <path d="M729 477q19-9 34 8v16q-15 17-35 5z" fill="#e8b46f" stroke="#a7704e" stroke-width="3"/>
-          <path d="M738 490q15 8 20 2" stroke="#fff0d8" stroke-width="3"/>
-        </g>
-        <g class="rider">
-          <path d="M553 492q-17 27 1 45l49 35q16 8 27-1l-6-10-50-47 23-36" fill="#e9f0e6" stroke="#6a8984" stroke-width="4"/>
-          <path d="M634 500q28 13 26 35l-33 30-10-10 24-28-35-11" fill="#fffaf0" stroke="#6a8984" stroke-width="4"/>
-          <path d="M613 564l29 11" stroke="#d59c6a" stroke-width="12" stroke-linecap="round"/>
-          <path d="M551 529l-24 31" stroke="#d59c6a" stroke-width="12" stroke-linecap="round"/>
-          <path d="M511 557l30 8 M632 577l31-1" stroke="#314c53" stroke-width="10" stroke-linecap="round"/>
-          <path d="M568 474q-19-19-11-56 10-30 36-37 19-8 37 11 22 28 13 67-11 32-38 44-25 6-37-29" fill="url(#body)" stroke="#577b7d" stroke-width="4"/>
-          <path class="wing" d="M597 458q-23 12-14 36 10 24 39 25 31-4 33-26-18-7-28-27-13-17-30-8" fill="#f8faf1" stroke="#709091" stroke-width="4"/>
-          <path d="M621 492q18 10 30 2" fill="none" stroke="#d8e7db" stroke-width="4" stroke-linecap="round"/>
-          <path d="M571 429q-18-22-14-51 5-44 21-65 11-15 28-14 21 0 24 23 3 27-15 47-12 18-10 39" fill="url(#body)" stroke="#577b7d" stroke-width="4"/>
-          <path d="M557 366q-6 40 15 45" fill="none" stroke="#e5eee5" stroke-width="8"/>
-          <path d="M575 317q-21-20-6-43 13-21 42-15 28 5 34 28 5 18-10 31-25 18-60-1" fill="url(#body)" stroke="#577b7d" stroke-width="4"/>
-          <path d="M606 277q18 8 28 7 36-3 57 13-25 8-54 8-17 0-31-9" fill="url(#bill)" stroke="#a97754" stroke-width="3"/>
-          <path d="M622 305q28 7 67-7-7 25-32 28-27 2-35-21" fill="#efae6c" stroke="#a97754" stroke-width="3"/>
-          <path d="M635 306q16 8 33 2" fill="none" stroke="#cf8e58" stroke-width="2"/>
-          <circle cx="614" cy="283" r="5" fill="#2d4c53"/><circle cx="615" cy="281" r="1.6" fill="white"/>
-          <path d="M583 264q6-14 16-17 M594 263q8-14 19-14" stroke="#e5eee5" stroke-width="7" stroke-linecap="round"/>
-          <path d="M558 397q15 10 38 2" fill="none" stroke="#e79b65" stroke-width="15" stroke-linecap="round"/>
-          <path class="scarf-tail" d="M577 399q-10-8-30 1-14 7-37 2 12 16 28 17 27 0 43-13" fill="#ec9e75" stroke="#d68762" stroke-width="2"/>
-          <path d="M642 457q23-13 38-18" fill="none" stroke="#f7faf1" stroke-width="20" stroke-linecap="round"/>
-          <path d="M678 438q9-6 17-1" fill="none" stroke="#efb16e" stroke-width="12" stroke-linecap="round"/>
-        </g>
-      </g>
-      <g class="rain-layer" pointer-events="none"><rect class="rain-a" x="-40" y="-100" width="1280" height="900" fill="url(#rain-pattern)" opacity=".64"/><rect class="rain-b" x="-5" y="-140" width="1280" height="900" fill="url(#rain-pattern)" opacity=".35"/></g>
+      <path d="M0 652c310 12 708 11 1440-10v258H0Z" fill="#e5d5a8"/><path class="road" d="M0 690c460 18 960 8 1440-12v222H0Z"/>
+      <path d="M0 698c540 10 1000 0 1440-13" fill="none" stroke="#fff5dc" stroke-width="7" opacity=".72"/>
+      <g class="road-marks" fill="#e2e9d9" opacity=".76"><rect x="-150" y="833" width="150" height="8" rx="4"/><rect x="150" y="833" width="150" height="8" rx="4"/><rect x="450" y="833" width="150" height="8" rx="4"/><rect x="750" y="833" width="150" height="8" rx="4"/><rect x="1050" y="833" width="150" height="8" rx="4"/><rect x="1350" y="833" width="150" height="8" rx="4"/></g>
+      <g class="wet"><path d="M80 760h145m148 38h180m485-26h200" stroke="#c7e4e8" stroke-width="5" stroke-linecap="round" opacity=".55"/><ellipse cx="710" cy="788" rx="224" ry="13" fill="#b9d7d8" opacity=".32"/></g>
+      <ellipse cx="746" cy="804" rx="272" ry="21" fill="#254b4f" opacity=".21"/>
+      <g id="bikeScale"><g class="bike">
+        <g transform="translate(585 704)"><g class="wheel"><use href="#wheel"/></g></g><g transform="translate(906 704)"><g class="wheel"><use href="#wheel"/></g></g>
+        <g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M585 704 705 602 756 704 585 704M705 602h145l-94 102M850 602l56 102" stroke="#e77858" stroke-width="15"/><path d="M705 602h145" stroke="#ffd18d" stroke-width="6"/><path d="M849 600 872 562h39" stroke="#25494d" stroke-width="11"/><path d="M705 603 693 576" stroke="#25494d" stroke-width="9"/><path d="M671 576h62" stroke="#294b4c" stroke-width="13"/></g>
+        <circle cx="756" cy="704" r="25" fill="#f4c56f" stroke="#355b58" stroke-width="7"/>
+        <g id="backLeg"><path id="legBack" d="M691 532 Q685 614 735 704" fill="none" stroke="#db8d50" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/><path id="shoeBack" d="M716 708h37" stroke="#754c3c" stroke-width="14" stroke-linecap="round"/></g>
+        <g class="tail"><path d="M654 469c-55-18-93-7-109 16 46-4 64 17 98 20Z" fill="#f9f7e9" stroke="#d6d7c6" stroke-width="4"/><path d="M629 488c-37-13-64-6-84-3" fill="none" stroke="#d3d5c6" stroke-width="3"/></g>
+        <path d="M785 435c43-51 38-95 22-125 29-7 57 17 61 47 4 53-27 100-46 140Z" fill="#e6e6d7"/>
+        <ellipse cx="704" cy="479" rx="129" ry="92" fill="#fffdf3" stroke="#dce1d5" stroke-width="5"/>
+        <path d="M773 493c-1-54 9-101 30-142 11-21 11-45 15-66 28-13 66 0 77 27 14 39-5 78-24 101-21 28-35 72-38 114Z" fill="#fffdf3" stroke="#dce1d5" stroke-width="5"/>
+        <path class="wing" d="M644 464c22-34 71-38 104-6 19 18 34 51 80 69l44 25-8 20c-73-4-108-24-143-48-28 22-61 22-80 3-18-16-19-43 3-63Z" fill="#ecefe5" stroke="#d3dcd3" stroke-width="4"/>
+        <path d="M742 482c32 26 57 43 94 53" fill="none" stroke="#d1dcd2" stroke-width="4" stroke-linecap="round"/>
+        <path d="M836 535c18 6 32 19 37 31" fill="none" stroke="#e9a666" stroke-width="18" stroke-linecap="round"/>
+        <ellipse cx="833" cy="334" rx="62" ry="57" fill="#fffdf3" stroke="#dce1d5" stroke-width="5"/>
+        <path d="M838 360c50-5 122-10 201-4-14 11-40 18-74 21-52 6-91 8-126 1Z" fill="#e3a457" stroke="#bb7747" stroke-width="4"/>
+        <path d="M833 376c52 5 112 5 175-3-11 57-48 92-92 91-49-2-72-38-83-88Z" fill="url(#pouch)" stroke="#d98342" stroke-width="4"/>
+        <path d="M852 399c42 22 93 19 140-5" fill="none" stroke="#f9ce79" stroke-width="5" opacity=".58"/>
+        <circle cx="842" cy="324" r="7" fill="#203f45"/><circle cx="844" cy="321" r="2.4" fill="#fff"/>
+        <path d="M793 283c-19-28-5-50 6-59 0 23 15 37 21 48" fill="#fffdf3" stroke="#dce1d5" stroke-width="4"/>
+        <path d="M815 278c-1-25 12-38 23-43-5 20 2 32 5 41" fill="#fffdf3" stroke="#dce1d5" stroke-width="4"/>
+        <g id="frontLeg"><path id="legFront" d="M729 540 Q735 616 777 704" fill="none" stroke="#efa65d" stroke-width="21" stroke-linecap="round" stroke-linejoin="round"/><path id="shoeFront" d="M760 708h38" stroke="#89583e" stroke-width="15" stroke-linecap="round"/></g>
+      </g></g>
+      <g class="rain"><rect width="1440" height="900" fill="url(#rainPattern)"/><rect width="1440" height="900" fill="#315262" opacity=".09"/></g>
     </svg>
-    <div class="masthead"><p class="eyebrow">A little ride through the day</p><h1>鹈鹕的骑行日记</h1><p class="subhead">沿着风的方向，慢慢向前。</p></div>
-    <div class="weather-panel" aria-live="polite" aria-atomic="true"><span class="weather-symbol" id="weather-symbol" aria-hidden="true">☀</span><div><div class="weather-name" id="weather-name">晴天</div><div class="weather-dots" aria-hidden="true"><span class="active"></span><span></span><span></span></div></div></div>
-    <div class="footer-note">Keep on riding · 01 / 03</div>
   </main>
   <script>
-    (() => {
-      const scene = document.querySelector('.scene');
-      const name = document.querySelector('#weather-name');
-      const symbol = document.querySelector('#weather-symbol');
-      const dots = [...document.querySelectorAll('.weather-dots span')];
-      const footer = document.querySelector('.footer-note');
-      const weather = [
-        {key:'sunny', label:'晴天', icon:'☀'},
-        {key:'cloudy', label:'阴天', icon:'☁'},
-        {key:'rainy', label:'雨天', icon:'☂'}
-      ];
-      let current = 0;
-      window.setInterval(() => {
-        current = (current + 1) % weather.length;
-        const next = weather[current];
-        scene.dataset.weather = next.key;
-        name.textContent = next.label;
-        symbol.textContent = next.icon;
-        footer.textContent = `Keep on riding · 0${current + 1} / 03`;
-        dots.forEach((dot, index) => dot.classList.toggle('active', index === current));
-      }, 5000);
-    })();
+    const scene = document.getElementById('scene');
+    const art = document.getElementById('art');
+    const weatherText = document.getElementById('weatherText');
+    const weatherIcon = document.getElementById('weatherIcon');
+    const weathers = [
+      { key:'sunny', text:'晴天', icon:'☀️', description:'晴朗的白天' },
+      { key:'cloudy', text:'阴天', icon:'☁️', description:'多云的白天' },
+      { key:'rainy', text:'雨天', icon:'🌧️', description:'下雨的白天' }
+    ];
+    let weatherIndex = 0;
+    setInterval(() => {
+      weatherIndex = (weatherIndex + 1) % weathers.length;
+      const weather = weathers[weatherIndex];
+      scene.dataset.weather = weather.key;
+      weatherText.textContent = weather.text;
+      weatherIcon.textContent = weather.icon;
+      art.setAttribute('aria-label', `${weather.description}，一只鹈鹕骑着自行车穿过乡间`);
+    }, 5000);
+    function fitScene() {
+      const width = innerWidth, height = innerHeight;
+      const viewWidth = Math.min(1440, 900 * width / height);
+      art.setAttribute('viewBox', `${720 - viewWidth / 2} 0 ${viewWidth} 900`);
+      const scale = Math.min(1, (viewWidth - 40) / 600);
+      document.getElementById('bikeScale').setAttribute('transform', `translate(720 704) scale(${scale}) translate(-720 -704)`);
+    }
+    addEventListener('resize', fitScene, { passive:true });
+    fitScene();
+    const legFront = document.getElementById('legFront');
+    const legBack = document.getElementById('legBack');
+    const shoeFront = document.getElementById('shoeFront');
+    const shoeBack = document.getElementById('shoeBack');
+    function pedal(time) {
+      const phase = time * .0042;
+      [[legFront,shoeFront,0,729,540],[legBack,shoeBack,Math.PI,691,532]].forEach(([leg,shoe,offset,hipX,hipY]) => {
+        const footX = 756 + 30 * Math.cos(phase + offset);
+        const footY = 704 + 30 * Math.sin(phase + offset);
+        const kneeX = (hipX + footX) / 2 - 25 + 12 * Math.cos(phase + offset);
+        const kneeY = 622 + 12 * Math.sin(phase + offset);
+        leg.setAttribute('d', `M${hipX} ${hipY} Q${kneeX} ${kneeY} ${footX} ${footY}`);
+        shoe.setAttribute('d', `M${footX - 14} ${footY + 4}h38`);
+      });
+      requestAnimationFrame(pedal);
+    }
+    requestAnimationFrame(pedal);
   </script>
 </body>
 </html>

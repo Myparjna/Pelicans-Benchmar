@@ -24,7 +24,7 @@ window.SITES = [
     "released": 1791193889
   },
   {
-    "file": "gpt6-sol-鹈鹕白天骑自行车动画.html",
+    "file": "1031-1502-鹈鹕白天骑自行车天气动画-gpt6sol.html",
     "slug": "gpt-6-sol",
     "category": "GPT",
     "model": "GPT-6 Sol",
@@ -264,7 +264,7 @@ window.SITES = [
     "released": 1777255064
   },
   {
-    "file": "智谱官网glm5.3flash.html",
+    "file": "1031-1528-鹈鹕白天骑自行车天气动画-glm53flash.html",
     "slug": "glm-5-3-flash-zhipu",
     "category": "智谱 · GLM",
     "model": "智谱 GLM 5.3 Flash",
@@ -273,19 +273,7 @@ window.SITES = [
     "src": "sites/glm-5-3-flash-zhipu.html",
     "params": "320B",
     "cutoff": "—",
-    "released": 1787752741
-  },
-  {
-    "file": "ZAIglm5.3flash.html",
-    "slug": "glm-5-3-flash-zai",
-    "category": "智谱 · GLM",
-    "model": "智谱 GLM 5.3 Flash",
-    "channel": "ZAI",
-    "thumb": "thumbs/glm-5-3-flash-zai.png",
-    "src": "sites/glm-5-3-flash-zai.html",
-    "params": "320B",
-    "cutoff": "—",
-    "released": 1787752741
+    "released": 1793431680
   },
   {
     "file": "GLM5.3.html",
@@ -334,6 +322,18 @@ window.SITES = [
     "params": "80B",
     "cutoff": "2025-03",
     "released": 1751987664
+  },
+  {
+    "file": "1031-1436-鹈鹕白天骑自行车天气动画-kimik3.1pro.html",
+    "slug": "kimi-k3-1-pro",
+    "category": "月之暗面 · Kimi",
+    "model": "Kimi K3.1 Pro",
+    "channel": "—",
+    "thumb": "thumbs/kimi-k3-1-pro.png",
+    "src": "sites/kimi-k3-1-pro.html",
+    "params": "未公开",
+    "cutoff": "—",
+    "released": 1793428560
   },
   {
     "file": "kimik2.8-10月5日-1715-鹈鹕白天骑自行车动画.html",

@@ -71,7 +71,6 @@
     'gemini-3-8': 7,
     'qwen-3-8-flash-api': 9,
     'glm-5-3-flash-zhipu': 5,
-    'glm-5-3-flash-zai': 9,
     'glm-5-3-wb': 10,
     'qwen-3-8-27b': 4,
     'gemini-3-7': 6,

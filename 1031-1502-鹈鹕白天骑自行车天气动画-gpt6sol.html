@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f3e9">
+  <title>鹈鹕的骑行日</title>
+  <style>
+    :root { color-scheme: light; font-family: "Trebuchet MS", "Microsoft YaHei", sans-serif; }
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+    body { background: #f7f3e9; }
+    .scene { --sky-top:#8cd5ed; --sky-bottom:#e2f7e7; --hill:#8dcda4; --hill-back:#b6ddbd; --cloud:#fffdf6; --cloud-shadow:#dcebef; --road:#708c83; --rain-opacity:0; --sun-opacity:1; position:relative; width:100%; height:100%; height:100dvh; overflow:hidden; isolation:isolate; transition:background-color 1.3s ease; background:#bfe6e8; }
+    .scene[data-weather="cloudy"] { --sky-top:#a8bdc3; --sky-bottom:#d5ded8; --hill:#86b49a; --hill-back:#abc9b1; --cloud:#e5e9e6; --cloud-shadow:#a5b8ba; --road:#6b8580; --sun-opacity:.23; }
+    .scene[data-weather="rainy"] { --sky-top:#708e9d; --sky-bottom:#b4cbd0; --hill:#699b89; --hill-back:#91ada5; --cloud:#b6c7cb; --cloud-shadow:#6f929e; --road:#536f72; --rain-opacity:1; --sun-opacity:0; }
+    svg { display:block; width:100%; height:100%; }
+    .sky-top { stop-color:var(--sky-top); transition:stop-color 1.4s ease; }
+    .sky-bottom { stop-color:var(--sky-bottom); transition:stop-color 1.4s ease; }
+    .hill { fill:var(--hill); transition:fill 1.4s ease; }
+    .hill-back { fill:var(--hill-back); transition:fill 1.4s ease; }
+    .road { fill:var(--road); transition:fill 1.4s ease; }
+    .cloud-main { fill:var(--cloud); transition:fill 1.4s ease; }
+    .cloud-shade { fill:var(--cloud-shadow); transition:fill 1.4s ease; }
+    .sun { opacity:var(--sun-opacity); transition:opacity 1.2s ease; transform-origin:1130px 178px; animation:sun-pulse 5s ease-in-out infinite; }
+    .cloud-a { animation:cloud-drift 18s ease-in-out infinite alternate; }
+    .cloud-b { animation:cloud-drift 23s ease-in-out -7s infinite alternate-reverse; }
+    .cloud-c { animation:cloud-drift 27s ease-in-out -12s infinite alternate; }
+    .rain { opacity:var(--rain-opacity); transition:opacity .8s ease; }
+    #rainPattern line { stroke:#e8f6fa; stroke-width:3; stroke-linecap:round; opacity:.72; animation:rain-fall .72s linear infinite; }
+    #rainPattern line:nth-child(3n) { animation-delay:-.24s; }
+    #rainPattern line:nth-child(3n + 1) { animation-delay:-.48s; }
+    .wet { opacity:var(--rain-opacity); transition:opacity 1s ease; }
+    .scenery { animation:scenery-roll 24s linear infinite; }
+    .road-marks { animation:marks-roll 2s linear infinite; }
+    .bike { animation:bob .7s ease-in-out infinite alternate; }
+    .wheel { transform-box:fill-box; transform-origin:center; animation:wheel-spin 1.5s linear infinite; }
+    .wing { transform-origin:715px 476px; animation:wing-sway .7s ease-in-out infinite alternate; }
+    .tail { transform-origin:635px 488px; animation:tail-sway 1.2s ease-in-out infinite alternate; }
+    .flower { transform-box:fill-box; transform-origin:bottom center; animation:flower-sway 2s ease-in-out infinite alternate; }
+    .flower:nth-child(2n) { animation-delay:-1s; }
+    .weather-badge { position:absolute; top:clamp(20px,4vw,48px); left:clamp(20px,5vw,72px); z-index:2; display:flex; align-items:center; gap:12px; min-width:124px; padding:12px 18px; border:1px solid #ffffff99; border-radius:999px; background:#fffdf6d9; color:#244a52; box-shadow:0 12px 36px #315b4c1c; backdrop-filter:blur(12px); font-size:15px; font-weight:700; letter-spacing:.06em; }
+    .weather-badge .icon { font-size:22px; line-height:1; }
+    .scene[data-weather="rainy"] .weather-badge { color:#315b67; }
+    @keyframes scenery-roll { to { transform:translateX(-720px); } }
+    @keyframes marks-roll { to { transform:translateX(-300px); } }
+    @keyframes wheel-spin { to { transform:rotate(360deg); } }
+    @keyframes bob { to { transform:translateY(-5px); } }
+    @keyframes wing-sway { to { transform:rotate(-4deg); } }
+    @keyframes tail-sway { to { transform:rotate(5deg); } }
+    @keyframes cloud-drift { to { transform:translateX(48px); } }
+    @keyframes sun-pulse { 50% { transform:scale(1.035); } }
+    @keyframes flower-sway { to { transform:rotate(9deg); } }
+    @keyframes rain-fall { from { transform:translate(25px,-32px); } to { transform:translate(-25px,32px); } }
+    @media (max-width:600px) { .weather-badge { top:22px; left:20px; padding:10px 15px; font-size:13px; } }
+    @media (prefers-reduced-motion:reduce) { .scenery,.road-marks,.bike,.wheel,.wing,.tail,.flower,.sun,.cloud-a,.cloud-b,.cloud-c,#rainPattern line { animation-duration:5s; } }
+  </style>
+</head>
+<body>
+  <main class="scene" id="scene" data-weather="sunny">
+    <div class="weather-badge" aria-live="polite"><span class="icon" id="weatherIcon" aria-hidden="true">☀️</span><span id="weatherText">晴天</span></div>
+    <svg id="art" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label="晴朗的白天，一只鹈鹕骑着自行车穿过乡间">
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop class="sky-top" offset="0"/><stop class="sky-bottom" offset="1"/></linearGradient>
+        <radialGradient id="glow"><stop offset="0" stop-color="#fffbd8" stop-opacity=".8"/><stop offset="1" stop-color="#fffbd8" stop-opacity="0"/></radialGradient>
+        <linearGradient id="pouch" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#f7b854"/><stop offset="1" stop-color="#e8813d"/></linearGradient>
+        <pattern id="rainPattern" width="130" height="115" patternUnits="userSpaceOnUse"><line x1="10" y1="15" x2="-6" y2="47"/><line x1="75" y1="58" x2="59" y2="90"/><line x1="117" y1="0" x2="101" y2="32"/><line x1="42" y1="94" x2="26" y2="126"/></pattern>
+        <g id="cloud"><ellipse class="cloud-shade" cx="7" cy="22" rx="94" ry="26"/><path class="cloud-main" d="M-91 20c0-26 25-44 50-41 8-30 39-51 71-37 22-32 76-30 97 8 27-2 52 20 52 47 0 22-20 39-46 39H-50C-75 36-91 30-91 20Z"/></g>
+        <g id="tree"><path d="M0 0v-116" stroke="#7e6952" stroke-width="14" stroke-linecap="round"/><circle cx="-21" cy="-116" r="47" fill="#5ca87e"/><circle cx="22" cy="-137" r="54" fill="#70b98a"/><circle cx="42" cy="-102" r="39" fill="#8ac79c"/></g>
+        <g id="flower"><path d="M0 0v-28" stroke="#4d916e" stroke-width="3"/><circle cy="-34" r="7" fill="#f8f2df"/><circle cy="-34" r="3" fill="#eab663"/></g>
+        <g id="wheel"><circle r="91" fill="none" stroke="#183c43" stroke-width="13"/><circle r="75" fill="none" stroke="#f6eee0" stroke-width="3"/><path d="M0-85V85M-85 0H85M-60-60 60 60M60-60-60 60" stroke="#86a6a3" stroke-width="2.4"/><circle r="13" fill="#f3bb63" stroke="#20434a" stroke-width="5"/></g>
+      </defs>
+      <rect width="1440" height="900" fill="url(#sky)"/>
+      <g class="sun"><circle cx="1130" cy="178" r="142" fill="url(#glow)"/><circle cx="1130" cy="178" r="73" fill="#ffe9a0"/><circle cx="1130" cy="178" r="59" fill="#fff1ad"/></g>
+      <g class="cloud-a" transform="translate(195 210)"><use href="#cloud" transform="scale(.76)"/></g>
+      <g class="cloud-b" transform="translate(720 120)"><use href="#cloud" transform="scale(.54)"/></g>
+      <g class="cloud-c" transform="translate(1270 272)"><use href="#cloud" transform="scale(.7)"/></g>
+      <path class="hill-back" d="M0 585C185 465 286 515 437 568c169-160 351-133 528-3 171-139 310-123 475-13V900H0Z"/>
+      <path class="hill" d="M0 642c187-100 293-72 474-9 174-111 325-106 485 17 166-107 322-117 481-29v279H0Z"/>
+      <g class="scenery" opacity=".9">
+        <g transform="translate(0 0)"><use href="#tree" x="70" y="659" transform="translate(70 659) scale(.75) translate(-70 -659)"/><use href="#tree" x="380" y="648" transform="translate(380 648) scale(.58) translate(-380 -648)"/><use href="#tree" x="1190" y="653" transform="translate(1190 653) scale(.65) translate(-1190 -653)"/><path d="M220 654h82v-60l-41-32-41 32Z" fill="#f8e8ce"/><path d="m209 594 52-40 52 40" fill="none" stroke="#b56f62" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><rect x="251" y="617" width="19" height="37" rx="9" fill="#8ab6b2"/><use href="#flower" x="120" y="675" class="flower"/><use href="#flower" x="330" y="674" class="flower"/><use href="#flower" x="1030" y="665" class="flower"/></g>
+        <g transform="translate(720 0)"><use href="#tree" x="70" y="659" transform="translate(70 659) scale(.75) translate(-70 -659)"/><use href="#tree" x="380" y="648" transform="translate(380 648) scale(.58) translate(-380 -648)"/><use href="#tree" x="1190" y="653" transform="translate(1190 653) scale(.65) translate(-1190 -653)"/><path d="M220 654h82v-60l-41-32-41 32Z" fill="#f8e8ce"/><path d="m209 594 52-40 52 40" fill="none" stroke="#b56f62" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><rect x="251" y="617" width="19" height="37" rx="9" fill="#8ab6b2"/><use href="#flower" x="120" y="675" class="flower"/><use href="#flower" x="330" y="674" class="flower"/><use href="#flower" x="1030" y="665" class="flower"/></g>
+        <g transform="translate(1440 0)"><use href="#tree" x="70" y="659" transform="translate(70 659) scale(.75) translate(-70 -659)"/><use href="#tree" x="380" y="648" transform="translate(380 648) scale(.58) translate(-380 -648)"/><path d="M220 654h82v-60l-41-32-41 32Z" fill="#f8e8ce"/><path d="m209 594 52-40 52 40" fill="none" stroke="#b56f62" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><rect x="251" y="617" width="19" height="37" rx="9" fill="#8ab6b2"/></g>
+      </g>
+      <path d="M0 652c310 12 708 11 1440-10v258H0Z" fill="#e5d5a8"/><path class="road" d="M0 690c460 18 960 8 1440-12v222H0Z"/>
+      <path d="M0 698c540 10 1000 0 1440-13" fill="none" stroke="#fff5dc" stroke-width="7" opacity=".72"/>
+      <g class="road-marks" fill="#e2e9d9" opacity=".76"><rect x="-150" y="833" width="150" height="8" rx="4"/><rect x="150" y="833" width="150" height="8" rx="4"/><rect x="450" y="833" width="150" height="8" rx="4"/><rect x="750" y="833" width="150" height="8" rx="4"/><rect x="1050" y="833" width="150" height="8" rx="4"/><rect x="1350" y="833" width="150" height="8" rx="4"/></g>
+      <g class="wet"><path d="M80 760h145m148 38h180m485-26h200" stroke="#c7e4e8" stroke-width="5" stroke-linecap="round" opacity=".55"/><ellipse cx="710" cy="788" rx="224" ry="13" fill="#b9d7d8" opacity=".32"/></g>
+      <ellipse cx="746" cy="804" rx="272" ry="21" fill="#254b4f" opacity=".21"/>
+      <g id="bikeScale"><g class="bike">
+        <g transform="translate(585 704)"><g class="wheel"><use href="#wheel"/></g></g><g transform="translate(906 704)"><g class="wheel"><use href="#wheel"/></g></g>
+        <g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M585 704 705 602 756 704 585 704M705 602h145l-94 102M850 602l56 102" stroke="#e77858" stroke-width="15"/><path d="M705 602h145" stroke="#ffd18d" stroke-width="6"/><path d="M849 600 872 562h39" stroke="#25494d" stroke-width="11"/><path d="M705 603 693 576" stroke="#25494d" stroke-width="9"/><path d="M671 576h62" stroke="#294b4c" stroke-width="13"/></g>
+        <circle cx="756" cy="704" r="25" fill="#f4c56f" stroke="#355b58" stroke-width="7"/>
+        <g id="backLeg"><path id="legBack" d="M691 532 Q685 614 735 704" fill="none" stroke="#db8d50" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/><path id="shoeBack" d="M716 708h37" stroke="#754c3c" stroke-width="14" stroke-linecap="round"/></g>
+        <g class="tail"><path d="M654 469c-55-18-93-7-109 16 46-4 64 17 98 20Z" fill="#f9f7e9" stroke="#d6d7c6" stroke-width="4"/><path d="M629 488c-37-13-64-6-84-3" fill="none" stroke="#d3d5c6" stroke-width="3"/></g>
+        <path d="M785 435c43-51 38-95 22-125 29-7 57 17 61 47 4 53-27 100-46 140Z" fill="#e6e6d7"/>
+        <ellipse cx="704" cy="479" rx="129" ry="92" fill="#fffdf3" stroke="#dce1d5" stroke-width="5"/>
+        <path d="M773 493c-1-54 9-101 30-142 11-21 11-45 15-66 28-13 66 0 77 27 14 39-5 78-24 101-21 28-35 72-38 114Z" fill="#fffdf3" stroke="#dce1d5" stroke-width="5"/>
+        <path class="wing" d="M644 464c22-34 71-38 104-6 19 18 34 51 80 69l44 25-8 20c-73-4-108-24-143-48-28 22-61 22-80 3-18-16-19-43 3-63Z" fill="#ecefe5" stroke="#d3dcd3" stroke-width="4"/>
+        <path d="M742 482c32 26 57 43 94 53" fill="none" stroke="#d1dcd2" stroke-width="4" stroke-linecap="round"/>
+        <path d="M836 535c18 6 32 19 37 31" fill="none" stroke="#e9a666" stroke-width="18" stroke-linecap="round"/>
+        <ellipse cx="833" cy="334" rx="62" ry="57" fill="#fffdf3" stroke="#dce1d5" stroke-width="5"/>
+        <path d="M838 360c50-5 122-10 201-4-14 11-40 18-74 21-52 6-91 8-126 1Z" fill="#e3a457" stroke="#bb7747" stroke-width="4"/>
+        <path d="M833 376c52 5 112 5 175-3-11 57-48 92-92 91-49-2-72-38-83-88Z" fill="url(#pouch)" stroke="#d98342" stroke-width="4"/>
+        <path d="M852 399c42 22 93 19 140-5" fill="none" stroke="#f9ce79" stroke-width="5" opacity=".58"/>
+        <circle cx="842" cy="324" r="7" fill="#203f45"/><circle cx="844" cy="321" r="2.4" fill="#fff"/>
+        <path d="M793 283c-19-28-5-50 6-59 0 23 15 37 21 48" fill="#fffdf3" stroke="#dce1d5" stroke-width="4"/>
+        <path d="M815 278c-1-25 12-38 23-43-5 20 2 32 5 41" fill="#fffdf3" stroke="#dce1d5" stroke-width="4"/>
+        <g id="frontLeg"><path id="legFront" d="M729 540 Q735 616 777 704" fill="none" stroke="#efa65d" stroke-width="21" stroke-linecap="round" stroke-linejoin="round"/><path id="shoeFront" d="M760 708h38" stroke="#89583e" stroke-width="15" stroke-linecap="round"/></g>
+      </g></g>
+      <g class="rain"><rect width="1440" height="900" fill="url(#rainPattern)"/><rect width="1440" height="900" fill="#315262" opacity=".09"/></g>
+    </svg>
+  </main>
+  <script>
+    const scene = document.getElementById('scene');
+    const art = document.getElementById('art');
+    const weatherText = document.getElementById('weatherText');
+    const weatherIcon = document.getElementById('weatherIcon');
+    const weathers = [
+      { key:'sunny', text:'晴天', icon:'☀️', description:'晴朗的白天' },
+      { key:'cloudy', text:'阴天', icon:'☁️', description:'多云的白天' },
+      { key:'rainy', text:'雨天', icon:'🌧️', description:'下雨的白天' }
+    ];
+    let weatherIndex = 0;
+    setInterval(() => {
+      weatherIndex = (weatherIndex + 1) % weathers.length;
+      const weather = weathers[weatherIndex];
+      scene.dataset.weather = weather.key;
+      weatherText.textContent = weather.text;
+      weatherIcon.textContent = weather.icon;
+      art.setAttribute('aria-label', `${weather.description}，一只鹈鹕骑着自行车穿过乡间`);
+    }, 5000);
+    function fitScene() {
+      const width = innerWidth, height = innerHeight;
+      const viewWidth = Math.min(1440, 900 * width / height);
+      art.setAttribute('viewBox', `${720 - viewWidth / 2} 0 ${viewWidth} 900`);
+      const scale = Math.min(1, (viewWidth - 40) / 600);
+      document.getElementById('bikeScale').setAttribute('transform', `translate(720 704) scale(${scale}) translate(-720 -704)`);
+    }
+    addEventListener('resize', fitScene, { passive:true });
+    fitScene();
+    const legFront = document.getElementById('legFront');
+    const legBack = document.getElementById('legBack');
+    const shoeFront = document.getElementById('shoeFront');
+    const shoeBack = document.getElementById('shoeBack');
+    function pedal(time) {
+      const phase = time * .0042;
+      [[legFront,shoeFront,0,729,540],[legBack,shoeBack,Math.PI,691,532]].forEach(([leg,shoe,offset,hipX,hipY]) => {
+        const footX = 756 + 30 * Math.cos(phase + offset);
+        const footY = 704 + 30 * Math.sin(phase + offset);
+        const kneeX = (hipX + footX) / 2 - 25 + 12 * Math.cos(phase + offset);
+        const kneeY = 622 + 12 * Math.sin(phase + offset);
+        leg.setAttribute('d', `M${hipX} ${hipY} Q${kneeX} ${kneeY} ${footX} ${footY}`);
+        shoe.setAttribute('d', `M${footX - 14} ${footY + 4}h38`);
+      });
+      requestAnimationFrame(pedal);
+    }
+    requestAnimationFrame(pedal);
+  </script>
+</body>
+</html>
