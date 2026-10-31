@@ -554,8 +554,8 @@ window.SITES = [
   {
     "file": "10月5日-1720-spacebunny-鹈鹕白天骑自行车动画.html",
     "slug": "spacebunny",
-    "category": "Space Bunny",
-    "model": "Space Bunny",
+    "category": "MiniMax",
+    "model": "MiniMax M3.1 Flash",
     "channel": "—",
     "thumb": "thumbs/spacebunny.png",
     "src": "sites/spacebunny.html",
