@@ -19,7 +19,7 @@ client_level: developer
 
 ### 流程 1：浏览并打开某个模型的页面
 
-- 前置：展厅已加载（`sites-data.js` 45 条数据）。
+- 前置：展厅已加载（`sites-data.js` 48 条数据（另 12 条 3D））。
 - 操作：滚动查看分类分组 → 点分类 chip 可只看该分类 → 点卡片打开查看器。
 - 输入：鼠标点击 / 键盘 `Enter`（卡片可聚焦）。
 - 预期输出：查看器全屏 iframe 加载 `sites/<slug>.html` 的真实页面，顶部显示序号 `n / 45`、模型名、分类、参数、截止与评分控件。
@@ -56,8 +56,8 @@ client_level: developer
 
 ## 数据与文件
 
-- 输入数据：各模型产出的单页 HTML（根目录原始文件 + `sites/` ASCII 命名副本，`sites/` 当前 45 个）。
-- 元数据：`sites-data.js`（`window.SITES`，45 条；字段 `file/slug/category/model/channel/thumb/src/params/cutoff/released`）。
+- 输入数据：各模型产出的单页 HTML（根目录原始文件 + `sites/` ASCII 命名副本，`sites/` 当前 60 个（48 个 2D + 12 个 3D））。
+- 元数据：`sites-data.js`（`window.SITES` 48 条与 `window.SITES_3D` 12 条；字段 `file/slug/category/model/channel/thumb/src/params/cutoff/released`）。
 - 图片：`thumbs/` 下每个 slug 两份——`<slug>.png`（1280×900 静态封面）与 `<slug>.webp`（8 帧动画，hover 播放），当前 90 个文件。
 - 评分导出：浏览器导出 JSON，形如 `{ schema, count, totalSites, exportedAt, ratings: { slug: score } }`；最近一次基线导出为 `C:/Users/mypra/Desktop/peilika-ratings-2026-10-05.json`（已回填为 `assets/app.js` 的 `DEFAULT_RATINGS`）。
 - 原始文件保留：根目录中文名原始 HTML 与 `Trash/` 下架备份长期保留，勿清理。

@@ -1,6 +1,7 @@
 ---
 document: regression-test.md
 generated: 2026-10-06 00:46
+updated: 2026-10-31
 client_level: developer
 ---
 
@@ -20,75 +21,84 @@ client_level: developer
 
 | 业务流程/模块 | 风险 | 验证方式 | 通过标准 | 证据位置 |
 |---|---|---|---|---|
-| 展厅渲染（45 卡片、分类顺序、并列 band） | 高 | 无头 Chrome dump-dom + 整页截图 | section 数=10、merged-band=4、标题顺序与配置一致 | `02-TempFiles/reorder-full.png`、`02-TempFiles/reorder-lower.png` |
-| 缩略图（png/webp） | 高 | 线上逐个校验 `content-type` | 全部 `image/png` / `image/webp`（状态码 200 不可信） | 部署后 curl 抽查 |
+| 2D 展厅渲染（48 卡片、分类顺序、并列 band） | 高 | 无头 Chrome dump-dom + 整页截图 | 卡片数=48、section 数=14、merged-band=3、标题顺序与配置一致 | `02-TempFiles/reorder-full.png`、`02-TempFiles/reorder-lower.png` |
+| **2D/3D 模式切换** | 高 | CDP 点击 `.mode-btn[data-mode="3d"]` 后读 DOM | 卡片数=12、缩略图全部加载、`aria-pressed` 切换、副标题与提示词文案同步、查看器 iframe 指向 `sites/3d-*.html`、计数 `1 / 12` | `03-TempScr/1031-1835-模式切换校验.js`（已执行并通过） |
+| 3D 展厅渲染（12 卡片） | 中高 | CDP + 整页截图 | 卡片数=12、无裂图、`thumbs/3d-*.webp` 全部 `image/webp` | `03-TempScr/1031-1835-模式切换校验.js` |
+| 缩略图（png/webp） | 高 | 线上逐个校验 `content-type` | 全部 `image/png` / `image/webp`（状态码 200 不可信，见 known-issues） | 部署后 curl 抽查 |
 | 打分与卡片同步 | 高 | CDP 合成点击：查看器打分 → 关闭 → 读卡片分数 | 卡片分数与查看器一致，刷新后保持 | `03-TempScr/10月5日-2110-展厅查看器交互校验.js`（已执行并通过） |
 | 查看器二次打开 / 连续翻页预加载 | 中高 | CDP 脚本 | 二次打开不串页、翻页命中预加载帧 | `03-TempScr/10月5日-2120-查看器二次打开复测.js`（已执行并通过） |
 | 分类筛选与搜索 | 中 | 人工点击 | chip 过滤正确、搜索命中 | 人工验证（无脚本留存） |
-| 数据完整性 | 高 | Node 载入 `sites-data.js` 核对文件存在性 | 条目数 45、缺失文件 0 | `03-TempScr/10月5日-2335-本次改动冒烟.js`（已执行并通过） |
-| 部署产物 | 高 | 线上 curl 校验首页计数、数据条数、资源 content-type | 计数 45、`"slug"` 45、图片类型正确 | 每次部署后执行 |
+| 数据完整性 | 高 | Node 载入 `sites-data.js` 核对文件存在性 | `SITES`=48 条、`SITES_3D`=12 条、缺失文件 0 | `03-TempScr/10月5日-2335-本次改动冒烟.js`（已执行并通过，针对 2D） |
+| 部署产物 | 高 | 线上 curl 校验首页计数、数据条数、资源 content-type | 首页计数 48、`"slug"` 出现 60 次、图片类型正确 | 每次部署后执行 |
 
 ## 自动化测试
 
 ```bash
 # 无自动化测试套件可跑。下面的命令是「已实际执行过」的等价校验步骤（在项目根目录执行）：
 
-# 1) 静态语法检查（已执行并通过，最近一次 2026-10-06 00:2x）
+# 1) 静态语法检查（已执行并通过，最近一次 2026-10-31）
 "C:/Users/mypra/.workbuddy/binaries/node/versions/22.22.2-6/node.exe" --check assets/app.js
 
-# 2) 数据完整性：条目数与资源文件存在性（已执行并通过，45 条 / 缺失 0）
+# 2) 数据完整性：两套数据集条目数与资源文件存在性（已执行并通过，48 + 12 条 / 缺失 0）
 "C:/Users/mypra/.workbuddy/binaries/node/versions/22.22.2-6/node.exe" -e "
 global.window={}; const fs=require('fs');
 eval(fs.readFileSync('sites-data.js','utf8'));
-const s=window.SITES;
-console.log(s.length, s.filter(x=>!fs.existsSync(x.src)||!fs.existsSync(x.thumb)).length);
+for (const key of ['SITES','SITES_3D']) {
+  const s = window[key] || [];
+  const miss = s.filter(x => !fs.existsSync(x.src) || !fs.existsSync(x.thumb));
+  console.log(key, s.length, 'missing=' + miss.length, miss.map(m=>m.slug).join(','));
+}
 "
 
 # 3) XML/结构校验（未执行）：当前没有 HTML 校验命令，靠浏览器渲染无报错间接保证
 ```
 
-- 执行日期：2026-10-05 至 2026-10-06（多次迭代）。
+- 执行日期：2026-10-05 至 2026-10-31（多次迭代）。
 - 结果：上述 1、2 通过；第 3 项未执行。
-- CDP 校验脚本（`03-TempScr/10月5日-2110/2120/2125/2335-*`）在 Chrome 9303 端口实例上执行并通过，脚本本身仍在目录里可重跑（需先起本地服务并手动启动带 `--remote-debugging-port=9303` 的 Chrome）。
+- CDP 校验脚本（`03-TempScr/10月5日-2110/2120/2125/2335-*`、`03-TempScr/1031-1835-模式切换校验.js`）在 Chrome 9303/9306 端口实例上执行并通过，脚本本身仍在目录里可重跑（需先起本地服务并手动启动带 `--remote-debugging-port=<port>` 的 Chrome）。
 
 ## 人工与真实软件验证
 
 | 步骤 | 预期结果 | 实际结果 | 证据 |
 |---|---|---|---|
-| 本地起服务打开首页 | 45 张卡片、无裂图、分类顺序正确 | 通过 | `02-TempFiles/reorder-full.png`（1440×5600 整页） |
-| 点击卡片打开查看器 | iframe 加载原页面；红色关闭按钮；序号 `n / 45` | 通过 | `02-TempFiles/viewer-open-功能验收.png` |
+| 本地起服务打开首页 | 48 张卡片、无裂图、分类顺序正确 | 通过 | `02-TempFiles/reorder-full.png`（1440×5600 整页） |
+| 点击顶部 3D 按钮 | 切到 12 张体素版本卡片、文案与提示词同步 | 通过 | `03-TempScr/1031-1835-模式切换校验.js` 输出 |
+| 点击卡片打开查看器 | iframe 加载原页面；红色关闭按钮；序号 `n / 48`（3D 为 `n / 12`） | 通过 | `02-TempFiles/viewer-open-功能验收.png` |
 | 查看器打分 7 → 改 9 → 关闭 | 展厅卡片同步显示 9 | 通过（修复后） | 2110 脚本输出 |
 | 连续翻页 3 次 | 命中预加载帧、无白屏 | 通过 | 2120 脚本输出 |
 | 移动端竖屏 390×844 | 单列、无横向溢出 | 通过（较早批次验证） | `02-TempFiles/mobile-390x844.png` |
-| 线上首页与数据 | 计数 45、`sites-data.js` 45 条 | 通过 | curl 输出 |
+| 线上首页与数据 | 计数 48、`sites-data.js` 含 48 + 12 条 | 通过 | curl 输出 |
 
 ## 测试数据与环境
 
 - 浏览器：系统 Chrome（`C:\Program Files\Google\Chrome\Application\chrome.exe`），无头模式 `--headless=new`。
-- 调试端口：9303（本项目惯用；9300/9302 常被其他项目占用，用前先探测）。
+- 调试端口：9033/9303/9304/9305/9306（本项目惯用；9300/9302 常被其他项目占用，用前先探测，每个实例配独立 `userDataDir`）。
 - 本地服务：`python -m http.server 8137 --bind 127.0.0.1`（跑脚本前先 curl 探活，临时服务会随终端退出）。
 - 运行时：托管 Node 22.22.2-6、托管 Python 3.13（venv 含 Pillow）。
-- 测试数据：`sites-data.js` 45 条真实数据；评分基线 `C:/Users/mypra/Desktop/peilika-ratings-2026-10-05.json`（不含密钥）。
+- 测试数据：`sites-data.js`（`window.SITES` 48 条 + `window.SITES_3D` 12 条）真实数据；评分基线 `C:/Users/mypra/Desktop/peilika-ratings-2026-10-05.json`（不含密钥）。
 - 备份：改动前会 `cp sites-data.js 02-TempFiles/sites-data.backup*.js`。
 
 ## 发布前最小回归清单
 
 - [ ] `node --check assets/app.js` 通过
-- [ ] 数据完整性脚本：条目数正确、缺失文件 0
-- [ ] 本地起服务，首页卡片数 = 数据条数，无裂图
-- [ ] 分类顺序与并列 band 与配置一致（dump-dom 或截图）
+- [ ] 数据完整性脚本：`SITES` 48 条、`SITES_3D` 12 条、缺失文件 0
+- [ ] 本地起服务，2D 首页卡片数 = 48、无裂图
+- [ ] 切到 3D：卡片数 = 12、缩略图全加载、副标题/提示词同步、查看器 `src` 为 `sites/3d-*.html`
+- [ ] 分类顺序与并列 band 与 `CATEGORY_BANDS` 配置一致（dump-dom 或截图）
 - [ ] 打开任一查看器：能加载、翻页正常、Esc 关闭、红色按钮在位
 - [ ] 打分 → 关闭 → 卡片同步；刷新页面评分仍在
 - [ ] 移动端视口（390×844）无横向溢出
+- [ ] `index.html` 的计数文案与「更新至」日期已同步改
 - [ ] 部署：`bash 04-OpsDev/deploy-pages.sh` 成功
-- [ ] 线上校验：首页计数、`sites-data.js` 条数、`thumbs/*.webp` 的 `content-type`
+- [ ] 线上校验：首页计数、`sites-data.js` 条数、`thumbs/*.webp` 的 `content-type`（**不要只看状态码**）
 - [ ] 回滚预案：记住上一个正常部署 ID（控制台 Rollback）
-- [ ] `git commit` 涉及文件
+- [ ] `git commit` + `git push` 涉及文件
 
 ## 已知测试缺口
 
-- **无自动化回归套件**：所有验证都是一次性脚本/人工，改动后不能一键回归。建议补一个统一的 `node 03-TempScr/regress.js`（起服务 + CDP 跑核心流程 + 断言）。
+- **无自动化回归套件**：所有验证都是一次性脚本/人工，改动后不能一键回归。建议补一个统一的 `node 03-TempScr/regress.js`（起服务 + CDP 跑核心流程 + 断言，覆盖 2D 与 3D 两套）。
 - **未覆盖**：键盘操作（←/→/Esc 的完整路径）、评分导出/导入 JSON 的一致性、搜索与筛选的边界（空结果、特殊字符）、iframe 内页面自身报错。
+- **3D 模式未做移动端与评分回归**：只验证了切换与查看器，3D 卡片在 390×844 下的表现、3D 条目打分后刷新是否保持，尚未跑过。
 - **无法在本机验证**：Cloudflare 生产环境行为（边缘缓存生效时间、真实用户网络下的 CDN 图标加载）。
 - **模型产出页面自身质量**未做自动检查（只人工看截图），各页面可能自带 JS 错误或外链失效。
 - **缩略图生成未纳入回归**：重跑脚本后只人工抽查几张，没有批量尺寸/帧数校验。

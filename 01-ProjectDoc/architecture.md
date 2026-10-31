@@ -30,7 +30,7 @@ flowchart LR
 ```
 03-鹈鹕自行车测试/
 ├─ index.html              # 页面骨架：header(搜索+排序+导出)、filter-bar、galleryRoot、viewer 三帧查看器
-├─ sites-data.js           # 唯一数据源：window.SITES，45 条（数组顺序 = 展厅与查看器翻页顺序）
+├─ sites-data.js           # 唯一数据源：window.SITES 48 条与 window.SITES_3D 12 条（数组顺序 = 展厅与查看器翻页顺序）
 ├─ favicon.webp            # 站点 favicon 与左上角品牌图标（同一张）
 ├─ assets/
 │  ├─ style.css            # 浅色主题、卡片网格、查看器、移动端断点 720px
@@ -56,7 +56,7 @@ flowchart LR
 
 - **纯静态、零构建**：展厅只需对比「模型产出的原始 HTML」，任何框架/打包都会污染对比对象；因此前端保持原生 JS，无 package.json。
 - **副本而非改造原件**：根目录原件禁止修改，展示用 `sites/` 下的 ASCII 副本（`slug` 必须是 ASCII，否则部署路径会出问题）。
-- **缩略图自制而不外链**：用无头 Chrome 自截 + Pillow 合成动画 WebP，保证 45 张风格一致（曾尝试外链图床方案，已放弃）。
+- **缩略图自制而不外链**：用无头 Chrome 自截 + Pillow 合成动画 WebP，保证全部卡片风格一致（曾尝试外链图床方案，已放弃）。
 - **评分存 localStorage**：无后端，故评分只在本机生效；`DEFAULT_RATINGS` 作为新访客的展示基线，由导出 JSON 回填。
 - **分类并列（band）**：小分类两两共用一行网格，先做过「auto-fit 拉宽」方案，用户否掉后改成「每组占位块 + 显式并列配置」，见「扩展与替换点」。
 
@@ -110,7 +110,7 @@ flowchart TD
 
 | 模块 | 职责 | 入口文件 | 上游 | 下游 | 关键配置 | 测试 |
 |---|---|---|---|---|---|---|
-| 数据层 | 45 条站点元数据，决定展示与翻页顺序 | `sites-data.js` | 人工维护 | 渲染模块 | `slug/src/thumb/category` 路径约定 | `03-TempScr/10月5日-2335-本次改动冒烟.js` |
+| 数据层 | 48 + 12 条站点元数据，按展示模式决定渲染与翻页顺序 | `sites-data.js` | 人工维护 | 渲染模块 | `slug/src/thumb/category` 路径约定 | `03-TempScr/10月5日-2335-本次改动冒烟.js` |
 | 渲染与分组 | 按分类分组、并列 band 合并、卡片 HTML | `assets/app.js` `renderGallery` | 数据层、筛选模块 | 事件绑定 | `CATEGORY_BANDS`（app.js:258 起） | 整页截图 + dump-dom 校验 section 数 |
 | 筛选与搜索 | 分类 chip、关键词搜索 | `assets/app.js` | 用户输入 | 渲染模块 | 搜索字段：model/category/file | 人工验证 |
 | 评分 | 1-10 分读写、默认基线、导出导入、按分排序 | `assets/app.js`（`RATINGS_KEY`=app.js:48，`DEFAULT_RATINGS`=app.js:51） | 卡片/查看器 | `localStorage` | 键 `peilika_ratings_v1` | `03-TempScr/10月5日-2110-展厅查看器交互校验.js` |

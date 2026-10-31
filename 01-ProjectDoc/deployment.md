@@ -33,7 +33,7 @@ bash 04-OpsDev/deploy-pages.sh
 4. 确认项目存在：Cloudflare Dashboard → Workers & Pages → 项目 `peilika` 存在（首次没有则 `wrangler pages project create peilika`）。
 5. 准备 Chrome：截图/校验依赖 `C:\Program Files\Google\Chrome\Application\chrome.exe`。
 6. 准备缩略图环境：`uv pip install --python <venv> pillow`（仅重生成缩略图时需要）。
-7. 起本地服务验证：`python -m http.server 8137 --bind 127.0.0.1`，打开 `http://127.0.0.1:8137/index.html` 确认 45 张卡片、无裂图。
+7. 起本地服务验证：`python -m http.server 8137 --bind 127.0.0.1`，打开 `http://127.0.0.1:8137/index.html` 确认 48 张卡片（2D 模式；切到 3D 模式为 12 张）、无裂图。
 8. 部署：`bash 04-OpsDev/deploy-pages.sh`。
 9. 线上验收（**必须校验 content-type，不能只看状态码**）：
    ```bash
