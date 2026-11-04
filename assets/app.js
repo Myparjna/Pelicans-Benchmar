@@ -73,6 +73,7 @@
     'seed-2-1-pro-0915': 7,
     'step-5-preview': 7,
     'step5preview-1012': 6,
+    'hy4': 10,
     'hy4-preview': 8,
     'spacebunny': 7,
     'kimi-k2-8': 6,

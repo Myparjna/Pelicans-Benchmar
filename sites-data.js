@@ -312,6 +312,18 @@ window.SITES = [
     "released": 1781631930
   },
   {
+    "file": "models/hy4.html",
+    "slug": "hy4",
+    "category": "腾讯 · 混元",
+    "model": "混元 HY4",
+    "channel": "WorkBuddy",
+    "thumb": "thumbs/hy4.png",
+    "src": "sites/hy4.html",
+    "params": "—",
+    "cutoff": "—",
+    "released": 1793772383
+  },
+  {
     "file": "models/hy4-preview.html",
     "slug": "hy4-preview",
     "category": "腾讯 · 混元",

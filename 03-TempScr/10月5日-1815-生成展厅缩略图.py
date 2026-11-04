@@ -14,18 +14,7 @@ TMP = r"C:\Users\mypra\AppData\Local\Temp\pel-thumbs"
 CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 
 SLUGS = [
-    "3d-glm-5-3",
-    "3d-hy4",
-    "3d-kimi-k3",
-    "3d-deepseek-v4-flash",
-    "3d-deepseek-v4-pro",
-    "3d-deepseek-v4-1-flash",
-    "3d-gpt-6",
-    "3d-qwen-3-8-max",
-    "3d-deepseek-v4-flash-vision",
-    "3d-gpt-5-6-sol",
-    "3d-gpt-5-6-luna",
-    "3d-glm-5-3-scene",
+    "hy4",
 ]
 
 # 虚拟时间点（毫秒），逐帧推进以抓取不同动画时刻
