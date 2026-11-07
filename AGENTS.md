@@ -29,11 +29,11 @@
 ## 1. 目录结构
 
 ```
-index.html            展厅首页（计数文案「48 个模型/版本」+「更新至 YYYY-MM-DD」需手工维护）
-sites-data.js         唯一数据源：window.SITES（48 条 2D）+ window.SITES_3D（12 条 3D）
+index.html            展厅首页（计数文案「49 个模型/版本生成效果对比」+「更新至 YYYY-MM-DD」需手工维护）
+sites-data.js         唯一数据源：window.SITES（49 条 2D）+ window.SITES_3D（12 条 3D），合计 61 个 slug
 assets/app.js         展厅逻辑（筛选/搜索/打分/查看器/2D-3D 切换）
 assets/style.css      样式（浅色主题）
-sites/                部署用的页面副本（60 个 = 48 + 12），命名 <slug>.html
+sites/                部署用的页面副本（61 个 = 49 + 12），命名 <slug>.html
 thumbs/               缩略图 <slug>.png + <slug>.webp
 models/               模型原件归档（2D，按 slug 命名），不参与部署
 models/3d/            体素版本原件，不参与部署
@@ -77,7 +77,7 @@ const CATEGORY_BANDS = [
 
 ### 评分
 
-- 默认基线在 `assets/app.js` 的 `DEFAULT_RATINGS`（2D 48 条；3D 暂未设基线）。
+- 默认基线在 `assets/app.js` 的 `DEFAULT_RATINGS`（2D 49 条，其中 `hy4`=10 分、`hy4-preview`=8 分；3D 暂未设基线）。
 - 用户打分存 `localStorage` 键 `peilika_ratings_v1`。
 - ⚠️ `loadRatings()` 是 `Object.assign({}, DEFAULT_RATINGS, localStorage)`，**本机旧值会盖掉新基线**。改了 `DEFAULT_RATINGS` 后本机看不到变化是正常的，用无痕窗口或清该键验证。
 
@@ -85,7 +85,7 @@ const CATEGORY_BANDS = [
 
 ## 3. 2D / 3D 两套数据集
 
-- `window.SITES`（48 条，平面动画版）与 `window.SITES_3D`（12 条，体素场景版）是**两个独立数组**，slug 分别以普通名称和 `3d-` 前缀区分。
+- `window.SITES`（49 条，平面动画版）与 `window.SITES_3D`（12 条，体素场景版）是**两个独立数组**，slug 分别以普通名称和 `3d-` 前缀区分。
 - 顶部「2D / 3D」按钮（`.mode-switch` / `.mode-btn[data-mode]`）切换时，卡片、缩略图、分类、提示词文案、查看器与计数全部同步切换（`applyMode()`）。
 - 3D 提示词原文：**「使用体素建模。生成一个鹈鹕白天骑自行车的网页场景，要求兼容手机竖屏与电脑横屏显示。而且每过5秒进行晴天-阴天-雨天-晴天的天气自动切换。不使用任何skills。给我html」**
 - 2D 提示词原文：**「生成一个鹈鹕白天骑自行车的网页动画，单个html文件给我，要求能自适应网页宽度，兼容手机竖屏与电脑横屏显示。每过5秒进行晴天-阴天-雨天-晴天的天气自动切换。不使用任何skills。」**
@@ -132,8 +132,9 @@ bash 04-OpsDev/deploy-pages.sh
 
 ### CDP 校验
 
-一次性 CDP 脚本放 `03-TempScr/`，用系统 Chrome 起带 `--remote-debugging-port=9303`（或 9304/9305/9306，每个实例配独立 `userDataDir`），脚本通过 WebSocket `Runtime.evaluate` 读 DOM。
+一次性 CDP 脚本放 `03-TempScr/`，用系统 Chrome 起带 `--remote-debugging-port=9303`（或 9304/9305/9306/9307，其中 9307 为 2026-11-04 hy4 收录校验新用端口；每个实例配独立 `userDataDir`），脚本通过 WebSocket `Runtime.evaluate` 读 DOM。
 注意卡片缩略图是懒加载：**必须先 `scrollIntoView` 再判断 `img.complete && naturalWidth > 0`**，否则会误报「未加载」。
+使用 Node 22 原生 `WebSocket` 时，事件监听走 `addEventListener`（无 `.on` 方法），不要沿用 `ws` 包的 `ws.on('message', ...)` 写法；此经验来自 2026-11-04 的 `03-TempScr/1104-1409-hy4正式版收录校验.js`。
 
 ---
 
@@ -156,6 +157,7 @@ bash 04-OpsDev/deploy-pages.sh
 - [ ] `node --check assets/app.js` 通过，本地首页无裂图
 - [ ] 部署后用专属域验证过 `content-type`
 - [ ] 交接文档（`01-ProjectDoc/`）里的计数与结构描述同步更新
+- [ ] 本文件（`AGENTS.md`）里的数据集/副本计数与 `DEFAULT_RATINGS` 说明同步更新
 - [ ] 已 commit + push
 
 ---

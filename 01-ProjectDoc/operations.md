@@ -30,7 +30,7 @@ client_level: developer
 
 每月（或每次大改后）：
 
-1. 卡片数是否与数据一致：线上 `curl -s https://peilika.pages.dev/sites-data.js | grep -c '"slug"'` 应为 45，首页计数文案同步。
+1. 卡片数是否与数据一致：线上 `curl -s https://peilika.pages.dev/sites-data.js | grep -c '"slug"'` 应为 61，首页计数文案同步。
 2. 缩略图完整性：抽查若干 `thumbs/<slug>.png` 与 `.webp` 的 `content-type` 为 `image/png` / `image/webp`（状态码 200 不可信，见 known-issues.md）。
 3. 评分基线：确认 `assets/app.js` 的 `DEFAULT_RATINGS` 是最新导出版（最近一次基线文件在桌面：`C:/Users/mypra/Desktop/peilika-ratings-2026-10-05.json`）。
 4. 死链/缺失：核对 `sites-data.js` 每条的 `src`/`thumb` 文件真实存在（可用 `03-TempScr/10月5日-2335-本次改动冒烟.js` 的思路跑一遍）。

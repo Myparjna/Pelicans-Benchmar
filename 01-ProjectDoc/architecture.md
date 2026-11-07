@@ -14,7 +14,7 @@ flowchart LR
   CF --> IDX[index.html]
   IDX --> DATA[sites-data.js]
   IDX --> APP[assets/app.js + assets/style.css]
-  APP -->|iframe src| PAGE[sites/&lt;slug&gt;.html 45份原始产出]
+  APP -->|iframe src| PAGE[sites/&lt;slug&gt;.html 61份原始产出]
   APP -->|img| THUMB[thumbs/&lt;slug&gt;.png + .webp]
   APP -->|icon font| CDN[jsdelivr: Tabler Icons Webfont]
   U -->|localStorage| LS[(peilika_ratings_v1 评分)]
@@ -30,16 +30,16 @@ flowchart LR
 ```
 03-鹈鹕自行车测试/
 ├─ index.html              # 页面骨架：header(搜索+排序+导出)、filter-bar、galleryRoot、viewer 三帧查看器
-├─ sites-data.js           # 唯一数据源：window.SITES 48 条与 window.SITES_3D 12 条（数组顺序 = 展厅与查看器翻页顺序）
+├─ sites-data.js           # 唯一数据源：window.SITES 49 条与 window.SITES_3D 12 条（合计 61 个 slug；数组顺序 = 展厅与查看器翻页顺序）
 ├─ favicon.webp            # 站点 favicon 与左上角品牌图标（同一张）
 ├─ assets/
 │  ├─ style.css            # 浅色主题、卡片网格、查看器、移动端断点 720px
 │  └─ app.js               # 渲染、筛选搜索、评分、排序、band 合并、查看器预加载
-├─ sites/                  # 48 个 ASCII 命名干净副本（部署用，查看器 iframe 直接加载）
-├─ thumbs/                 # 96 个缩略图：每个 slug 一份 png（静态）+ 一份 webp（8 帧动画）
+├─ sites/                  # 61 个 ASCII 命名干净副本（49 个 2D + 12 个 3D，部署用，查看器 iframe 直接加载）
+├─ thumbs/                 # 122 个缩略图：每个 slug 一份 png（静态）+ 一份 webp（8 帧动画），共 61 组
 ├─ models/                 # 各模型原始产出原件（禁止修改，仅作对比源与副本来源），按 slug 命名
 │  └─ 3d/                  # 3D 版本鹈鹕动画原件
-├─ 04-04-OpsDev/deploy-pages.sh  # 构建 02-TempFiles/dist 并 wrangler 部署到 Cloudflare Pages
+├─ 04-OpsDev/deploy-pages.sh  # 构建 02-TempFiles/dist 并 wrangler 部署到 Cloudflare Pages
 ├─ 03-TempScr/             # 维护脚本：缩略图生成、元数据回填、重排、CDP 交互校验
 ├─ 02-TempFiles/           # 临时产物：dist 部署包、校验截图、Chrome 调试 profile、数据备份
 ├─ 01-ProjectDoc/          # 本交接文档集（legacy/ 为旧版单文件备份）与各模型需求排期记录
@@ -110,12 +110,12 @@ flowchart TD
 
 | 模块 | 职责 | 入口文件 | 上游 | 下游 | 关键配置 | 测试 |
 |---|---|---|---|---|---|---|
-| 数据层 | 48 + 12 条站点元数据，按展示模式决定渲染与翻页顺序 | `sites-data.js` | 人工维护 | 渲染模块 | `slug/src/thumb/category` 路径约定 | `03-TempScr/10月5日-2335-本次改动冒烟.js` |
-| 渲染与分组 | 按分类分组、并列 band 合并、卡片 HTML | `assets/app.js` `renderGallery` | 数据层、筛选模块 | 事件绑定 | `CATEGORY_BANDS`（app.js:258 起） | 整页截图 + dump-dom 校验 section 数 |
+| 数据层 | 49 + 12 条站点元数据，按展示模式决定渲染与翻页顺序 | `sites-data.js` | 人工维护 | 渲染模块 | `slug/src/thumb/category` 路径约定 | `03-TempScr/10月5日-2335-本次改动冒烟.js` |
+| 渲染与分组 | 按分类分组、并列 band 合并、卡片 HTML | `assets/app.js` `renderGallery` | 数据层、筛选模块 | 事件绑定 | `CATEGORY_BANDS`（app.js:272 起） | 整页截图 + dump-dom 校验 section 数 |
 | 筛选与搜索 | 分类 chip、关键词搜索 | `assets/app.js` | 用户输入 | 渲染模块 | 搜索字段：model/category/file | 人工验证 |
-| 评分 | 1-10 分读写、默认基线、导出导入、按分排序 | `assets/app.js`（`RATINGS_KEY`=app.js:48，`DEFAULT_RATINGS`=app.js:51） | 卡片/查看器 | `localStorage` | 键 `peilika_ratings_v1` | `03-TempScr/10月5日-2110-展厅查看器交互校验.js` |
+| 评分 | 1-10 分读写、默认基线、导出导入、按分排序 | `assets/app.js`（`RATINGS_KEY`=app.js:57，`DEFAULT_RATINGS`=app.js:60） | 卡片/查看器 | `localStorage` | 键 `peilika_ratings_v1` | `03-TempScr/10月5日-2110-展厅查看器交互校验.js` |
 | 查看器 | iframe 全屏查看、翻页、预加载、键盘 | `assets/app.js` `openViewer/loadCurrent/warmNeighbors` | 卡片点击 | `sites/*.html` | 三帧 `viewerIframe/Prev/Next` | `03-TempScr/10月5日-2120-查看器二次打开复测.js` |
-| 缩略图生成 | 无头 Chrome 截图 + Pillow 合成动画 WebP | `03-TempScr/10月5日-1815-生成展厅缩略图.py` | `sites/*.html` | `thumbs/*.png|.webp` | 1280×900、8 帧、每帧 260ms | 脚本已生成 45 组，产物人工抽查 |
+| 缩略图生成 | 无头 Chrome 截图 + Pillow 合成动画 WebP | `03-TempScr/10月5日-1815-生成展厅缩略图.py` | `sites/*.html` | `thumbs/*.png|.webp` | 1280×900、8 帧、每帧 260ms | 脚本已生成 61 组，产物人工抽查 |
 | 部署 | 构建 dist + wrangler 推送 | `04-OpsDev/deploy-pages.sh` | 工作区文件 | Cloudflare Pages | `--project-name peilika` | 每次部署后 curl 校验 |
 
 ## 关键调用链
