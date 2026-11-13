@@ -32,7 +32,7 @@ client_level: developer
 - **5 个新模型的 `channel` 元数据未确认**：`grok-4-7`、`deepseek-v4-1-flash`、`mimo-v2-6`、`mimo-v2-6-pro`、`minimax-m3-1` 的渠道值暂为 `未公开`（界面已隐藏渠道标签，数据仍留占位）。
 - **3D 模式条目无默认评分基线**：`DEFAULT_RATINGS` 只覆盖 2D 的 50 条，12 条 3D 条目首次打开时为未打分态，需人工打分。
 - **模型规格字段有部分「未公开」**：闭源模型的 `params`（参数规模）与 `cutoff`（知识截止）检索不到时填「未公开」，只有能查证的才填实数（如 Hy4 preview 770B/A49B、Step 5 Preview 600B/A27B、DeepSeek V4.1 Flash 552B/A8B）。
-- **评分只在本机生效**：无后端，换浏览器/设备看不到评分；跨设备同步目前只能手动导出/导入 JSON。
+- **评分只在本机生效**：无后端，换浏览器/设备看不到评分；展厅的排序与导出入口已下线，无跨设备同步手段。
 
 ## 技术债
 
@@ -72,5 +72,6 @@ client_level: developer
 | `a4aa4b1` | 收录「混元 HY4 正式版」（slug `hy4`，`DEFAULT_RATINGS` 10 分）置于「腾讯 · 混元」分类首位，`hy4-preview`（8 分）保留；`window.SITES` 49 条、`window.SITES_3D` 12 条，slug 合计 61 个；首页计数 49 与「更新至 2026-11-04」同步；部署 `296307a5` 已线上校验 |
 | `825cde2` | 增量更新交接文档：同步 `window.SITES` 49 条 + `window.SITES_3D` 12 条（合计 61 个 slug）与混元 HY4 正式版条目、10 分评分基线、CDP 9307 校验证据及部署 `296307a5` 线上校验记录；修正架构文档过时行号与路径、首页标题与描述的模型计数 |
 | `a1f337b` | 收录「Gemini 4 Hydrogen」（slug `gemini-4-hydrogen`，`DEFAULT_RATINGS` 10 分），置于 Gemini 分类 `gemini-4-argon` 之后，`channel` 与 `params` 为「未公开」；原件 `models/gemini-4-hydrogen.html`、展厅副本 `sites/gemini-4-hydrogen.html`、8 帧缩略图 `thumbs/gemini-4-hydrogen.png` 与 `.webp` 已生成；`window.SITES` 50 条、`window.SITES_3D` 12 条、slug 合计 62 个；首页 title、meta description、副标题 50 个模型与「更新至 2026-11-13」同步；部署 `cd72ad24` 已线上校验 |
+| 2026-11-13 晚间 | 替换 2D 提示词为带 agent 约束的新版本（顶部与查看器四处静态文案 + `MODE_META` 同步）；下线「按评分排序」「导出评分」入口与相关死代码/样式；GitHub 图标移至 Header 右上角；实现渐进式分批渲染、图片 eager/lazy + fetchpriority + decoding、卡片 `content-visibility`、事件委托、搜索防抖、chip 状态更新、CDN `preconnect`。CDP 验收见 `03-TempScr/1113-2210-性能优化与交互验收.js` |
 
 > 更早历史见 [legacy/PROJECT_HANDOFF.md](./legacy/PROJECT_HANDOFF.md)（24 卡时代记录，计数已过时）。

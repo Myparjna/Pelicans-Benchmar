@@ -56,7 +56,8 @@ models/3d/            体素版本原件，不参与部署
 2. **生成展厅副本** → 复制到 `sites/<slug>.html`（内容与原模型文件一致，`src` 指向这里）。
 3. **登记数据** → 在 `sites-data.js` 对应数组里加/改一条，字段：`file`（指向 `models/...`）、`slug`、`model`、`category`、以及 2D 条目的规格字段。`category` 必须是已有分类名之一，否则会新开一个分类 section。
 4. **生成缩略图** → 改 `03-TempScr/10月5日-1815-生成展厅缩略图.py` 的 `SLUGS` 列表，跑一次。
-5. **同步首页文案** → `index.html` 里「N 个模型/版本」计数 + 「更新至 YYYY-MM-DD」日期。**这一步最容易漏，每次增删条目都要改。**（曾因漏改被返工）
+5. **同步首页文案** → `index.html` 里「N 个模型/版本」计数 + 「更新至 YYYY-MM-DD」日期 + `<title>` 与 meta description 的计数。**这一步最容易漏，每次增删条目都要改。**（曾因漏改被返工）
+   - 若同时改了提示词，按 §3 的说明同步 `MODE_META` 与 `index.html` 四处静态文案。
 6. **校验** → 见第 4 节。
 7. **部署** → `bash 04-OpsDev/deploy-pages.sh`，然后用**部署专属域** `<id>.peilika.pages.dev` 验证（生产域有边缘缓存，会看到旧版）。
 8. **提交推送** → `git add -A && git commit -m "..."` && `git push`。
@@ -83,13 +84,22 @@ const CATEGORY_BANDS = [
 
 ---
 
-## 3. 2D / 3D 两套数据集
+## 3. 2D / 3D 两套数据集与渲染约定
 
 - `window.SITES`（50 条，平面动画版）与 `window.SITES_3D`（12 条，体素场景版）是**两个独立数组**，slug 分别以普通名称和 `3d-` 前缀区分。
 - 顶部「2D / 3D」按钮（`.mode-switch` / `.mode-btn[data-mode]`）切换时，卡片、缩略图、分类、提示词文案、查看器与计数全部同步切换（`applyMode()`）。
 - 3D 提示词原文：**「使用体素建模。生成一个鹈鹕白天骑自行车的网页场景，要求兼容手机竖屏与电脑横屏显示。而且每过5秒进行晴天-阴天-雨天-晴天的天气自动切换。不使用任何skills。给我html」**
-- 2D 提示词原文：**「生成一个鹈鹕白天骑自行车的网页动画，单个html文件给我，要求能自适应网页宽度，兼容手机竖屏与电脑横屏显示。每过5秒进行晴天-阴天-雨天-晴天的天气自动切换。不使用任何skills。」**
-- 两套文案写在 `assets/app.js` 的 `MODE_META` 里，不要硬编码进 `index.html`。
+- 2D 提示词原文（2026-11-13 更新）：**「生成一个鹈鹕白天骑自行车的网页动画，单个html文件给我，要求能自适应网页宽度，兼容手机竖屏与电脑横屏显示。每过5秒进行晴天-阴天-雨天-晴天的天气自动切换。不使用任何skills。也不派任何subagent进行codereviwer。单个文件+时间命名好给我。告诉我绝对路径。」**
+- 两套文案写在 `assets/app.js` 的 `MODE_META` 里，不要硬编码进 `index.html`。`index.html` 里另有 `promptLine`、`promptTip1`、`promptTip2`、`viewerPromptText` 四处静态文案，改提示词时**四处 + MODE_META 一起改**，否则首屏会闪旧文案或查看器不跟随切换。
+
+### 渐进式渲染与性能约定
+
+- `renderGallery()` 先铺「分类标题 + 空网格」骨架，卡片 HTML 字符串与 DOM 插入都按 `requestAnimationFrame` 每帧 8 张进行（`RENDER_BATCH`）；`renderToken` 代次取消旧批次，快速筛选/切换时不会串插。
+- 卡片交互走 `root` 上的事件委托（click / keydown / pointerover），新插入的卡片无需逐个绑定监听器。评分交互仍按批次对新卡片调用 `bindRatings(card)`。
+- 图片：前 6 张 `loading="eager" fetchpriority="high"`，其余 `loading="lazy"`；静态图全部 `decoding="async"` 并带 `width/height`；动画 WebP 只在首次 hover 时才赋 `src`。
+- `.site-card` 用 `content-visibility: auto` + `contain-intrinsic-size: auto 340px` 跳过视口外绘制。
+- 搜索输入 120ms 防抖；分类 chip 点击只切换 `active`，不重建 chip DOM；`<head>` 对 jsDelivr 有 `preconnect`。
+- 排序与导出入口已于 2026-11-13 下线，`sortByRating` / `exportRatings()` / `rank-badge` 相关代码与样式已清理，不要重新引入。
 
 ---
 
@@ -159,6 +169,8 @@ bash 04-OpsDev/deploy-pages.sh
 - [ ] 部署后用专属域验证过 `content-type`
 - [ ] 交接文档（`01-ProjectDoc/`）里的计数与结构描述同步更新
 - [ ] 本文件（`AGENTS.md`）里的数据集/副本计数与 `DEFAULT_RATINGS` 说明同步更新
+- [ ] 改提示词时，`MODE_META` 与 `index.html` 四处静态文案一起改
+- [ ] CDP 验收覆盖渐进式渲染、2D/3D 提示词同步、查看器、打分与移动端视口
 - [ ] 已 commit + push
 
 ---

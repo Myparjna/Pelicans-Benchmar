@@ -29,12 +29,12 @@ flowchart LR
 
 ```
 03-鹈鹕自行车测试/
-├─ index.html              # 页面骨架：header(搜索+排序+导出)、filter-bar、galleryRoot、viewer 三帧查看器
+├─ index.html              # 页面骨架：header(2D/3D 切换 + 搜索 + 提示词 + 右上角 GitHub 链接)、filter-bar、galleryRoot、viewer 三帧查看器
 ├─ sites-data.js           # 唯一数据源：window.SITES 50 条与 window.SITES_3D 12 条（合计 62 个 slug；数组顺序 = 展厅与查看器翻页顺序）
 ├─ favicon.webp            # 站点 favicon 与左上角品牌图标（同一张）
 ├─ assets/
 │  ├─ style.css            # 浅色主题、卡片网格、查看器、移动端断点 720px
-│  └─ app.js               # 渲染、筛选搜索、评分、排序、band 合并、查看器预加载
+│  └─ app.js               # 渐进式分批渲染、筛选搜索、评分、band 合并、事件委托、查看器预加载
 ├─ sites/                  # 62 个 ASCII 命名干净副本（50 个 2D + 12 个 3D，部署用，查看器 iframe 直接加载）
 ├─ thumbs/                 # 124 个缩略图：每个 slug 一份 png（静态）+ 一份 webp（8 帧动画），共 62 组
 ├─ models/                 # 各模型原始产出原件（禁止修改，仅作对比源与副本来源），按 slug 命名
@@ -57,7 +57,7 @@ flowchart LR
 - **纯静态、零构建**：展厅只需对比「模型产出的原始 HTML」，任何框架/打包都会污染对比对象；因此前端保持原生 JS，无 package.json。
 - **副本而非改造原件**：根目录原件禁止修改，展示用 `sites/` 下的 ASCII 副本（`slug` 必须是 ASCII，否则部署路径会出问题）。
 - **缩略图自制而不外链**：用无头 Chrome 自截 + Pillow 合成动画 WebP，保证全部卡片风格一致（曾尝试外链图床方案，已放弃）。
-- **评分存 localStorage**：无后端，故评分只在本机生效；`DEFAULT_RATINGS` 作为新访客的展示基线，由导出 JSON 回填。
+- **评分存 localStorage**：无后端，故评分只在本机生效；`DEFAULT_RATINGS` 作为新访客的展示基线（源自 2026-10-05 的历史导出文件，展厅导出功能已于 2026-11-13 下线）。
 - **分类并列（band）**：小分类两两共用一行网格，先做过「auto-fit 拉宽」方案，用户否掉后改成「每组占位块 + 显式并列配置」，见「扩展与替换点」。
 
 ## 外部资源依赖
@@ -100,7 +100,8 @@ flowchart TD
   CARD --> RATE[评分模块]
   VIEWER --> RATE
   RATE --> LS[(localStorage)]
-  RATE --> SORT[按评分排序视图]
+  RENDER --> PROGRESSIVE[逐帧分批插入卡片]
+  PROGRESSIVE --> CARD
   VIEWER --> PRELOAD[相邻页预加载 warmNeighbors]
 ```
 
@@ -111,9 +112,9 @@ flowchart TD
 | 模块 | 职责 | 入口文件 | 上游 | 下游 | 关键配置 | 测试 |
 |---|---|---|---|---|---|---|
 | 数据层 | 50 + 12 条站点元数据，按展示模式决定渲染与翻页顺序 | `sites-data.js` | 人工维护 | 渲染模块 | `slug/src/thumb/category` 路径约定 | `03-TempScr/10月5日-2335-本次改动冒烟.js` |
-| 渲染与分组 | 按分类分组、并列 band 合并、卡片 HTML | `assets/app.js` `renderGallery` | 数据层、筛选模块 | 事件绑定 | `CATEGORY_BANDS`（app.js:272 起） | 整页截图 + dump-dom 校验 section 数 |
-| 筛选与搜索 | 分类 chip、关键词搜索 | `assets/app.js` | 用户输入 | 渲染模块 | 搜索字段：model/category/file | 人工验证 |
-| 评分 | 1-10 分读写、默认基线、导出导入、按分排序 | `assets/app.js`（`RATINGS_KEY`=app.js:57，`DEFAULT_RATINGS`=app.js:60） | 卡片/查看器 | `localStorage` | 键 `peilika_ratings_v1` | `03-TempScr/10月5日-2110-展厅查看器交互校验.js` |
+| 渲染与分组 | 按分类分组、并列 band 合并、空网格骨架 + 逐帧分批插入卡片、根节点事件委托 | `assets/app.js` `renderGallery` | 数据层、筛选模块 | 卡片交互 | `RENDER_BATCH=8`、`EAGER_CARDS=6`、`renderToken` 代次取消、`CATEGORY_BANDS`（app.js 内） | `03-TempScr/1113-2210-性能优化与交互验收.js` |
+| 筛选与搜索 | 分类 chip（只切 active 状态）、关键词搜索（120ms 防抖） | `assets/app.js` | 用户输入 | 渲染模块 | 搜索字段：model/category/file | `03-TempScr/1113-2210-性能优化与交互验收.js` |
+| 评分 | 1-10 分读写、默认基线、卡片与查看器双向同步 | `assets/app.js`（`RATINGS_KEY`、`DEFAULT_RATINGS`） | 卡片/查看器 | `localStorage` | 键 `peilika_ratings_v1` | `03-TempScr/10月5日-2110-展厅查看器交互校验.js` |
 | 查看器 | iframe 全屏查看、翻页、预加载、键盘 | `assets/app.js` `openViewer/loadCurrent/warmNeighbors` | 卡片点击 | `sites/*.html` | 三帧 `viewerIframe/Prev/Next` | `03-TempScr/10月5日-2120-查看器二次打开复测.js` |
 | 缩略图生成 | 无头 Chrome 截图 + Pillow 合成动画 WebP | `03-TempScr/10月5日-1815-生成展厅缩略图.py` | `sites/*.html` | `thumbs/*.png|.webp` | 1280×900、8 帧、每帧 260ms | 脚本已生成 62 组，产物人工抽查 |
 | 部署 | 构建 dist + wrangler 推送 | `04-OpsDev/deploy-pages.sh` | 工作区文件 | Cloudflare Pages | `--project-name peilika` | 每次部署后 curl 校验 |

@@ -25,10 +25,10 @@ client_level: developer
 - 预期输出：查看器全屏 iframe 加载 `sites/<slug>.html` 的真实页面，顶部显示序号 `n / 50`（3D 模式为 `n / 12`）、模型名、分类、参数、截止与评分控件。
 - 失败表现：卡片区域空白 → 多为 `sites-data.js` 语法错误或 `sites/` 缺失文件（本地先 `node --check sites-data.js`）。
 
-### 流程 2：打分并导出基准分
+### 流程 2：打分
 
 - 操作：卡片底部星星点 1-10 分；或打开查看器在顶部打分 → 关闭后卡片分数同步更新。
-- 预期输出：写入 `localStorage` 键 `peilika_ratings_v1`；点顶部「按评分排序」生成榜单（高分在前、未评分在后，卡片带 `No.n` 徽标）；点导出按钮下载 JSON（格式见「数据与文件」）。
+- 预期输出：写入 `localStorage` 键 `peilika_ratings_v1`，卡片与查看器分数一致，刷新页面后保持。
 - 失败表现：分数不同步 → 检查是否在同一浏览器/同一 origin（本地 `127.0.0.1:8137` 与线上 `peilika.pages.dev` 数据不互通）。
 
 ### 流程 3：新增一个模型条目（维护者）
@@ -59,7 +59,7 @@ client_level: developer
 - 输入数据：各模型产出的单页 HTML（根目录原始文件 + `sites/` ASCII 命名副本，`sites/` 当前 62 个（50 个 2D + 12 个 3D））。
 - 元数据：`sites-data.js`（`window.SITES` 50 条与 `window.SITES_3D` 12 条，合计 62 个 slug；字段 `file/slug/category/model/channel/thumb/src/params/cutoff/released`）。
 - 图片：`thumbs/` 下每个 slug 两份——`<slug>.png`（1280×900 静态封面）与 `<slug>.webp`（8 帧动画，hover 播放），当前 124 个文件（62 组 png + 62 组 webp）。
-- 评分导出：浏览器导出 JSON，形如 `{ schema, count, totalSites, exportedAt, ratings: { slug: score } }`；最近一次基线导出为 `C:/Users/mypra/Desktop/peilika-ratings-2026-10-05.json`（已回填为 `assets/app.js` 的 `DEFAULT_RATINGS`）。
+- 评分存储：`localStorage` 键 `peilika_ratings_v1`，形如 `{ slug: score }`；默认基线写死在 `assets/app.js` 的 `DEFAULT_RATINGS`，来源为 2026-10-05 的历史导出文件 `C:/Users/mypra/Desktop/peilika-ratings-2026-10-05.json`。展厅的排序与导出入口已于 2026-11-13 下线，需要跨设备搬运评分时从浏览器开发者工具读取该键。
 - 原始文件保留：根目录中文名原始 HTML 与 `Trash/` 下架备份长期保留，勿清理。
 
 ## 权限与安全边界

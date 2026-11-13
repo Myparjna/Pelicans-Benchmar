@@ -1,4 +1,4 @@
-/* 展厅逻辑：按厂商分组渲染卡片、分类筛选、搜索、1-10 打分(localStorage)、一键按评分排序、iframe 查看器 */
+/* 展厅逻辑：按厂商分组渐进渲染卡片、分类筛选、搜索、1-10 打分(localStorage)、iframe 查看器 */
 (function () {
   const DATASETS = {
     '2d': window.SITES || [],
@@ -16,9 +16,7 @@
   const root = document.getElementById('galleryRoot');
   const searchInput = document.getElementById('searchInput');
   const filterBar = document.getElementById('filterBar');
-  const sortToggle = document.getElementById('sortToggle');
   const totalCount = document.getElementById('totalCount');
-  const exportBtn = document.getElementById('exportRatings');
 
   const viewer = document.getElementById('viewer');
   const viewerIframe = document.getElementById('viewerIframe');
@@ -134,36 +132,6 @@
     } catch (e) { /* 存储不可用时静默降级 */ }
   }
 
-  function exportRatings() {
-    // 收集当前模式下所有条目的评分（含默认分基线 + 用户手动覆盖）
-    const site = sites;
-    const ratingsOut = {};
-    for (const s of site) {
-      const v = ratings[s.slug];
-      if (typeof v === 'number' && v > 0) ratingsOut[s.slug] = v;
-    }
-    const payload = {
-      schema: 'peilika-ratings/v1',
-      source: 'peilika.pages.dev',
-      exportedAt: new Date().toISOString(),
-      count: Object.keys(ratingsOut).length,
-      totalSites: site.length,
-      ratings: ratingsOut,
-    };
-    const json = JSON.stringify(payload, null, 2);
-    const blob = new Blob([json], { type: 'application/json;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    const today = new Date().toISOString().slice(0, 10);
-    a.href = url;
-    a.download = `peilika-ratings-${today}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-    return { count: Object.keys(ratingsOut).length, totalSites: site.length, bytes: json.length };
-  }
-
   function getRating(slug) {
     const v = ratings[slug];
     return (typeof v === 'number' && v >= 1 && v <= 10) ? v : 0;
@@ -171,7 +139,6 @@
 
   let activeCategory = '全部';
   let searchTerm = '';
-  let sortByRating = false;
   let filteredSites = [...sites];
   let currentIndex = -1;
 
@@ -204,9 +171,10 @@
     }).join('');
   }
 
-  function updateSortToggle() {
-    sortToggle.classList.toggle('active', sortByRating);
-    sortToggle.setAttribute('aria-pressed', String(sortByRating));
+  function updateChips() {
+    filterBar.querySelectorAll('.filter-chip').forEach(chip => {
+      chip.classList.toggle('active', chip.dataset.category === activeCategory);
+    });
   }
 
   /* 星星评分：5 颗星 × 半星粒度 = 10 分制；底层镂空灰星，上层实心黄星按填充比例裁剪（0/50/100%） */
@@ -233,31 +201,19 @@
     return starHTML(getRating(s.slug), s.slug);
   }
 
+  /* ---------- 渐进式渲染：先铺分类骨架，再逐帧分批插入卡片 ---------- */
+  const RENDER_BATCH = 8;   // 每帧插入的卡片数，拆散长任务
+  const EAGER_CARDS = 6;    // 首屏优先加载的静态缩略图数量
+  let renderToken = 0;      // 渲染代次：筛选/切换时丢弃未完成的旧批次
+  let cardSeq = 0;
+  let searchTimer = 0;
+
   function renderGallery() {
+    const token = ++renderToken;
     totalCount.textContent = filteredSites.length;
 
     if (filteredSites.length === 0) {
       root.innerHTML = '<div class="empty-state">没有匹配的站点，请调整筛选条件。</div>';
-      return;
-    }
-
-    // 一键按评分排序：跨分类排成榜单（高分在前，未评分在后）
-    if (sortByRating) {
-      const sorted = [...filteredSites].sort((a, b) => {
-        const ra = getRating(a.slug), rb = getRating(b.slug);
-        if (rb !== ra) return rb - ra;
-        return 0; // 同分时保持原始顺序
-      });
-      const cards = sorted.map((s, i) => cardHTML(s, i + 1)).join('');
-      root.innerHTML = `
-        <section class="category-section sort-view">
-          <div class="category-title">
-            <span class="category-name">评分排行</span>
-            <span class="category-count">${sorted.length} 个 · 高分优先</span>
-          </div>
-          <div class="site-grid">${cards}</div>
-        </section>`;
-      bindCards();
       return;
     }
 
@@ -279,6 +235,15 @@
     for (const [a, b] of CATEGORY_BANDS) { bandOf.set(a, b); bandOf.set(b, a); }
     const consumed = new Set();
 
+    // 骨架只保留空的网格容器，卡片数据暂存到 slots；HTML 字符串也按帧生成，
+    // 避免一次性拼接 50+ 张卡片形成长任务
+    const slots = [];
+    function makeSlot(items, className, showCategory) {
+      const i = slots.length;
+      slots.push({ items, showCategory });
+      return `<div class="${className}" data-slot="${i}"></div>`;
+    }
+
     const html = [];
     for (const [category, items] of groups) {
       if (consumed.has(category)) continue;
@@ -297,9 +262,7 @@
                 <span class="category-name">${escapeHtml(g.category)}</span>
                 <span class="category-count">${g.items.length} 个</span>
               </div>
-              <div class="band-cards">
-                ${g.items.map(s => cardHTML(s, 0, true)).join('')}
-              </div>
+              ${makeSlot(g.items, 'band-cards', true)}
             </div>`).join('');
         html.push(`
           <section class="category-section merged-band">
@@ -316,27 +279,47 @@
             <span class="category-name">${escapeHtml(category)}</span>
             <span class="category-count">${items.length} 个</span>
           </div>
-          <div class="site-grid">
-            ${items.map(s => cardHTML(s)).join('')}
-          </div>
+          ${makeSlot(items, 'site-grid', false)}
         </section>
       `);
     }
     root.innerHTML = html.join('');
-    bindCards();
+
+    // 按视觉顺序汇总成队列，逐帧生成卡片 HTML、插入并对新卡片绑定评分交互
+    const queue = [];
+    slots.forEach((slot, i) => slot.items.forEach(s => queue.push({ slot: i, site: s, showCategory: slot.showCategory })));
+    cardSeq = 0;
+    let cursor = 0;
+    function flush() {
+      if (token !== renderToken) return;
+      const bySlot = new Map();
+      queue.slice(cursor, cursor + RENDER_BATCH).forEach(it => {
+        if (!bySlot.has(it.slot)) bySlot.set(it.slot, []);
+        bySlot.get(it.slot).push(cardHTML(it.site, it.showCategory));
+      });
+      bySlot.forEach((cards, slot) => {
+        const el = root.querySelector(`[data-slot="${slot}"]`);
+        if (!el) return;
+        const before = el.children.length;
+        el.insertAdjacentHTML('beforeend', cards.join(''));
+        [...el.children].slice(before).forEach(card => bindRatings(card));
+      });
+      cursor += RENDER_BATCH;
+      if (cursor < queue.length) requestAnimationFrame(flush);
+    }
+    requestAnimationFrame(flush);
   }
 
-  function cardHTML(s, rank, showCategory) {
-    const rankBadge = rank ? `<span class="rank-badge">No.${rank}</span>` : '';
+  function cardHTML(s, showCategory) {
+    const eager = cardSeq++ < EAGER_CARDS;
     const categoryBadge = showCategory ? `<span class="category-chip">${escapeHtml(s.category)}</span>` : '';
     const paramsBadge = s.params ? `<span class="params-badge" title="模型总参（激活参未列出）">${escapeHtml(s.params)}</span>` : '';
     const cutoffBadge = s.cutoff ? `<span class="cutoff-badge" title="知识截止日期">截止 ${escapeHtml(s.cutoff)}</span>` : '';
     return `
       <article class="site-card" tabindex="0" role="button" aria-label="打开 ${escapeHtml(s.model)}" data-slug="${escapeHtml(s.slug)}">
         <div class="thumb-wrap">
-          ${rankBadge}
-          <img class="thumb-static" src="${escapeHtml(s.thumb)}" alt="${escapeHtml(s.model)} 缩略图" loading="lazy">
-          <img class="thumb-anim" data-anim="${escapeHtml(s.thumb.replace(/\.png$/, '.webp'))}" alt="" aria-hidden="true">
+          <img class="thumb-static" src="${escapeHtml(s.thumb)}" alt="${escapeHtml(s.model)} 缩略图" width="1280" height="800" decoding="async" loading="${eager ? 'eager' : 'lazy'}"${eager ? ' fetchpriority="high"' : ''}>
+          <img class="thumb-anim" data-anim="${escapeHtml(s.thumb.replace(/\.png$/, '.webp'))}" alt="" aria-hidden="true" decoding="async">
         </div>
         <div class="card-body">
           <div class="card-meta">
@@ -352,28 +335,30 @@
     `;
   }
 
-  function bindCards() {
-    document.querySelectorAll('.site-card').forEach(card => {
-      const slug = card.dataset.slug;
-      // 首次悬停时才加载动图（避免 27 张动图全部预下载）
-      card.addEventListener('mouseenter', () => {
-        const anim = card.querySelector('.thumb-anim');
-        if (anim && !anim.src) anim.src = anim.dataset.anim;
-      });
-      function activate(e) {
-        if (e.target.closest('.star-rating')) return; // 评分区不触发打开
-        openViewer(slug);
-      }
-      card.addEventListener('click', activate);
-      card.addEventListener('keydown', e => {
-        if (e.target.closest('.star')) return; // 评分控件自行处理
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          activate(e);
-        }
-      });
+  /* 卡片交互改为画廊根节点事件委托：分批插入的新卡片无需逐个绑定监听器 */
+  function bindCardDelegates() {
+    root.addEventListener('click', e => {
+      if (!(e.target instanceof Element)) return;
+      const card = e.target.closest('.site-card');
+      if (!card || e.target.closest('.star-rating')) return;
+      openViewer(card.dataset.slug);
     });
-    bindRatings(root);
+    root.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      if (!(e.target instanceof Element) || e.target.closest('.star')) return;
+      const card = e.target.closest('.site-card');
+      if (!card) return;
+      e.preventDefault();
+      openViewer(card.dataset.slug);
+    });
+    root.addEventListener('pointerover', e => {
+      if (!(e.target instanceof Element)) return;
+      const card = e.target.closest('.site-card');
+      if (!card || card.dataset.animLoaded) return;
+      const anim = card.querySelector('.thumb-anim');
+      if (anim && !anim.src) anim.src = anim.dataset.anim;
+      card.dataset.animLoaded = '1';
+    });
   }
 
   /* 星星交互：悬停预览、点击（左半=半星）/方向键微调，保存后回调 onSave */
@@ -428,7 +413,6 @@
   /* 统一评分入口：写入本地存储后同步刷新展厅卡片与查看器显示 */
   function applyRating(slug, score) {
     saveRating(slug, score);
-    if (sortByRating) renderGallery();
     refreshCardRating(slug);
     const cur = filteredSites[currentIndex];
     if (cur && cur.slug === slug) updateViewerRating(siteBySlug[slug]);
@@ -579,12 +563,13 @@
   const promptLineEl = document.getElementById('promptLine');
   const promptTip1El = document.getElementById('promptTip1');
   const promptTip2El = document.getElementById('promptTip2');
+  const viewerPromptTextEl = document.getElementById('viewerPromptText');
   const MODE_META = {
     '2d': {
       subtitle: '鹈鹕自行车测试 · ' + DATASETS['2d'].length + ' 个模型/版本生成效果对比',
-      line: '生成一个鹈鹕白天骑自行车的网页动画，单个html文件给我，要求能自适应网页宽度，兼容手机竖屏与电脑横屏显示。每过5秒进行晴天-阴天-雨天-晴天的天气自动切换。不使用任何skills。',
-      tip1: '生成一个鹈鹕白天骑自行车的网页动画，单个html文件给我，要求能自适应网页宽度，兼容手机竖屏与电脑横屏显示。',
-      tip2: '每过5秒进行晴天-阴天-雨天-晴天的天气自动切换。不使用任何skills。',
+      line: '生成一个鹈鹕白天骑自行车的网页动画，单个html文件给我，要求能自适应网页宽度，兼容手机竖屏与电脑横屏显示。每过5秒进行晴天-阴天-雨天-晴天的天气自动切换。不使用任何skills。也不派任何subagent进行codereviwer。单个文件+时间命名好给我。告诉我绝对路径。',
+      tip1: '生成一个鹈鹕白天骑自行车的网页动画，单个html文件给我，要求能自适应网页宽度，兼容手机竖屏与电脑横屏显示。每过5秒进行晴天-阴天-雨天-晴天的天气自动切换。不使用任何skills。',
+      tip2: '也不派任何subagent进行codereviwer。单个文件+时间命名好给我。告诉我绝对路径。',
     },
     '3d': {
       subtitle: '鹈鹕自行车测试 · ' + DATASETS['3d'].length + ' 个体素版本生成效果对比',
@@ -593,6 +578,7 @@
       tip2: '而且每过5秒进行晴天-阴天-雨天-晴天的天气自动切换。不使用任何skills。给我html',
     },
   };
+  let PROMPT_TEXT = MODE_META[mode].line;
 
   function applyMode(next) {
     if (!DATASETS[next] || next === mode) return;
@@ -600,10 +586,9 @@
     sites = DATASETS[mode];
     reindex();
     activeCategory = '全部';
-    sortByRating = false;
     searchTerm = '';
     searchInput.value = '';
-    updateSortToggle();
+    clearTimeout(searchTimer);
     modeSwitch.querySelectorAll('.mode-btn').forEach(btn => {
       const on = btn.dataset.mode === mode;
       btn.classList.toggle('is-active', on);
@@ -614,6 +599,7 @@
     promptLineEl.textContent = meta.line;
     promptTip1El.textContent = meta.tip1;
     promptTip2El.textContent = meta.tip2;
+    viewerPromptTextEl.textContent = meta.line;
     PROMPT_TEXT = meta.line;
     renderChips();
     applyFilters();
@@ -624,27 +610,18 @@
     if (btn) applyMode(btn.dataset.mode);
   });
 
-  sortToggle.addEventListener('click', () => {
-    sortByRating = !sortByRating;
-    if (sortByRating) activeCategory = '全部'; // 排序即为全量榜单
-    updateSortToggle();
-    renderChips();
-    applyFilters();
-  });
-
   filterBar.addEventListener('click', e => {
     const chip = e.target.closest('.filter-chip');
     if (!chip) return;
     activeCategory = chip.dataset.category;
-    sortByRating = false; // 选分类即退出排序视图
-    updateSortToggle();
-    renderChips();
+    updateChips();
     applyFilters();
   });
 
   searchInput.addEventListener('input', e => {
     searchTerm = e.target.value;
-    applyFilters();
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(applyFilters, 120);
   });
 
   btnClose.addEventListener('click', closeViewer);
@@ -660,21 +637,11 @@
     if (e.key === 'ArrowRight') next();
   });
 
-  if (exportBtn) {
-    exportBtn.addEventListener('click', () => {
-      const r = exportRatings();
-      const orig = exportBtn.innerHTML;
-      exportBtn.innerHTML = `<i class="ti ti-check"></i> 已导出 ${r.count} 条`;
-      setTimeout(() => { exportBtn.innerHTML = orig; }, 1600);
-    });
-  }
-
-  updateSortToggle();
+  bindCardDelegates();
   renderChips();
   applyFilters();
 
   /* ---------- 顶部提示词：点击复制（大厅 + 查看器两处） ---------- */
-  let PROMPT_TEXT = MODE_META[mode].line;
 
   function bindPromptCopy(box, iconId) {
     const icon = document.getElementById(iconId);

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # 部署「鹈鹕自行车测试」展厅到 Cloudflare Pages 项目 peilika
 # 用法（在 git bash 中）：
-#   bash OpsDev/deploy-pages.sh
+#   bash 04-OpsDev/deploy-pages.sh
 # 依赖：已登录 wrangler（npx wrangler login）且账号下有 peilika 项目
 set -e
 

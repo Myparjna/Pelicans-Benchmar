@@ -32,6 +32,7 @@ client_level: developer
 | 部署产物 | 高 | 线上 curl 校验首页计数、数据条数、资源 content-type | 首页计数 50、`"slug"` 出现 62 次、`thumbs/gemini-4-hydrogen.png` 与 `thumbs/gemini-4-hydrogen.webp` 的 content-type 分别为 image/png / image/webp、`sites/gemini-4-hydrogen.html` 200 text/html、`assets/app.js` 含 `'gemini-4-hydrogen': 10` | 部署 `296307a5`（2026-11-04）与 `cd72ad24`（2026-11-13，本次）线上校验已执行并通过；每次部署后执行 |
 | 混元 HY4 正式版收录校验（2026-11-04） | 高 | CDP（端口 9307）+ Node 数据完整性脚本 | hy4 卡片在位、显示 10 分、缩略图懒加载后 naturalWidth=1280、副标题 49、日期正确；`SITES`=49 / `SITES_3D`=12 / 缺失 0；`[data-slug]` 每条出现 2 次（卡片 + 查看器槽位） | `03-TempScr/1104-1409-hy4正式版收录校验.js`（已执行并通过，CDP 端口 9307，`userDataDir=02-TempFiles/chrome-profile-鹈鹕展厅校验-9307`） |
 | Gemini 4 Hydrogen 收录校验（2026-11-13） | 高 | CDP（端口 9307，含真实鼠标点击）+ Node 数据完整性脚本 | 数据完整性 `SITES`=50 / `SITES_3D`=12 / 缺失 0、`node --check` 通过；去重后 50 张卡片、Gemini 组顺序 argon→hydrogen→3.8、hydrogen 卡片显示 10 分、缩略图懒加载 1280×900、subtitle 与 title 均为 50、日期 2026-11-13、切 3D 后 12 张、控制台 0 报错；查看器打开 `Gemini 4 Hydrogen` / `44 / 50`、当前帧 `sites/gemini-4-hydrogen.html`、三帧预加载为 argon、hydrogen(current)、gemini-3-8；点下一页到 `Gemini 3.8 Flash` / `45 / 50` 并命中预加载帧、Esc 正常关闭 | `03-TempScr/1113-2124-gemini4hydrogen收录校验.js`、`03-TempScr/1113-2128-查看器真实点击补测.js`（均已执行并通过，CDP 端口 9307，`userDataDir=02-TempFiles/chrome-profile-鹈鹕展厅校验-9307`） |
+| 性能优化与交互回归（2026-11-13） | 高 | CDP（端口 9307，禁用磁盘缓存）+ 真实鼠标点击 + 移动端视口模拟 | 50 张卡片 / 14 个空网格槽位 / 11 个 section；eager 6 张 + lazy 44 张、`fetchpriority=high` 6 张、`decoding=async` 50 张、动画 webp 全部未预载；`content-visibility=auto`、`contain-intrinsic-size=auto 340px` 生效、首屏长任务 0 个；排序与导出按钮及 footer 文案均已移除；顶部与查看器提示词均为新版且切 3D 同步；GitHub 图标右上角且不与控件重叠；分类筛选 Gemini=6、搜索防抖后 hydrogen=1；查看器打开/翻页/Esc 正常；打分 7 分同步写入 localStorage；390×844 无横向溢出、图标不压标题；控制台 0 报错 | `03-TempScr/1113-2210-性能优化与交互验收.js`（已执行并通过；`net::ERR_ABORTED` 为 `canceled: true`，属关闭查看器时取消 iframe 请求） |
 
 ## 自动化测试
 
@@ -90,6 +91,8 @@ for (const key of ['SITES','SITES_3D']) {
 - [ ] 打开任一查看器：能加载、翻页正常、Esc 关闭、红色按钮在位
 - [ ] 打分 → 关闭 → 卡片同步；刷新页面评分仍在
 - [ ] 移动端视口（390×844）无横向溢出
+- [ ] 渐进式渲染：卡片分批插入完成、`loading`/`fetchpriority`/`content-visibility` 生效、控制台无报错
+- [ ] 顶部与查看器提示词一致，切换 2D/3D 后同步
 - [ ] `index.html` 的计数文案与「更新至」日期已同步改
 - [ ] 部署：`bash 04-OpsDev/deploy-pages.sh` 成功
 - [ ] 线上校验：首页计数、`sites-data.js` 条数、`thumbs/*.webp` 的 `content-type`（**不要只看状态码**）
@@ -99,8 +102,9 @@ for (const key of ['SITES','SITES_3D']) {
 ## 已知测试缺口
 
 - **无自动化回归套件**：所有验证都是一次性脚本/人工，改动后不能一键回归。建议补一个统一的 `node 03-TempScr/regress.js`（起服务 + CDP 跑核心流程 + 断言，覆盖 2D 与 3D 两套）。
-- **未覆盖**：键盘操作（←/→/Esc 的完整路径）、评分导出/导入 JSON 的一致性、搜索与筛选的边界（空结果、特殊字符）、iframe 内页面自身报错。
+- **未覆盖**：键盘操作（←/→/Esc 的完整路径）、搜索与筛选的边界（空结果、特殊字符）、iframe 内页面自身报错、`content-visibility` 在超长页面滚动时的布局跳动。
 - **3D 模式未做移动端与评分回归**：只验证了切换与查看器，3D 卡片在 390×844 下的表现、3D 条目打分后刷新是否保持，尚未跑过。
+- **长任务观测存在偶发抖动**：本地禁用缓存复测为 0 个 >50ms 长任务；线上专属域 `1f47bd49` 偶发 1-2 个（99ms 归因 `iframe`、79ms 归因 `window`），与 CDN 图标字体及查看器 iframe 页面自身脚本相关，非展厅渲染路径的持续开销。
 - **无法在本机验证**：Cloudflare 生产环境行为（边缘缓存生效时间、真实用户网络下的 CDN 图标加载）。
 - **模型产出页面自身质量**未做自动检查（只人工看截图），各页面可能自带 JS 错误或外链失效。
 - **缩略图生成未纳入回归**：重跑脚本后只人工抽查几张，没有批量尺寸/帧数校验。
