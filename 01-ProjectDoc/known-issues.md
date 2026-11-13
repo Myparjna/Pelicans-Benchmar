@@ -30,7 +30,7 @@ client_level: developer
 ## 未完成功能
 
 - **5 个新模型的 `channel` 元数据未确认**：`grok-4-7`、`deepseek-v4-1-flash`、`mimo-v2-6`、`mimo-v2-6-pro`、`minimax-m3-1` 的渠道值暂为 `未公开`（界面已隐藏渠道标签，数据仍留占位）。
-- **3D 模式条目无默认评分基线**：`DEFAULT_RATINGS` 只覆盖 2D 的 49 条，12 条 3D 条目首次打开时为未打分态，需人工打分。
+- **3D 模式条目无默认评分基线**：`DEFAULT_RATINGS` 只覆盖 2D 的 50 条，12 条 3D 条目首次打开时为未打分态，需人工打分。
 - **模型规格字段有部分「未公开」**：闭源模型的 `params`（参数规模）与 `cutoff`（知识截止）检索不到时填「未公开」，只有能查证的才填实数（如 Hy4 preview 770B/A49B、Step 5 Preview 600B/A27B、DeepSeek V4.1 Flash 552B/A8B）。
 - **评分只在本机生效**：无后端，换浏览器/设备看不到评分；跨设备同步目前只能手动导出/导入 JSON。
 
@@ -41,14 +41,15 @@ client_level: developer
 - **`02-TempFiles/chrome-profile-*`**：Chrome 调试 user data dir 留在项目内，体积大且被扫描器误判为项目内容（误报 Make/Ninja/Arduino/局域网绑定等线索）。
 - **~~根目录堆积大量中文名原始 HTML~~**（2026-10-31 已整理）：原件统一收进 `models/`（按条目标识命名）、3D 原件收进 `models/3d/`，`Trash/`、`3D鹈鹕测试/` 等旁支目录已合并为编号目录。`02-TempFiles/`、`99-Trash/` 已进 `.gitignore`，不参与推送。
 - **无自动化测试**：全部依赖人工 + 一次性 CDP 脚本，脚本命名带日期且散在 `03-TempScr/`，没有统一入口（见 regression-test.md）。
-- **首页计数与日期文案手工维护**：`index.html` 里的「49 个模型/版本生成效果对比」和「更新至 2026-11-04」是手改的，增删条目时必须同步改计数 + 日期 + 排序，否则与数据不一致（已因此被返工过一次）。
+- **首页计数与日期文案手工维护**：`index.html` 里的「50 个模型/版本生成效果对比」和「更新至 2026-11-13」是手改的，增删条目时必须同步改计数 + 日期 + 排序，否则与数据不一致（已因此被返工过一次）。
 - **缩略图脚本用绝对路径且改一次动一次**：`03-TempScr/10月5日-1815-生成展厅缩略图.py` 的 `SLUGS` 是硬编码列表，每次新增都要往里塞 slug。
 - **两套数据集各自独立、无去重**：3D 条目是独立数组 `window.SITES_3D`，与 2D 的同名模型条目不共享评分与元数据；若之后要「同一模型 2D/3D 对照」，需要额外建关联字段。
 - **评分会被本机旧基线覆盖**：`loadRatings()` 是 `Object.assign({}, DEFAULT_RATINGS, localStorage)`，浏览器里存过的旧值会盖掉新基线。改 `DEFAULT_RATINGS` 后本机看不到变化属正常，需清 `localStorage` 键 `peilika_ratings_v1` 或用无痕窗口验证。
+- **交接文档验收基线版本落后**：`01-ProjectDoc/.handoff/analysis-report.json` 的 `schema_version` 为 3（2026-10-05 生成），当前 project-handoff 技能脚本 3.4.0 的 `require_schema` 要求 ≥4。用 `verify_handoff.py --check-only` 可完成静态验收；若要走标准验收并推进基线，需先重跑一次完整扫描升级报告。2026-11-13 增量更新采用 `--check-only`，`analysis-report.verified.json` 的文档摘要未推进。
 
 ## 安全注意项
 
-- 站点完全公开、无鉴权，任何人可访问全部 61 个模型产出页面（这是设计如此）。
+- 站点完全公开、无鉴权，任何人可访问全部 62 个模型产出页面（这是设计如此）。
 - 仓库与部署包内**无密钥、无 token、无 `.env`**；部署凭据仅在本机 `~/.wrangler/`。
 - 各模型产出的页面内引用了第三方 CDN（three.js 等，见 architecture.md 外部资源表），展厅以 iframe 加载它们且**未设 `sandbox` 属性**，被对比页面可执行自身脚本。
 - 未做专业安全审计。
@@ -69,5 +70,7 @@ client_level: developer
 | `e0666bf` | 新增 3D 展示模式：`window.SITES_3D` 12 条独立数据集 + 顶部 2D/3D 切换，卡片/缩略图/分类/提示词/查看器同步切换 |
 | `1f75832` | 完善交接文档并新增 `AGENTS.md`：同步 48+12 数据集与 2D/3D 模式说明、修正各处旧计数、补 3D 模式回归项与变更记录 |
 | `a4aa4b1` | 收录「混元 HY4 正式版」（slug `hy4`，`DEFAULT_RATINGS` 10 分）置于「腾讯 · 混元」分类首位，`hy4-preview`（8 分）保留；`window.SITES` 49 条、`window.SITES_3D` 12 条，slug 合计 61 个；首页计数 49 与「更新至 2026-11-04」同步；部署 `296307a5` 已线上校验 |
+| `825cde2` | 增量更新交接文档：同步 `window.SITES` 49 条 + `window.SITES_3D` 12 条（合计 61 个 slug）与混元 HY4 正式版条目、10 分评分基线、CDP 9307 校验证据及部署 `296307a5` 线上校验记录；修正架构文档过时行号与路径、首页标题与描述的模型计数 |
+| `a1f337b` | 收录「Gemini 4 Hydrogen」（slug `gemini-4-hydrogen`，`DEFAULT_RATINGS` 10 分），置于 Gemini 分类 `gemini-4-argon` 之后，`channel` 与 `params` 为「未公开」；原件 `models/gemini-4-hydrogen.html`、展厅副本 `sites/gemini-4-hydrogen.html`、8 帧缩略图 `thumbs/gemini-4-hydrogen.png` 与 `.webp` 已生成；`window.SITES` 50 条、`window.SITES_3D` 12 条、slug 合计 62 个；首页 title、meta description、副标题 50 个模型与「更新至 2026-11-13」同步；部署 `cd72ad24` 已线上校验 |
 
 > 更早历史见 [legacy/PROJECT_HANDOFF.md](./legacy/PROJECT_HANDOFF.md)（24 卡时代记录，计数已过时）。
