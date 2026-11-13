@@ -516,6 +516,18 @@ window.SITES = [
     "released": 1793428620
   },
   {
+    "file": "models/gemini-4-hydrogen.html",
+    "slug": "gemini-4-hydrogen",
+    "category": "Gemini",
+    "model": "Gemini 4 Hydrogen",
+    "channel": "未公开",
+    "thumb": "thumbs/gemini-4-hydrogen.png",
+    "src": "sites/gemini-4-hydrogen.html",
+    "params": "未公开",
+    "cutoff": "—",
+    "released": 1794576238
+  },
+  {
     "file": "models/gemini-3-8.html",
     "slug": "gemini-3-8",
     "category": "Gemini",

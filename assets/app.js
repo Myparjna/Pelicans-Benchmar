@@ -82,6 +82,7 @@
     'claude-opus-5-5-zcode': 10,
     'gemini-3-8': 7,
     'gemini-4-argon': 10,
+    'gemini-4-hydrogen': 10,
     'qwen-3-8-flash-api': 9,
     'glm-5-3-flash-zhipu': 7,
     'glm-5-3-wb': 10,
