@@ -1,0 +1,65 @@
+{
+  "base": "http://127.0.0.1:8137",
+  "checks": {
+    "title": "AI模型鹈鹕自行车测试 · 51 个模型对比",
+    "h1": "更新至 2026-11-18",
+    "subtitle": "鹈鹕自行车测试 · 51 个模型/版本生成效果对比",
+    "cards_2d": 51,
+    "filter_chips": 15,
+    "gpt_order": [
+      "gpt-6-2-astra",
+      "gpt-6-1-sol",
+      "gpt-6-1-terra",
+      "gpt-6",
+      "gpt-6-sol",
+      "gpt-6-luna",
+      "gpt-5-6-codex",
+      "gpt-5-6-luna-codex"
+    ],
+    "new_card_present": 1,
+    "new_card_title": "GPT-6.2 Astra",
+    "new_params_badge": "未公开",
+    "new_cutoff_badge": "截止 2026-04",
+    "new_card_file": "models/gpt-6-2-astra.html",
+    "header_align": {
+      "icon_cy": 55.8,
+      "actions_cy": 55.8,
+      "brand_cy": 55.8,
+      "delta_actions": 0,
+      "delta_brand": 0
+    },
+    "anim": {
+      "total": 51,
+      "with_src": 51,
+      "complete": 51,
+      "visible": 51,
+      "webp_src": 51,
+      "loading_eager": 51,
+      "bad": []
+    },
+    "static_loading": {
+      "total": 51,
+      "eager": 6,
+      "lazy": 45
+    },
+    "overflow_x": 0,
+    "viewer_src": "sites/gpt-6-2-astra.html",
+    "viewer_src_all": [
+      "sites/gpt-6-2-astra.html",
+      "sites/gpt-6-1-sol.html",
+      "about:blank"
+    ],
+    "viewer_title": "GPT-6.2 Astra",
+    "viewer_params": "未公开",
+    "viewer_cutoff": "截止 2026-04",
+    "viewer_visible": "false",
+    "cards_3d": 12,
+    "anim_3d": {
+      "total": 12,
+      "complete": 12,
+      "visible": 12
+    }
+  },
+  "errors": [],
+  "failed": []
+}

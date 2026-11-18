@@ -1,0 +1,22 @@
+{
+  "base": "https://fe0ad14b.peilika.pages.dev",
+  "checks": {
+    "title": "AI模型鹈鹕自行车测试 · 51 个模型对比",
+    "cards_2d": 51,
+    "gpt_order": [
+      "gpt-6-2-astra",
+      "gpt-6-1-sol",
+      "gpt-6-1-terra",
+      "gpt-6",
+      "gpt-6-sol",
+      "gpt-6-luna",
+      "gpt-5-6-codex",
+      "gpt-5-6-luna-codex"
+    ],
+    "first_card_title": "GPT-6.2 Astra",
+    "anim_complete": 51,
+    "overflow_x": 0
+  },
+  "errors": [],
+  "failed": []
+}

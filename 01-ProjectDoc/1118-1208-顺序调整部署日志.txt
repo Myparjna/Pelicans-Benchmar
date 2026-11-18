@@ -1,0 +1,11 @@
+==> 构建部署包到 C:/Users/mypra/Desktop/VibeCoding指南/skills测评项目/03-鹈鹕自行车测试/02-TempFiles/dist
+==> 部署到 peilika.pages.dev
+
+ ⛅️ wrangler 4.159.0
+────────────────────
+Uploading... (193/194)
+Uploading... (194/194)
+✨ Success! Uploaded 1 files (193 already uploaded) (1.42 sec)
+
+🌎 Deploying...
+✨ Deployment complete! Take a peek over at https://fe0ad14b.peilika.pages.dev

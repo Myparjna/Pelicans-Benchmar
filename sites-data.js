@@ -1,17 +1,5 @@
 window.SITES = [
   {
-    "file": "models/gpt-6.html",
-    "slug": "gpt-6",
-    "category": "GPT",
-    "model": "GPT-6 Astra",
-    "channel": "官网",
-    "thumb": "thumbs/gpt-6.png",
-    "src": "sites/gpt-6.html",
-    "params": "—",
-    "cutoff": "2026-04",
-    "released": 1788552838
-  },
-  {
     "file": "models/gpt-6-2-astra.html",
     "slug": "gpt-6-2-astra",
     "category": "GPT",
@@ -48,6 +36,18 @@ window.SITES = [
     "params": "未公开",
     "cutoff": "2026-04",
     "released": 1793431380
+  },
+  {
+    "file": "models/gpt-6.html",
+    "slug": "gpt-6",
+    "category": "GPT",
+    "model": "GPT-6 Astra",
+    "channel": "官网",
+    "thumb": "thumbs/gpt-6.png",
+    "src": "sites/gpt-6.html",
+    "params": "—",
+    "cutoff": "2026-04",
+    "released": 1788552838
   },
   {
     "file": "models/gpt-6-sol.html",

@@ -37,6 +37,8 @@ with sync_playwright() as p:
     c['subtitle'] = pg.locator('.subtitle').inner_text()
     c['cards_2d'] = pg.locator('.site-card').count()
     c['filter_chips'] = pg.locator('#filterBar .filter-chip').count()
+    c['gpt_order'] = pg.locator('#galleryRoot .site-card').evaluate_all(
+        'els => els.slice(0, 8).map(e => e.dataset.slug)')
 
     # 新条目字段（参数量 / 知识截止）
     new = pg.locator('.site-card[data-slug="gpt-6-2-astra"]')

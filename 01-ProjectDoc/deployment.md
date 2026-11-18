@@ -83,3 +83,4 @@ bash 04-OpsDev/deploy-pages.sh
 - 上传 7 个文件（187 个已存在）：新增 GPT-6.2 Astra 条目、右上角 GitHub 图标垂直居中、全部动画 WebP 自动加载播放。
 - 线上核验：首页 / sites-data.js / 新页面 / 新 PNG / 新 WebP / app.js / style.css 均 200 且 content-type 正确；真实浏览器 51 张 2D 卡片、51 张动图全部加载完成并可见、图标中心偏差 0、查看器当前帧 `sites/gpt-6-2-astra.html`、console 与请求失败 0。
 - 报告见 `01-ProjectDoc/1118-1130-GPT6.2Astra收录与UI调整报告.md`。
+- 12:08 顺序调整二次部署：专属域 `https://fe0ad14b.peilika.pages.dev`，上传 1 个文件（`sites-data.js`）；GPT 分类把 `gpt-6` 插到 `gpt-6-sol` 之前，`gpt-6-2-astra` 成为首位。专属域与生产域数据顺序一致，线上真实浏览器验收通过。
