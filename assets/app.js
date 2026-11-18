@@ -319,7 +319,7 @@
       <article class="site-card" tabindex="0" role="button" aria-label="打开 ${escapeHtml(s.model)}" data-slug="${escapeHtml(s.slug)}">
         <div class="thumb-wrap">
           <img class="thumb-static" src="${escapeHtml(s.thumb)}" alt="${escapeHtml(s.model)} 缩略图" width="1280" height="800" decoding="async" loading="${eager ? 'eager' : 'lazy'}"${eager ? ' fetchpriority="high"' : ''}>
-          <img class="thumb-anim" data-anim="${escapeHtml(s.thumb.replace(/\.png$/, '.webp'))}" alt="" aria-hidden="true" decoding="async">
+          <img class="thumb-anim" src="${escapeHtml(s.thumb.replace(/\.png$/, '.webp'))}" alt="" aria-hidden="true" decoding="async" loading="eager" fetchpriority="low">
         </div>
         <div class="card-body">
           <div class="card-meta">
@@ -350,14 +350,6 @@
       if (!card) return;
       e.preventDefault();
       openViewer(card.dataset.slug);
-    });
-    root.addEventListener('pointerover', e => {
-      if (!(e.target instanceof Element)) return;
-      const card = e.target.closest('.site-card');
-      if (!card || card.dataset.animLoaded) return;
-      const anim = card.querySelector('.thumb-anim');
-      if (anim && !anim.src) anim.src = anim.dataset.anim;
-      card.dataset.animLoaded = '1';
     });
   }
 

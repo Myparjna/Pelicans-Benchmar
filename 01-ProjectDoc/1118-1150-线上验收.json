@@ -1,0 +1,25 @@
+{
+  "base": "https://6dc4ca32.peilika.pages.dev",
+  "checks": {
+    "title": "AI模型鹈鹕自行车测试 · 51 个模型对比",
+    "h1": "更新至 2026-11-18",
+    "cards_2d": 51,
+    "new_card": 1,
+    "new_title": "GPT-6.2 Astra",
+    "new_params": "未公开",
+    "new_cutoff": "截止 2026-04",
+    "header_align": 0,
+    "anim": {
+      "total": 51,
+      "with_src": 51,
+      "complete": 51,
+      "visible": 51,
+      "webp": 51
+    },
+    "overflow_x": 0,
+    "viewer_src": "sites/gpt-6-2-astra.html",
+    "viewer_title": "GPT-6.2 Astra"
+  },
+  "errors": [],
+  "failed": []
+}

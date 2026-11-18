@@ -12,6 +12,20 @@ window.SITES = [
     "released": 1788552838
   },
   {
+    "file": "models/gpt-6-2-astra.html",
+    "slug": "gpt-6-2-astra",
+    "category": "GPT",
+    "model": "GPT-6.2 Astra",
+    "channel": "Codex · 思考程度中",
+    "thumb": "thumbs/gpt-6-2-astra.png",
+    "src": "sites/gpt-6-2-astra.html",
+    "params": "未公开",
+    "cutoff": "2026-04",
+    "thinking": "中",
+    "env": "Codex",
+    "released": 1794972406
+  },
+  {
     "file": "models/gpt-6-1-sol.html",
     "slug": "gpt-6-1-sol",
     "category": "GPT",

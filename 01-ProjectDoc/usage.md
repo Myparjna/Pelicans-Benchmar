@@ -19,7 +19,7 @@ client_level: developer
 
 ### 流程 1：浏览并打开某个模型的页面
 
-- 前置：展厅已加载（`sites-data.js` 50 条数据（另 12 条 3D））。
+- 前置：展厅已加载（`sites-data.js` 51 条数据（另 12 条 3D））。
 - 操作：滚动查看分类分组 → 点分类 chip 可只看该分类 → 点卡片打开查看器。
 - 输入：鼠标点击 / 键盘 `Enter`（卡片可聚焦）。
 - 预期输出：查看器全屏 iframe 加载 `sites/<slug>.html` 的真实页面，顶部显示序号 `n / 50`（3D 模式为 `n / 12`）、模型名、分类、参数、截止与评分控件。
@@ -56,9 +56,9 @@ client_level: developer
 
 ## 数据与文件
 
-- 输入数据：各模型产出的单页 HTML（根目录原始文件 + `sites/` ASCII 命名副本，`sites/` 当前 62 个（50 个 2D + 12 个 3D））。
-- 元数据：`sites-data.js`（`window.SITES` 50 条与 `window.SITES_3D` 12 条，合计 62 个 slug；字段 `file/slug/category/model/channel/thumb/src/params/cutoff/released`）。
-- 图片：`thumbs/` 下每个 slug 两份——`<slug>.png`（1280×900 静态封面）与 `<slug>.webp`（8 帧动画，hover 播放），当前 124 个文件（62 组 png + 62 组 webp）。
+- 输入数据：各模型产出的单页 HTML（根目录原始文件 + `sites/` ASCII 命名副本，`sites/` 当前 63 个（51 个 2D + 12 个 3D））。
+- 元数据：`sites-data.js`（`window.SITES` 51 条与 `window.SITES_3D` 12 条，合计 63 个 slug；字段 `file/slug/category/model/channel/thumb/src/params/cutoff/released`，可选 `thinking/env`）。
+- 图片：`thumbs/` 下每个 slug 两份——`<slug>.png`（1280×900 静态封面）与 `<slug>.webp`（8 帧动画，页面加载后自动加载并循环播放），当前 126 个文件（63 组 png + 63 组 webp）。
 - 评分存储：`localStorage` 键 `peilika_ratings_v1`，形如 `{ slug: score }`；默认基线写死在 `assets/app.js` 的 `DEFAULT_RATINGS`，来源为 2026-10-05 的历史导出文件 `C:/Users/mypra/Desktop/peilika-ratings-2026-10-05.json`。展厅的排序与导出入口已于 2026-11-13 下线，需要跨设备搬运评分时从浏览器开发者工具读取该键。
 - 原始文件保留：根目录中文名原始 HTML 与 `Trash/` 下架备份长期保留，勿清理。
 

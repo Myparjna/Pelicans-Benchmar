@@ -14,7 +14,7 @@ TMP = r"C:\Users\mypra\AppData\Local\Temp\pel-thumbs"
 CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 
 SLUGS = [
-    "gemini-4-hydrogen",
+    "gpt-6-2-astra",
 ]
 
 # 虚拟时间点（毫秒），逐帧推进以抓取不同动画时刻

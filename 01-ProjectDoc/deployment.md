@@ -33,13 +33,13 @@ bash 04-OpsDev/deploy-pages.sh
 4. 确认项目存在：Cloudflare Dashboard → Workers & Pages → 项目 `peilika` 存在（首次没有则 `wrangler pages project create peilika`）。
 5. 准备 Chrome：截图/校验依赖 `C:\Program Files\Google\Chrome\Application\chrome.exe`。
 6. 准备缩略图环境：`uv pip install --python <venv> pillow`（仅重生成缩略图时需要）。
-7. 起本地服务验证：`python -m http.server 8137 --bind 127.0.0.1`，打开 `http://127.0.0.1:8137/index.html` 确认 50 张卡片（2D 模式；切到 3D 模式为 12 张）、无裂图。
+7. 起本地服务验证：`python -m http.server 8137 --bind 127.0.0.1`，打开 `http://127.0.0.1:8137/index.html` 确认 51 张卡片（2D 模式；切到 3D 模式为 12 张）、无裂图。
 8. 部署：`bash 04-OpsDev/deploy-pages.sh`。
 9. 线上验收（**必须校验 content-type，不能只看状态码**）：
    ```bash
    curl -s -o /dev/null -w "%{http_code} %{content_type}\n" -L https://peilika.pages.dev/
    curl -s -o /dev/null -w "%{content_type}\n" -L https://peilika.pages.dev/thumbs/hy4-preview.webp   # 应为 image/webp
-   curl -s https://peilika.pages.dev/sites-data.js | grep -c '"slug"'                                  # 应为 62
+   curl -s https://peilika.pages.dev/sites-data.js | grep -c '"slug"'                                  # 应为 63
    ```
 10. 提交 git：`git add` 涉及文件后 `git commit -m "..."`；需要远端备份时执行 `git push origin main`（remote `origin` 已指向 `https://github.com/Myparjna/Pelicans-Benchmar.git`）。
 
@@ -76,3 +76,10 @@ bash 04-OpsDev/deploy-pages.sh
 ## 服务器/托管资源
 
 无 VPS、无自建服务器、无数据库：全部使用 Cloudflare Pages 静态托管。不涉及 SSH、容器或 systemd 服务。
+
+## 2026-11-18 部署记录
+
+- 部署专属域 `https://6dc4ca32.peilika.pages.dev`，生产域 `https://peilika.pages.dev` 同步生效（slug 63）。
+- 上传 7 个文件（187 个已存在）：新增 GPT-6.2 Astra 条目、右上角 GitHub 图标垂直居中、全部动画 WebP 自动加载播放。
+- 线上核验：首页 / sites-data.js / 新页面 / 新 PNG / 新 WebP / app.js / style.css 均 200 且 content-type 正确；真实浏览器 51 张 2D 卡片、51 张动图全部加载完成并可见、图标中心偏差 0、查看器当前帧 `sites/gpt-6-2-astra.html`、console 与请求失败 0。
+- 报告见 `01-ProjectDoc/1118-1130-GPT6.2Astra收录与UI调整报告.md`。

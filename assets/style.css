@@ -85,8 +85,9 @@ body {
 /* GitHub 仓库链接图标（Header 右上角） */
 .github-link {
   position: absolute;
-  top: 18px;
+  top: 50%;
   right: 20px;
+  transform: translateY(-50%);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -306,22 +307,14 @@ body {
   transition: opacity 0.2s;
 }
 
-/* 悬停播放的动画预览（Animated WebP） */
+/* 自动加载并循环播放的动画预览（Animated WebP） */
 .thumb-wrap .thumb-anim {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: none;
-}
-
-.site-card:hover .thumb-anim {
   display: block;
-}
-
-.site-card:hover .thumb-static {
-  opacity: 0;
 }
 
 .site-card:hover .thumb-wrap img {
@@ -980,7 +973,7 @@ body.viewer-open {
   }
 
   .github-link {
-    top: 16px;
+    top: 50%;
     right: 20px;
   }
 

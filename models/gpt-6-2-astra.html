@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>鹈鹕的海岸骑行</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f7f4eb;color:#223c3b;font-family:"Microsoft YaHei",system-ui,sans-serif}main{width:min(1500px,100%);margin:auto;padding:clamp(16px,3vw,44px)}header,footer,.legend{display:flex;align-items:center;justify-content:space-between;gap:12px}header{margin:0 0 20px}.brand,.issue,footer{font:600 11px/1.4 Consolas,monospace;letter-spacing:.13em}.brand{display:flex;align-items:center;gap:10px}.mark{background:#244744;color:white;padding:7px 9px;border-radius:50%}.issue{color:#546761}.art{position:relative;isolation:isolate;overflow:hidden;border:1px solid #45615b;border-radius:16px;height:clamp(460px,73svh,820px);background:#c8e4df}canvas{width:100%;height:100%;display:block}.caption{position:absolute;left:clamp(20px,4vw,58px);top:clamp(22px,4vw,55px);pointer-events:none}.kicker{font:bold 11px/1.6 Consolas,monospace;letter-spacing:.18em}h1{font:900 clamp(30px,4vw,65px)/1.15 Georgia,"Songti SC",SimSun,serif;letter-spacing:-.04em;margin:9px 0}.sub{font:italic clamp(15px,1.7vw,24px) Georgia,serif}.status{position:absolute;bottom:18px;left:22px;background:#f8f5e9;color:#263f3d;border:1px solid #50635c;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:700}footer{margin-top:15px}.legend{gap:9px;font-size:12px;letter-spacing:0}.legend span{color:#626a61}.legend span.on{color:#22453f;font-weight:900}.legend i{width:15px;height:1px;background:#939c8f}button{font:inherit;letter-spacing:0;background:transparent;color:inherit;border:1px solid #8a9588;border-radius:30px;padding:8px 14px;cursor:pointer}button:focus-visible{outline:3px solid #137783}@media(max-width:600px){.art{height:clamp(440px,73svh,780px)}.issue{font-size:9px}.caption{top:24px}.status{left:15px;bottom:15px}header{margin-bottom:14px}}
+</style><main><header><div class="brand"><b class="mark">P.</b> COAST FIELD NOTES</div><div class="issue">MOTION STUDY / 01</div></header><section class="art"><canvas aria-label="一只戴着红围巾的白鹈鹕骑着青绿色自行车经过海岸和灯塔"></canvas><div class="caption"><div class="kicker">THE COASTAL SERIES</div><h1>鹈鹕的海岸骑行</h1><div class="sub">Pelican on wheels</div></div><div class="status" id="status">☀　晴天</div></section><footer><div class="legend" aria-label="天气循环，每种天气持续五秒"><span class="on">晴天</span><i></i><span>阴天</span><i></i><span>雨天</span></div><button id="pause">Ⅱ　暂停动画</button></footer></main>
+<script>
+'use strict';
+const c=document.querySelector('canvas'),g=c.getContext('2d'),ink='#263e3c',cream='#fff7df';
+const palettes=[['#a7d9df','#f8e7c5','#77b8b5','#acd0bd','#628f83','#e6bf82'],['#b2c6cb','#e2dfcf','#86a9a8','#a4b6a7','#6b8982','#caba99'],['#8fa8b2','#ccdad7','#74969c','#95aaa4','#617f7d','#ada894']];
+const names=['☀　晴天','☁　阴天','☂　雨天'];
+let w,h,d,t=0,last,paused=false,phase=-1;
+function resize(){const r=c.getBoundingClientRect();w=r.width;h=r.height;d=Math.min(devicePixelRatio||1,2);c.width=Math.round(w*d);c.height=Math.round(h*d);draw()}
+function path(s,fill,stroke,width=2){const p=new Path2D(s);if(fill){g.fillStyle=fill;g.fill(p)}if(stroke){g.strokeStyle=stroke;g.lineWidth=width;g.stroke(p)}}
+function ellipse(x,y,a,b,color,edge,width=2){g.beginPath();g.ellipse(x,y,a,b,0,0,Math.PI*2);g.fillStyle=color;g.fill();if(edge){g.strokeStyle=edge;g.lineWidth=width;g.stroke()}}
+function line(x,y,X,Y,color,width){g.beginPath();g.moveTo(x,y);g.lineTo(X,Y);g.strokeStyle=color;g.lineWidth=width;g.stroke()}
+function rect(x,y,W,H,color){g.fillStyle=color;g.fillRect(x,y,W,H)}
+function mix(a,b,k){let n=parseInt(a.slice(1),16),m=parseInt(b.slice(1),16);return 'rgb('+[16,8,0].map(s=>Math.round(((n>>s)&255)*(1-k)+((m>>s)&255)*k)).join(',')+')'}
+function cloud(x,y,size,color){g.save();g.translate(x,y);g.scale(size,size);path('M-75 9 Q-85 -4 -63 -9 Q-57 -32 -32 -22 Q-12 -54 15 -28 Q44 -36 51 -12 Q81 -15 87 8 Q20 17 -75 9Z',color);g.restore()}
+function lighthouse(x,y,s){g.save();g.translate(x,y);g.scale(s,s);path('M-35 0 L-24 -9 L-11 -10 L-8 -62 L5 -62 L11 -11 L32 -6 L50 1Z','#eee3c6','#667d72',1.4);path('M-9 -48 L7 -46 L8 -34 L-10 -36Z','#bd6955');rect(-10,-72,16,10,'#4c6460');rect(-6,-70,3,7,'#f5db99');path('M-14 -72 L-2 -81 L10 -72Z','#a65949');line(-14,-61,10,-61,ink,2);g.restore()}
+function wheel(x,a){g.save();g.translate(x,0);g.rotate(a);ellipse(0,0,48,48,'#efe5c9',ink,6);ellipse(0,0,43,43,'#d6d5b3');for(let i=0;i<16;i++){g.rotate(Math.PI/8);line(0,0,42,0,'#869a89',1.3)}ellipse(0,0,4,4,ink);g.restore()}
+function leg(a,back){const x=-9+17*Math.cos(a),y=-2+17*Math.sin(a),kneeX=9+12*Math.cos(a-.7),kneeY=-52+6*Math.sin(a);path('M-28 -94 Q-19 -83 '+kneeX+' '+kneeY+' L'+x+' '+(y-3),null,ink,7);path('M-28 -94 Q-19 -83 '+kneeX+' '+kneeY+' L'+x+' '+(y-3),null,back?'#c99556':'#efb367',4);path('M'+(x-4)+' '+(y-7)+' q6 1 13 4 l8 5 q-10 2 -23 -1Z',back?'#c99451':'#e9a452',ink,2);line(x-7,y+4,x+13,y+4,ink,3)}
+function rider(x,y,s){g.save();g.translate(x,y);g.scale(s,s);const a=t*3.9;ellipse(-2,50,149,6,'rgba(55,66,52,.16)');wheel(-87,a*.78);wheel(88,a*.78);leg(a+Math.PI,true);
+const frame='M-87 0 L-35 -68 L-9 -2 Z M-35 -68 L57 -72 L-9 -2 M52 -89 L88 0';path(frame,null,ink,8);path(frame,null,'#38857b',4.5);
+path('M-35 -68 L-40 -86 M57 -72 L51 -95 Q48 -105 65 -105 L71 -105',null,ink,4);path('M-58 -89 Q-55 -94 -32 -90 L-23 -89 Q-25 -84 -48 -84Z','#9f6547',ink);ellipse(-9,-2,12,12,'#c6bd94',ink,2);line(-9,-2,-9+17*Math.cos(a),-2+17*Math.sin(a),ink,3);leg(a,false);
+g.translate(0,1.7*Math.sin(2*a));
+// Tail feathers, body, bill and pouch.
+path('M-65 -110 Q-92 -108 -108 -134 Q-94 -133 -84 -128 L-100 -143 Q-79 -143 -56 -122Z','#405858',ink,2.5);
+path('M-86 -131 Q-58 -119 -38 -151 Q-16 -174 -20 -207 Q-25 -228 -9 -236 Q8 -247 23 -233 Q32 -222 27 -209 Q15 -199 13 -181 Q12 -156 3 -129 Q-8 -97 -37 -94 Q-67 -91 -86 -116Z',cream,ink,3.2);
+path('M-74 -116 Q-48 -99 -27 -110 Q-5 -121 4 -150 Q0 -111 -28 -99 Q-54 -87 -74 -110Z','#cfceaf');
+path('M17 -217 Q65 -220 122 -209 Q111 -186 85 -181 Q45 -174 21 -200Z','#ecad57',ink,3);
+path('M19 -220 Q57 -224 106 -215 Q125 -213 126 -208 Q74 -205 21 -208Z','#fbd48b',ink,2.6);
+path('M32 -201 Q66 -184 91 -188',null,'#c48a46',1.5);ellipse(8,-223,5.8,6.2,'#f5cf7f',ink,1.6);ellipse(9,-223,2.7,3,ink);ellipse(10,-224,1,1,'white');path('M-19 -231 Q-30 -240 -33 -231 Q-24 -235 -20 -224',cream,ink,2);
+const flutter=4*Math.sin(t*5);path('M-12 -179 Q-36 -185 -52 '+(-178+flutter)+' Q-61 -173 -75 '+(-180+flutter)+' L-66 -168 Q-47 -161 -30 -171 L-16 -168Z','#ce6046',ink,2.4);path('M-17 -183 Q-4 -178 12 -184 L12 -175 Q0 -168 -17 -173Z','#dd7352',ink,2);
+path('M-44 -150 Q-23 -154 -6 -137 Q11 -119 55 -111 Q65 -109 65 -104 Q58 -101 40 -106 Q31 -105 11 -112 Q-22 -113 -46 -129 Q-56 -138 -44 -150Z','#eeead0',ink,2.8);path('M-35 -139 Q-16 -125 8 -121 M-37 -133 Q-20 -121 -3 -118',null,'#aaa98f',1.6);g.restore()}
+function draw(){if(!w)return;g.setTransform(d,0,0,d,0,0);g.lineCap='round';g.lineJoin='round';const p=Math.floor(t/5)%3,k=Math.min(1,(t%5)/.65),prev=t<5?0:(p+2)%3,P=palettes[p].map((v,i)=>mix(palettes[prev][i],v,k));
+if(p!==phase){phase=p;document.querySelector('#status').textContent=names[p];document.querySelectorAll('.legend span').forEach((e,i)=>e.classList.toggle('on',i===p))}
+const horizon=h*.57,road=h*.79,sky=g.createLinearGradient(0,0,0,horizon);sky.addColorStop(0,P[0]);sky.addColorStop(1,P[1]);rect(0,0,w,h,sky);
+const cx=w*.81,cy=h*.23,R=Math.min(w*.085,h*.091);ellipse(cx,cy,R+7,R+7,'#ffe6a54d');ellipse(cx,cy,R,R,'#ffe2a0');
+for(let i=0;i<7;i++){let x=((i*263+160-t*(4+i%3))%(w+260)+w+260)%(w+260)-130;cloud(x,h*(.10+(i%4)*.095),.38+(i%3)*.23,'#fff9e6b3')}
+const cover=(prev===0?0:1)*(1-k)+(p===0?0:1)*k;g.globalAlpha=cover;for(let i=0;i<6;i++)cloud(((i*211+90-t*12)%(w+350)+w+350)%(w+350)-160,h*(.12+i%3*.095),1.3,'#aabbbd');g.globalAlpha=1;
+for(let j=0;j<2;j++){g.beginPath();g.moveTo(0,horizon+4);for(let x=0;x<=w+5;x+=5){let v=x+t*(j+1)*4;g.lineTo(x,horizon-8-j*2-(j?11:20)*Math.sin(v*.009+j)-(j?5:13)*Math.sin(v*.019+2))}g.lineTo(w,horizon+10);g.lineTo(0,horizon+10);g.fillStyle=j?P[4]:P[3];g.fill()}
+rect(0,horizon+4,w,road-horizon,P[2]);lighthouse(w*.79-18*Math.sin(t*.09),horizon+6,Math.min(1,w/670+.15));
+for(let i=0;i<72;i++){let x=((i*127-t*10)%(w+65)+w+65)%(w+65)-55,y=horizon+11+(i*29)%Math.max(10,Math.floor(road-horizon-12));line(x,y,x+9+i%29,y,'#f5f4d99b',1.5)}
+rect(0,road-9,w,h-road+9,P[5]);rect(0,road-12,w,4,'#718771');rect(0,road-8,w,5,'#c4bd8c');
+for(let i=0;i<70;i++){let x=((i*109-t*89)%(w+40)+w+40)%(w+40)-25,y=road+(i*23)%Math.max(10,Math.floor(h-road));line(x,y,x+3+i%13,y,'#967d5955',1.5)}
+let scale=Math.min(w/333,h/425,1.75);rider(w*(w/h>1.3?.54:.49),h*.864-50*scale,scale);
+const rain=((prev===2?1:0)*(1-k)+(p===2?1:0)*k);if(rain){g.globalAlpha=rain*.57;for(let i=0;i<Math.ceil(w*h/3700);i++){let y=(i*113+t*(360+i%60))%(h+20)-15,x=((i*191-y*.26)%(w+20)+w+20)%(w+20);line(x,y,x-4,y+12,'#f0f6ee',1.6)}g.globalAlpha=1}}
+function tick(now){if(last!==undefined&&!paused)t+=(now-last)/1000;last=now;if(!paused)draw();requestAnimationFrame(tick)}
+document.querySelector('#pause').onclick=e=>{paused=!paused;last=performance.now();e.currentTarget.textContent=paused?'▶　继续动画':'Ⅱ　暂停动画'};new ResizeObserver(resize).observe(c);resize();requestAnimationFrame(tick);
+</script></html>

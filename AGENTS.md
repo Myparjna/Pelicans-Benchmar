@@ -29,11 +29,11 @@
 ## 1. 目录结构
 
 ```
-index.html            展厅首页（计数文案「50 个模型/版本生成效果对比」+「更新至 YYYY-MM-DD」需手工维护）
-sites-data.js         唯一数据源：window.SITES（50 条 2D）+ window.SITES_3D（12 条 3D），合计 62 个 slug
+index.html            展厅首页（计数文案「51 个模型/版本生成效果对比」+「更新至 YYYY-MM-DD」需手工维护）
+sites-data.js         唯一数据源：window.SITES（51 条 2D）+ window.SITES_3D（12 条 3D），合计 63 个 slug
 assets/app.js         展厅逻辑（筛选/搜索/打分/查看器/2D-3D 切换）
 assets/style.css      样式（浅色主题）
-sites/                部署用的页面副本（62 个 = 50 + 12），命名 <slug>.html
+sites/                部署用的页面副本（63 个 = 51 + 12），命名 <slug>.html
 thumbs/               缩略图 <slug>.png + <slug>.webp
 models/               模型原件归档（2D，按 slug 命名），不参与部署
 models/3d/            体素版本原件，不参与部署
@@ -78,7 +78,7 @@ const CATEGORY_BANDS = [
 
 ### 评分
 
-- 默认基线在 `assets/app.js` 的 `DEFAULT_RATINGS`（2D 50 条，其中 `hy4`=10 分、`hy4-preview`=8 分、`gemini-4-hydrogen`=10 分；3D 暂未设基线）。
+- 默认基线在 `assets/app.js` 的 `DEFAULT_RATINGS`（2D 51 条，其中 `hy4`=10 分、`hy4-preview`=8 分、`gemini-4-hydrogen`=10 分；3D 暂未设基线）。
 - 用户打分存 `localStorage` 键 `peilika_ratings_v1`。
 - ⚠️ `loadRatings()` 是 `Object.assign({}, DEFAULT_RATINGS, localStorage)`，**本机旧值会盖掉新基线**。改了 `DEFAULT_RATINGS` 后本机看不到变化是正常的，用无痕窗口或清该键验证。
 
@@ -86,7 +86,7 @@ const CATEGORY_BANDS = [
 
 ## 3. 2D / 3D 两套数据集与渲染约定
 
-- `window.SITES`（50 条，平面动画版）与 `window.SITES_3D`（12 条，体素场景版）是**两个独立数组**，slug 分别以普通名称和 `3d-` 前缀区分。
+- `window.SITES`（51 条，平面动画版）与 `window.SITES_3D`（12 条，体素场景版）是**两个独立数组**，slug 分别以普通名称和 `3d-` 前缀区分。
 - 顶部「2D / 3D」按钮（`.mode-switch` / `.mode-btn[data-mode]`）切换时，卡片、缩略图、分类、提示词文案、查看器与计数全部同步切换（`applyMode()`）。
 - 3D 提示词原文：**「使用体素建模。生成一个鹈鹕白天骑自行车的网页场景，要求兼容手机竖屏与电脑横屏显示。而且每过5秒进行晴天-阴天-雨天-晴天的天气自动切换。不使用任何skills。给我html」**
 - 2D 提示词原文（2026-11-13 更新）：**「生成一个鹈鹕白天骑自行车的网页动画，单个html文件给我，要求能自适应网页宽度，兼容手机竖屏与电脑横屏显示。每过5秒进行晴天-阴天-雨天-晴天的天气自动切换。不使用任何skills。也不派任何subagent进行codereviwer。单个文件+时间命名好给我。告诉我绝对路径。」**
@@ -96,7 +96,7 @@ const CATEGORY_BANDS = [
 
 - `renderGallery()` 先铺「分类标题 + 空网格」骨架，卡片 HTML 字符串与 DOM 插入都按 `requestAnimationFrame` 每帧 8 张进行（`RENDER_BATCH`）；`renderToken` 代次取消旧批次，快速筛选/切换时不会串插。
 - 卡片交互走 `root` 上的事件委托（click / keydown / pointerover），新插入的卡片无需逐个绑定监听器。评分交互仍按批次对新卡片调用 `bindRatings(card)`。
-- 图片：前 6 张 `loading="eager" fetchpriority="high"`，其余 `loading="lazy"`；静态图全部 `decoding="async"` 并带 `width/height`；动画 WebP 只在首次 hover 时才赋 `src`。
+- 静态缩略图：前 6 张 `loading="eager" fetchpriority="high"`，其余 `loading="lazy"`；全部 `decoding="async"` 并带 `width/height`。动画 WebP 在卡片 HTML 中直接带 `src`、`loading="eager"`、`fetchpriority="low"`，页面加载后自动加载并循环播放，不再依赖 hover。63 张动画 WebP 合计约 12.1 MB。
 - `.site-card` 用 `content-visibility: auto` + `contain-intrinsic-size: auto 340px` 跳过视口外绘制。
 - 搜索输入 120ms 防抖；分类 chip 点击只切换 `active`，不重建 chip DOM；`<head>` 对 jsDelivr 有 `preconnect`。
 - 排序与导出入口已于 2026-11-13 下线，`sortByRating` / `exportRatings()` / `rank-badge` 相关代码与样式已清理，不要重新引入。
@@ -181,3 +181,9 @@ bash 04-OpsDev/deploy-pages.sh
 - 增删条目时**主动核对计数 + 日期 + 排序**，不要等用户指出。
 - 用户给的 HTML 文件视为评测原件，**原样收录**，不改内容。
 - 涉及删除/重命名等破坏性操作，先只读扫描列出清单，确认后再执行。
+
+### 2026-11-18 UI 约定补充
+
+- 右上角 GitHub 图标使用 `top: 50%` + `transform: translateY(-50%)`，相对 `.header-inner` 垂直居中，与 brand、header-actions 同中心；响应式断点只覆盖 `top`/`right`，不覆盖 transform。
+- 动画 WebP 默认 `display: block` 覆盖在静态 PNG 之上；静态 PNG 保留作加载失败时的回退。`.site-card:hover .thumb-anim` 与 `.site-card:hover .thumb-static` 两条门控已移除，hover 只保留轻微放大。
+- 2D 新增字段 `thinking`、`env` 为可选元数据（当前仅 `gpt-6-2-astra` 登记），界面不渲染，改动渲染逻辑时勿误删。
