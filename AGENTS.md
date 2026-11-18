@@ -184,6 +184,6 @@ bash 04-OpsDev/deploy-pages.sh
 
 ### 2026-11-18 UI 约定补充
 
-- 右上角 GitHub 图标使用 `top: 50%` + `transform: translateY(-50%)`，相对 `.header-inner` 垂直居中，与 brand、header-actions 同中心；响应式断点只覆盖 `top`/`right`，不覆盖 transform。
+- 右上角 GitHub 图标为 `.header-actions` 的最后一个 flex 成员（`flex: none`，40×40），与 40px 高的搜索框同高、顶底齐平，并位于控件组最右端；不再使用绝对定位，`.header-actions` 不再保留 `padding-right` 预留位。响应式断点下搜索框 `flex: 1; min-width: 0` 可收缩，窄屏不产生横向溢出。
 - 动画 WebP 默认 `display: block` 覆盖在静态 PNG 之上；静态 PNG 保留作加载失败时的回退。`.site-card:hover .thumb-anim` 与 `.site-card:hover .thumb-static` 两条门控已移除，hover 只保留轻微放大。
 - 2D 新增字段 `thinking`、`env` 为可选元数据（当前仅 `gpt-6-2-astra` 登记），界面不渲染，改动渲染逻辑时勿误删。

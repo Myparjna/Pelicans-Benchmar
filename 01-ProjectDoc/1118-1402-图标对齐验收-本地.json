@@ -1,0 +1,70 @@
+{
+  "base": "http://127.0.0.1:8137",
+  "viewports": {
+    "desktop_1600": {
+      "icon": {
+        "left": 1540,
+        "right": 1580,
+        "top": 36,
+        "bottom": 76,
+        "w": 40,
+        "h": 40
+      },
+      "search": {
+        "left": 1248,
+        "right": 1528,
+        "top": 36,
+        "bottom": 76,
+        "w": 280,
+        "h": 40
+      },
+      "actions": {
+        "left": 1129,
+        "right": 1580
+      },
+      "brand_cy": 55.8,
+      "icon_cy": 55.8,
+      "last_child": "github-link",
+      "is_last": true,
+      "gap_to_search": 12,
+      "top_delta": 0,
+      "bottom_delta": 0,
+      "overflow_x": 0,
+      "viewport_w": 1600
+    },
+    "mobile_390": {
+      "icon": {
+        "left": 330,
+        "right": 370,
+        "top": 243,
+        "bottom": 283,
+        "w": 40,
+        "h": 40
+      },
+      "search": {
+        "left": 139,
+        "right": 318,
+        "top": 243,
+        "bottom": 283,
+        "w": 179,
+        "h": 40
+      },
+      "actions": {
+        "left": 20,
+        "right": 370
+      },
+      "brand_cy": 41,
+      "icon_cy": 263.2,
+      "last_child": "github-link",
+      "is_last": true,
+      "gap_to_search": 12,
+      "top_delta": 0,
+      "bottom_delta": 0,
+      "overflow_x": 0,
+      "viewport_w": 390
+    }
+  },
+  "errors": [],
+  "failed": [],
+  "aborted": []
+}

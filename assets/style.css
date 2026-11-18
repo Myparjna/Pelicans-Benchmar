@@ -84,15 +84,12 @@ body {
 
 /* GitHub 仓库链接图标（Header 右上角） */
 .github-link {
-  position: absolute;
-  top: 50%;
-  right: 20px;
-  transform: translateY(-50%);
+  flex: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 40px;
+  height: 40px;
   border: 1px solid var(--border);
   border-radius: 999px;
   background: var(--surface);
@@ -127,6 +124,8 @@ body {
   border-radius: 999px;
   padding: 10px 16px;
   width: 280px;
+  height: 40px;
+  box-sizing: border-box;
   max-width: 100%;
   transition: box-shadow 0.2s, border-color 0.2s;
 }
@@ -539,7 +538,6 @@ body {
   align-items: center;
   gap: 12px;
   flex: none;
-  padding-right: 46px;
 }
 
 .mode-switch {
@@ -954,10 +952,6 @@ body.viewer-open {
     align-items: stretch;
   }
 
-  .brand {
-    padding-right: 46px;
-  }
-
   .brand h1 {
     font-size: 18px;
   }
@@ -969,12 +963,6 @@ body.viewer-open {
 
   .header-actions {
     width: 100%;
-    padding-right: 0;
-  }
-
-  .github-link {
-    top: 50%;
-    right: 20px;
   }
 
   .prompt-box {
@@ -983,7 +971,9 @@ body.viewer-open {
   }
 
   .search-box {
-    width: 100%;
+    flex: 1;
+    width: auto;
+    min-width: 0;
   }
 
   .filter-bar {
