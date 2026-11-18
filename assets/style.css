@@ -292,6 +292,7 @@ body {
   aspect-ratio: 16 / 10;
   overflow: hidden;
   background: #eef2f7;
+  transition: transform 0.4s;
 }
 
 .thumb-wrap img {
@@ -306,7 +307,9 @@ body {
   transition: opacity 0.2s;
 }
 
-/* 自动加载并循环播放的动画预览（Animated WebP） */
+/* 自动加载并循环播放的动画预览（Animated WebP）。
+   叠加一层极轻微的连续推镜：源页面本身没有动画时，帧动画看起来会「卡住」，
+   CSS 合成层的 60fps 插值让预览始终有连续位移，且不增加任何文件体积。 */
 .thumb-wrap .thumb-anim {
   position: absolute;
   inset: 0;
@@ -314,9 +317,20 @@ body {
   height: 100%;
   object-fit: cover;
   display: block;
+  animation: thumb-drift 10s ease-in-out infinite;
 }
 
-.site-card:hover .thumb-wrap img {
+@keyframes thumb-drift {
+  0%   { transform: scale(1.000) translate3d(0, 0, 0); }
+  50%  { transform: scale(1.025) translate3d(-0.8%, -0.5%, 0); }
+  100% { transform: scale(1.000) translate3d(0, 0, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thumb-wrap .thumb-anim { animation: none; }
+}
+
+.site-card:hover .thumb-wrap {
   transform: scale(1.03);
 }
 

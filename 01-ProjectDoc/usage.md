@@ -58,7 +58,7 @@ client_level: developer
 
 - 输入数据：各模型产出的单页 HTML（根目录原始文件 + `sites/` ASCII 命名副本，`sites/` 当前 63 个（51 个 2D + 12 个 3D））。
 - 元数据：`sites-data.js`（`window.SITES` 51 条与 `window.SITES_3D` 12 条，合计 63 个 slug；字段 `file/slug/category/model/channel/thumb/src/params/cutoff/released`，可选 `thinking/env`）。
-- 图片：`thumbs/` 下每个 slug 两份——`<slug>.png`（1280×900 静态封面）与 `<slug>.webp`（8 帧动画，页面加载后自动加载并循环播放），当前 126 个文件（63 组 png + 63 组 webp）。
+- 图片：`thumbs/` 下每个 slug 两份——`<slug>.png`（静态封面，原始尺寸未改动）与 `<slug>.webp`（640×400 / 18 帧 / 83ms 动画，页面加载后自动加载并循环播放，另有 CSS 推镜），当前 126 个文件（63 组 png + 63 组 webp），63 张动画合计 6.75 MB。
 - 评分存储：`localStorage` 键 `peilika_ratings_v1`，形如 `{ slug: score }`；默认基线写死在 `assets/app.js` 的 `DEFAULT_RATINGS`，来源为 2026-10-05 的历史导出文件 `C:/Users/mypra/Desktop/peilika-ratings-2026-10-05.json`。展厅的排序与导出入口已于 2026-11-13 下线，需要跨设备搬运评分时从浏览器开发者工具读取该键。
 - 原始文件保留：根目录中文名原始 HTML 与 `Trash/` 下架备份长期保留，勿清理。
 

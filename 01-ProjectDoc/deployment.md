@@ -85,3 +85,10 @@ bash 04-OpsDev/deploy-pages.sh
 - 报告见 `01-ProjectDoc/1118-1130-GPT6.2Astra收录与UI调整报告.md`。
 - 12:08 顺序调整二次部署：专属域 `https://fe0ad14b.peilika.pages.dev`，上传 1 个文件（`sites-data.js`）；GPT 分类把 `gpt-6` 插到 `gpt-6-sol` 之前，`gpt-6-2-astra` 成为首位。专属域与生产域数据顺序一致，线上真实浏览器验收通过。
 - 14:10 图标对齐三次部署：专属域 `https://559427ed.peilika.pages.dev`，上传 2 个文件（`index.html`、`assets/style.css`）；GitHub 图标改为右侧控件组末尾的 40×40 flex 成员，与搜索框顶底齐平。首次部署遇 `fetch failed` 网络抖动，原命令重试成功。专属域与生产域结构、样式一致，双视口真实浏览器验收通过。
+
+## 2026-11-18 17:42 动图重编码部署记录
+
+- 部署专属域 `https://315e75b2.peilika.pages.dev`，上传 64 个文件（63 张重编码 WebP + `assets/style.css`），生产域 `https://peilika.pages.dev` 同步生效。
+- 63 张动画统一 640×400 / 18 帧 / 83ms，体积 12.12 MB → 6.75 MB；CSS `thumb-drift` 推镜层上线。
+- 线上核验：专属域与生产域首页 / style.css / 新 WebP 均 200 且 content-type 正确，线上 WebP 实测 640×400 / 18 帧 / 83ms / 1.49s；真实浏览器 51 张动图全部加载、CSS 动画运行中、动感采样连续、console 与请求失败 0。
+- 报告见 `01-ProjectDoc/1118-1735-动图重编码与卡顿修复报告.md`，证据 JSON 见 `1118-1738-动图优化验收-本地.json` / `-线上.json`。

@@ -1,0 +1,63 @@
+{
+  "base": "https://315e75b2.peilika.pages.dev",
+  "tag": "线上",
+  "checks": {
+    "title": "AI模型鹈鹕自行车测试 · 51 个模型对比",
+    "cards_2d": 51,
+    "anim_total": 51,
+    "anim_loaded": 51,
+    "anim_sizes": [
+      "640x400"
+    ],
+    "webp_requests": 53,
+    "webp_transfer_MB": 0.14,
+    "css_animation": {
+      "name": "thumb-drift",
+      "duration": "10s",
+      "running": 1
+    },
+    "hover_scale": "transform",
+    "fps_2s": 100,
+    "overflow_x": 0,
+    "motion_gpt-5-6-luna-codex": {
+      "adjacent_pixel_diff": [
+        3.76,
+        8.0,
+        2.94,
+        4.06,
+        4.77
+      ],
+      "avg": 4.71,
+      "min": 2.94,
+      "max": 8.0
+    },
+    "motion_gpt-5-6-codex": {
+      "adjacent_pixel_diff": [
+        3.74,
+        6.5,
+        12.49,
+        16.88,
+        3.29
+      ],
+      "avg": 8.58,
+      "min": 3.29,
+      "max": 16.88
+    },
+    "motion_gpt-6-2-astra": {
+      "adjacent_pixel_diff": [
+        1.19,
+        1.5,
+        1.7,
+        1.96,
+        2.17
+      ],
+      "avg": 1.7,
+      "min": 1.19,
+      "max": 2.17
+    },
+    "motion_3d-deepseek-v4-pro": "card-not-found"
+  },
+  "errors": [],
+  "failed": [],
+  "aborted": []
+}

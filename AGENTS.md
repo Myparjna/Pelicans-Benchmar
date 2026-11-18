@@ -96,7 +96,7 @@ const CATEGORY_BANDS = [
 
 - `renderGallery()` 先铺「分类标题 + 空网格」骨架，卡片 HTML 字符串与 DOM 插入都按 `requestAnimationFrame` 每帧 8 张进行（`RENDER_BATCH`）；`renderToken` 代次取消旧批次，快速筛选/切换时不会串插。
 - 卡片交互走 `root` 上的事件委托（click / keydown / pointerover），新插入的卡片无需逐个绑定监听器。评分交互仍按批次对新卡片调用 `bindRatings(card)`。
-- 静态缩略图：前 6 张 `loading="eager" fetchpriority="high"`，其余 `loading="lazy"`；全部 `decoding="async"` 并带 `width/height`。动画 WebP 在卡片 HTML 中直接带 `src`、`loading="eager"`、`fetchpriority="low"`，页面加载后自动加载并循环播放，不再依赖 hover。63 张动画 WebP 合计约 12.1 MB。
+- 静态缩略图：前 6 张 `loading="eager" fetchpriority="high"`，其余 `loading="lazy"`；全部 `decoding="async"` 并带 `width/height`。动画 WebP 在卡片 HTML 中直接带 `src`、`loading="eager"`、`fetchpriority="low"`，页面加载后自动加载并循环播放，不再依赖 hover。63 张动画 WebP 统一为 **640×400 / 18 帧 / 83ms（12fps）/ 1.494s 循环 / loop=0**，合计 **6.75 MB**（重编码前 12.12 MB）。`.thumb-anim` 另叠加 `thumb-drift` 10s 往返轻微推镜（CSS 合成层 60fps 插值），让源页面本身无动画的预览也有连续运动；`prefers-reduced-motion` 下自动关闭。hover 放大作用于 `.thumb-wrap` 容器，避免与动画的 `transform` 冲突。
 - `.site-card` 用 `content-visibility: auto` + `contain-intrinsic-size: auto 340px` 跳过视口外绘制。
 - 搜索输入 120ms 防抖；分类 chip 点击只切换 `active`，不重建 chip DOM；`<head>` 对 jsDelivr 有 `preconnect`。
 - 排序与导出入口已于 2026-11-13 下线，`sortByRating` / `exportRatings()` / `rank-badge` 相关代码与样式已清理，不要重新引入。
@@ -128,6 +128,8 @@ for (const key of ['SITES','SITES_3D']) {
 
 # 生成缩略图（先改脚本里的 SLUGS 列表）
 "C:/Users/mypra/.workbuddy/binaries/python/envs/default/Scripts/python.exe" "03-TempScr/10月5日-1815-生成展厅缩略图.py"
+# 批量重编码全部动画 WebP（输入 02-TempFiles/backup-webp-1118-1720/，输出覆盖 thumbs/）
+"C:/Users/mypra/.workbuddy/binaries/python/envs/default/Scripts/python.exe" "03-TempScr/1118-1720-重编码动图.py"
 
 # 部署 Cloudflare Pages
 bash 04-OpsDev/deploy-pages.sh
