@@ -1,0 +1,89 @@
+{
+  "base": "http://127.0.0.1:8137",
+  "tag": "本地",
+  "checks": {
+    "title": "AI模型鹈鹕自行车测试 · 51 个模型对比",
+    "cards_2d": 51,
+    "anim_total": 51,
+    "anim_loaded": 51,
+    "anim_sizes": [
+      "640x400"
+    ],
+    "css_animation": {
+      "name": "thumb-drift",
+      "duration": "14s",
+      "running": 1
+    },
+    "astra_rating": {
+      "text": "10 分",
+      "rated": true,
+      "star_count": 5
+    },
+    "first_card_slug": "gpt-6-2-astra",
+    "fps_2s": 99,
+    "overflow_x": 0,
+    "motion_gpt-6-2-astra": {
+      "adjacent_pixel_diff": [
+        1.04,
+        1.95,
+        1.01,
+        1.63,
+        1.68,
+        0.86,
+        1.74
+      ],
+      "avg": 1.42,
+      "min": 0.86,
+      "max": 1.95,
+      "spike": false
+    },
+    "motion_gpt-5-6-luna-codex": {
+      "adjacent_pixel_diff": [
+        0.23,
+        0.82,
+        0.28,
+        0.87,
+        0.41,
+        0.76,
+        0.91
+      ],
+      "avg": 0.61,
+      "min": 0.23,
+      "max": 0.91,
+      "spike": false
+    },
+    "motion_gpt-5-6-codex": {
+      "adjacent_pixel_diff": [
+        3.36,
+        5.14,
+        3.53,
+        3.83,
+        3.36,
+        3.89,
+        3.31
+      ],
+      "avg": 3.77,
+      "min": 3.31,
+      "max": 5.14,
+      "spike": false
+    },
+    "motion_deepseek-v4-flash-0424-wb": {
+      "adjacent_pixel_diff": [
+        2.92,
+        5.76,
+        5.28,
+        6.85,
+        6.39,
+        5.19,
+        6.4
+      ],
+      "avg": 5.54,
+      "min": 2.92,
+      "max": 6.85,
+      "spike": false
+    }
+  },
+  "errors": [],
+  "failed": [],
+  "aborted": []
+}

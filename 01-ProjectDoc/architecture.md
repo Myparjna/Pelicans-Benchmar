@@ -36,7 +36,7 @@ flowchart LR
 │  ├─ style.css            # 浅色主题、卡片网格、查看器、移动端断点 720px
 │  └─ app.js               # 渐进式分批渲染、筛选搜索、评分、band 合并、事件委托、查看器预加载
 ├─ sites/                  # 63 个 ASCII 命名干净副本（51 个 2D + 12 个 3D，部署用，查看器 iframe 直接加载）
-├─ thumbs/                 # 126 个缩略图：每个 slug 一份 png（静态）+ 一份 webp（640×400 / 18 帧 / 83ms 动画），共 63 组
+├─ thumbs/                 # 126 个缩略图：每个 slug 一份 png（静态）+ 一份 webp（640×400 / 130ms / 自适应帧数），共 63 组
 ├─ models/                 # 各模型原始产出原件（禁止修改，仅作对比源与副本来源），按 slug 命名
 │  └─ 3d/                  # 3D 版本鹈鹕动画原件
 ├─ 04-OpsDev/deploy-pages.sh  # 构建 02-TempFiles/dist 并 wrangler 部署到 Cloudflare Pages
@@ -116,7 +116,7 @@ flowchart TD
 | 筛选与搜索 | 分类 chip（只切 active 状态）、关键词搜索（120ms 防抖） | `assets/app.js` | 用户输入 | 渲染模块 | 搜索字段：model/category/file | `03-TempScr/1113-2210-性能优化与交互验收.js` |
 | 评分 | 1-10 分读写、默认基线、卡片与查看器双向同步 | `assets/app.js`（`RATINGS_KEY`、`DEFAULT_RATINGS`） | 卡片/查看器 | `localStorage` | 键 `peilika_ratings_v1` | `03-TempScr/10月5日-2110-展厅查看器交互校验.js` |
 | 查看器 | iframe 全屏查看、翻页、预加载、键盘 | `assets/app.js` `openViewer/loadCurrent/warmNeighbors` | 卡片点击 | `sites/*.html` | 三帧 `viewerIframe/Prev/Next` | `03-TempScr/10月5日-2120-查看器二次打开复测.js` |
-| 缩略图生成 | 无头 Chrome 截图 + Pillow 合成动画 WebP | `03-TempScr/10月5日-1815-生成展厅缩略图.py` | `sites/*.html` | `thumbs/*.png|.webp` | 静态 PNG 1280×900 系列；动画经 `1118-1720-重编码动图.py` 统一为 640×400 / 18 帧 / 83ms | 脚本已生成 63 组，产物人工抽查 |
+| 缩略图生成 | 无头 Chrome 截图 + Pillow 合成动画 WebP | `03-TempScr/10月5日-1815-生成展厅缩略图.py` | `sites/*.html` | `thumbs/*.png|.webp` | 静态 PNG 1280×900 系列；动画经 `1119-1410-平滑重编码动图.py` 统一为 640×400 / 130ms / 自适应帧数 | 脚本已生成 63 组，产物人工抽查 |
 | 部署 | 构建 dist + wrangler 推送 | `04-OpsDev/deploy-pages.sh` | 工作区文件 | Cloudflare Pages | `--project-name peilika` | 每次部署后 curl 校验 |
 
 ## 关键调用链
@@ -138,6 +138,6 @@ flowchart TD
 
 - **改分类顺序 / 并列组合**：改两处——`sites-data.js` 数组顺序（组内顺序跟着走），与 `assets/app.js` 的 `CATEGORY_BANDS`（并列配对，如 `['智谱 · GLM','腾讯 · 混元']`）。
 - **新增/下架条目**：只改 `sites-data.js` + `sites/` + `thumbs/`（详见 usage.md 流程 3/4）。
-- **缩略图规格**：改 `03-TempScr/10月5日-1815-生成展厅缩略图.py` 的 `SLUGS`、`BUDGETS`（8 个时间点采样）、`duration`；脚本对已存在的图会跳过，重截需先删。批量统一动画规格用 `03-TempScr/1118-1720-重编码动图.py`（按累计变化量重采样 + 插值补帧 + 帧独立化），原始素材备份在 `02-TempFiles/backup-webp-1118-1720/`。
+- **缩略图规格**：改 `03-TempScr/10月5日-1815-生成展厅缩略图.py` 的 `SLUGS`、`BUDGETS`（8 个时间点采样）、`duration`；脚本对已存在的图会跳过，重截需先删。批量统一动画规格用 `03-TempScr/1119-1410-平滑重编码动图.py`（保留原始帧 + 按像素差自适应补帧 + 首尾渐变闭环），原始素材备份在 `02-TempFiles/backup-webp-1118-1720/`。`1118-1720-重编码动图.py` 按累计变化量重采样，会放大帧间跳变，已弃用。
 - **渠道标签**：界面已移除 `channel-badge` 渲染，`channelClass()` 与 `ch-*` 样式仍在；要恢复显示只需在 `assets/app.js` 的 `cardHTML()` 里加回一个 `<span>`。
 - 无插件机制、无适配器接口，扩展靠直接改上述文件。

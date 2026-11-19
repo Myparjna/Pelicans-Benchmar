@@ -56,6 +56,7 @@
   // 预置默认评分：新访客直接看到这些分；用户本地手动改过/清除过的以本地为准
   // 2026-10-05 由用户在本地展厅手动评出的基准分（导出文件 peilika-ratings-2026-10-05.json）
   const DEFAULT_RATINGS = {
+    'gpt-6-2-astra': 10,
     'gpt-6': 10,
     'gpt-6-1-sol': 10,
     'gpt-6-1-terra': 7,

@@ -92,3 +92,10 @@ bash 04-OpsDev/deploy-pages.sh
 - 63 张动画统一 640×400 / 18 帧 / 83ms，体积 12.12 MB → 6.75 MB；CSS `thumb-drift` 推镜层上线。
 - 线上核验：专属域与生产域首页 / style.css / 新 WebP 均 200 且 content-type 正确，线上 WebP 实测 640×400 / 18 帧 / 83ms / 1.49s；真实浏览器 51 张动图全部加载、CSS 动画运行中、动感采样连续、console 与请求失败 0。
 - 报告见 `01-ProjectDoc/1118-1735-动图重编码与卡顿修复报告.md`，证据 JSON 见 `1118-1738-动图优化验收-本地.json` / `-线上.json`。
+
+## 2026-11-19 14:35 动图突变修复与评分更新部署记录
+
+- 部署专属域 `https://8f261524.peilika.pages.dev`，上传 65 个文件（63 张温和重编码 WebP + `assets/app.js` + `assets/style.css`），生产域 `https://peilika.pages.dev` 同步生效。
+- 动图改为保留原始帧 + 自适应补帧（`MAX_STEP=2.5`、130ms、640×400），体积 6.75 MB → 7.39 MB；`max>10` 的张数 20 → 6。CSS 推镜减弱为 14s / scale 1.012。`DEFAULT_RATINGS` 新增 `gpt-6-2-astra: 10`。
+- 线上核验：专属域与生产域首页 / app.js / style.css / 抽查 WebP 均 200 且 content-type 正确；线上 WebP 实测 640×400 / 26 帧 / 130ms / 3.38s；真实浏览器 51 张动图全部加载、Astra 卡片显示「10 分」5 颗满星、CSS 动画 14s 运行中、四张抽查卡片连续截屏无突变、console 与请求失败 0。
+- 报告见 `01-ProjectDoc/1119-1425-动图突变修复与评分更新报告.md`，证据 JSON 见 `1119-1430-评分与动图验收-本地.json` / `-线上.json`。
